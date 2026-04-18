@@ -1,0 +1,60 @@
+[
+  {
+    "decision": "REJECT",
+    "confidence": "MEDIUM",
+    "commune": "ALGER",
+    "zone": "Zone III",
+    "existing_commune_capital_B": 86.12,
+    "proposed_capital_B": 5.0,
+    "existing_wilaya_capital_B": 251.19,
+    "wilaya_concentration_pct": 0.0,
+    "premium_adjustment_pct": 0,
+    "reasoning": "High-risk zone (Zone III) | Commune already highly concentrated (5143 policies)",
+    "recommendation": "REJECT"
+  },
+  {
+    "decision": "REJECT",
+    "confidence": "MEDIUM",
+    "commune": "ROUIBA",
+    "zone": "Zone III",
+    "existing_commune_capital_B": 18.77,
+    "proposed_capital_B": 2.0,
+    "existing_wilaya_capital_B": 251.19,
+    "wilaya_concentration_pct": 0.0,
+    "premium_adjustment_pct": 0,
+    "reasoning": "High-risk zone (Zone III)",
+    "recommendation": "REJECT"
+  },
+  {
+    "decision": "REJECT",
+    "confidence": "MEDIUM",
+    "commune": "HYDRA",
+    "zone": "Zone III",
+    "existing_commune_capital_B": 6.82,
+    "proposed_capital_B": 0.5,
+    "existing_wilaya_capital_B": 251.19,
+    "wilaya_concentration_pct": 0.0,
+    "premium_adjustment_pct": 0,
+    "reasoning": "High-risk zone (Zone III)",
+    "recommendation": "REJECT"
+  },
+  {
+    "decision": "INSUFFICIENT DATA",
+    "confidence": "LOW",
+    "reasoning": "Commune \"MOUZAIA BLIDA\" not found in portfolio",
+    "recommendation": "Check spelling or classify manually"
+  },
+  {
+    "decision": "REJECT",
+    "confidence": "MEDIUM",
+    "commune": "LARBATACHE",
+    "zone": "Zone IIb",
+    "existing_commune_capital_B": 6.63,
+    "proposed_capital_B": 2.5,
+    "existing_wilaya_capital_B": 32.91,
+    "wilaya_concentration_pct": 0.0,
+    "premium_adjustment_pct": 0,
+    "reasoning": "High-risk zone (Zone IIb)",
+    "recommendation": "REJECT"
+  }
+]

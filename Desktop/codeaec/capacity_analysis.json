@@ -1,0 +1,10 @@
+{
+  "primary_capacity_B": 70.0,
+  "reinsurance_capacity_B": 15.0,
+  "total_capacity_B": 85.0,
+  "pml_99_B": 121.25,
+  "surplus_deficit_B": -36.25,
+  "capital_exposed_B": 883.0,
+  "concentration_alger_pct": 28.4,
+  "concentration_zone_iii_pct": 34.4
+}

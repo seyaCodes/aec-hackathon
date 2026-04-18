@@ -1,0 +1,25 @@
+{
+  "generated_date": "2026-04-18 03:10:15.573837",
+  "total_actions": 3,
+  "critical_count": 1,
+  "actions": [
+    {
+      "priority": "[CRITICAL]",
+      "action": "Reduce ALGER concentration from 28pct to 15pct",
+      "why": "Single wilaya >25pct violates portfolio policy. PML risk: 75.4B DZD",
+      "how": "Pause new policies in Alger Zone III. Incentivize underwriting in Zone IIa/I."
+    },
+    {
+      "priority": "[HIGH]",
+      "action": "Increase annual premium by 20pct or reduce exposure",
+      "why": "Current annual premium 432M only covers 2pct of PML 99pct",
+      "how": "Option A: Rate increase 20pct across board. Option B: Stop Zone III growth 6 months."
+    },
+    {
+      "priority": "[HIGH]",
+      "action": "Negotiate additional reinsurance coverage",
+      "why": "Capacity margin only -36.2B (want 15-20B buffer)",
+      "how": "Contact XL Capital, Everest Re for Zone III increase. Budget: ~5M DZD additional premium"
+    }
+  ]
+}
