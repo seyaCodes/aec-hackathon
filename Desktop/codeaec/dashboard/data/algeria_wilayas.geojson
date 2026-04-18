@@ -1,0 +1,445 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "ALGER",
+        "zone": "Zone III",
+        "capital_B": 251.19,
+        "pml_B": 75.35,
+        "communes_count": 146,
+        "decision_REJECT": 2,
+        "decision_ADJUST": 137,
+        "decision_ACCEPT": 7,
+        "dominant_decision": "ADJUST",
+        "color": "#e53935",
+        "lat": 36.7538,
+        "lon": 3.0588
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.8088,
+              36.5038
+            ],
+            [
+              3.3088,
+              36.5038
+            ],
+            [
+              3.3088,
+              37.0038
+            ],
+            [
+              2.8088,
+              37.0038
+            ],
+            [
+              2.8088,
+              36.5038
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "BLIDA",
+        "zone": "Zone III",
+        "capital_B": 23.42,
+        "pml_B": 6.8,
+        "communes_count": 43,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 31,
+        "decision_ACCEPT": 12,
+        "dominant_decision": "ADJUST",
+        "color": "#e53935",
+        "lat": 36.4744,
+        "lon": 2.8277
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.5777,
+              36.2244
+            ],
+            [
+              3.0777,
+              36.2244
+            ],
+            [
+              3.0777,
+              36.7244
+            ],
+            [
+              2.5777,
+              36.7244
+            ],
+            [
+              2.5777,
+              36.2244
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "BOUMERDES",
+        "zone": "Zone III",
+        "capital_B": 32.66,
+        "pml_B": 7.88,
+        "communes_count": 45,
+        "decision_REJECT": 1,
+        "decision_ADJUST": 33,
+        "decision_ACCEPT": 11,
+        "dominant_decision": "ADJUST",
+        "color": "#e53935",
+        "lat": 36.7611,
+        "lon": 3.4801
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              3.2301,
+              36.5111
+            ],
+            [
+              3.7301,
+              36.5111
+            ],
+            [
+              3.7301,
+              37.0111
+            ],
+            [
+              3.2301,
+              37.0111
+            ],
+            [
+              3.2301,
+              36.5111
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "AIN DEFLA",
+        "zone": "Zone III",
+        "capital_B": 11.85,
+        "pml_B": 2.45,
+        "communes_count": 30,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 22,
+        "decision_ACCEPT": 8,
+        "dominant_decision": "ADJUST",
+        "color": "#e53935",
+        "lat": 36.2603,
+        "lon": 1.9663
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1.7163,
+              36.0103
+            ],
+            [
+              2.2163,
+              36.0103
+            ],
+            [
+              2.2163,
+              36.5103
+            ],
+            [
+              1.7163,
+              36.5103
+            ],
+            [
+              1.7163,
+              36.0103
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "TIPAZA",
+        "zone": "Zone III",
+        "capital_B": 15.23,
+        "pml_B": 4.57,
+        "communes_count": 49,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 46,
+        "decision_ACCEPT": 3,
+        "dominant_decision": "ADJUST",
+        "color": "#e53935",
+        "lat": 36.5915,
+        "lon": 2.4508
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.2008,
+              36.3415
+            ],
+            [
+              2.7008,
+              36.3415
+            ],
+            [
+              2.7008,
+              36.8415
+            ],
+            [
+              2.2008,
+              36.8415
+            ],
+            [
+              2.2008,
+              36.3415
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "MEDEA",
+        "zone": "Zone IIb",
+        "capital_B": 3.78,
+        "pml_B": 0.76,
+        "communes_count": 2,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 1,
+        "decision_ACCEPT": 1,
+        "dominant_decision": "ADJUST",
+        "color": "#ff9800",
+        "lat": 36.2762,
+        "lon": 2.7584
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.5084,
+              36.0262
+            ],
+            [
+              3.0084,
+              36.0262
+            ],
+            [
+              3.0084,
+              36.5262
+            ],
+            [
+              2.5084,
+              36.5262
+            ],
+            [
+              2.5084,
+              36.0262
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "TIZI OUZOU",
+        "zone": "Zone IIb",
+        "capital_B": 0.95,
+        "pml_B": 0.19,
+        "communes_count": 1,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 0,
+        "decision_ACCEPT": 1,
+        "dominant_decision": "ACCEPT",
+        "color": "#ff9800",
+        "lat": 36.7165,
+        "lon": 4.0522
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              3.8022,
+              36.4665
+            ],
+            [
+              4.3022,
+              36.4665
+            ],
+            [
+              4.3022,
+              36.9665
+            ],
+            [
+              3.8022,
+              36.9665
+            ],
+            [
+              3.8022,
+              36.4665
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "CHLEF",
+        "zone": "Zone III",
+        "capital_B": 2.74,
+        "pml_B": 0.72,
+        "communes_count": 27,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 20,
+        "decision_ACCEPT": 7,
+        "dominant_decision": "ADJUST",
+        "color": "#e53935",
+        "lat": 36.1716,
+        "lon": 1.3389
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1.0889,
+              35.9216
+            ],
+            [
+              1.5889,
+              35.9216
+            ],
+            [
+              1.5889,
+              36.4216
+            ],
+            [
+              1.0889,
+              36.4216
+            ],
+            [
+              1.0889,
+              35.9216
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "RELIZANE",
+        "zone": "Zone IIb",
+        "capital_B": 0.22,
+        "pml_B": 0.04,
+        "communes_count": 2,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 1,
+        "decision_ACCEPT": 1,
+        "dominant_decision": "ACCEPT",
+        "color": "#ff9800",
+        "lat": 35.7397,
+        "lon": 0.5589
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              0.30889999999999995,
+              35.4897
+            ],
+            [
+              0.8089,
+              35.4897
+            ],
+            [
+              0.8089,
+              35.9897
+            ],
+            [
+              0.30889999999999995,
+              35.9897
+            ],
+            [
+              0.30889999999999995,
+              35.4897
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "wilaya": "MOSTAGANEM",
+        "zone": "Zone III",
+        "capital_B": 0.05,
+        "pml_B": 0.01,
+        "communes_count": 3,
+        "decision_REJECT": 0,
+        "decision_ADJUST": 3,
+        "decision_ACCEPT": 0,
+        "dominant_decision": "ADJUST",
+        "color": "#e53935",
+        "lat": 35.9339,
+        "lon": 0.0881
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.1619,
+              35.6839
+            ],
+            [
+              0.3381,
+              35.6839
+            ],
+            [
+              0.3381,
+              36.1839
+            ],
+            [
+              -0.1619,
+              36.1839
+            ],
+            [
+              -0.1619,
+              35.6839
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
