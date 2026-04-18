@@ -1,0 +1,34 @@
+{
+  "label_mapping": {
+    "ACCEPT": 0,
+    "ADJUST": 1,
+    "REJECT": 2
+  },
+  "reverse_mapping": {
+    "0": "ACCEPT",
+    "1": "ADJUST",
+    "2": "REJECT"
+  },
+  "feature_importance": [
+    {
+      "feature": "loss_ratio",
+      "importance": 47.25042735698922
+    },
+    {
+      "feature": "COMMUNE",
+      "importance": 43.543962173483095
+    },
+    {
+      "feature": "WILAYA",
+      "importance": 4.2633528870447694
+    },
+    {
+      "feature": "CAPITAL_ASSURE",
+      "importance": 2.941878683962191
+    },
+    {
+      "feature": "TYPE",
+      "importance": 2.0003788985207205
+    }
+  ]
+}

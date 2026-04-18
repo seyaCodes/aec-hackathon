@@ -76,23 +76,72 @@ def load_ai_log():
         return None
 
 @st.cache_data
-def run_monte_carlo(cap3, cap2b, cap2a, cap1, cap0):
+def load_empirical_params():
+    """Load data-derived Monte Carlo parameters by zone"""
+    try:
+        with open('empirical_monte_carlo_params.json','r',encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return None
+
+@st.cache_data
+def load_catboost_model():
+    """Load trained CatBoost underwriting model"""
+    try:
+        from catboost import CatBoostClassifier
+        model = CatBoostClassifier()
+        model.load_model('catboost_underwriting_model.cbm')
+        with open('catboost_label_mapping.json','r',encoding='utf-8') as f:
+            metadata = json.load(f)
+        return model, metadata
+    except Exception as e:
+        st.warning(f"Could not load CatBoost model: {e}")
+        return None, None
+
+@st.cache_data
+def run_monte_carlo(df_filtered, empirical_params):
+    """
+    Run Monte Carlo simulation using data-derived parameters.
+    
+    Args:
+        df_filtered: Filtered portfolio dataframe
+        empirical_params: Zone-wise loss parameters
+    
+    Returns:
+        Array of 10,000 simulated annual losses in billions DZD
+    """
     np.random.seed(42)
     N = 10_000
-    S = [
-        (cap3,  0.07,  0.30, 0.08),
-        (cap2b, 0.04,  0.20, 0.06),
-        (cap2a, 0.025, 0.12, 0.04),
-        (cap1,  0.010, 0.05, 0.02),
-        (cap0,  0.002, 0.01, 0.005),
-    ]
     losses = np.zeros(N)
+    
+    # Build zone-wise loss simulation parameters from empirical data
+    zones = ['Zone 0', 'Zone I', 'Zone IIa', 'Zone IIb', 'Zone III']
+    
     for i in range(N):
-        t = 0
-        for cap, prob, mean, std in S:
-            if np.random.random() < prob:
-                t += cap * np.clip(np.random.normal(mean, std), 0, 1)
-        losses[i] = t
+        total_loss = 0
+        
+        for zone in zones:
+            if zone not in empirical_params:
+                continue
+            
+            zone_data = empirical_params[zone]
+            zone_capital = zone_data['total_capital_B']
+            loss_prob = zone_data['loss_probability']
+            mean_loss_ratio = zone_data['mean_loss_ratio']
+            std_loss_ratio = zone_data['std_loss_ratio']
+            
+            # Simulate: does this zone have a loss event?
+            if np.random.random() < loss_prob:
+                # Sample loss ratio from distribution (using empirical mean/std)
+                loss_ratio = np.clip(
+                    np.random.normal(mean_loss_ratio, std_loss_ratio),
+                    0, 1
+                )
+                zone_loss = zone_capital * loss_ratio
+                total_loss += zone_loss
+        
+        losses[i] = total_loss
+    
     return losses
 
 try:
@@ -257,11 +306,13 @@ st.subheader("⚡ Scenario Simulation — What If Earthquake?")
 scenario_col1, scenario_col2 = st.columns([2, 1])
 
 with scenario_col1:
-    st.caption("Monte Carlo 10,000-year loss distribution")
-    zc = df.groupby('ZONE_RPA')['CAPITAL_ASSURE'].sum()
-    losses = run_monte_carlo(
-        zc.get('Zone III',0), zc.get('Zone IIb',0), zc.get('Zone IIa',0),
-        zc.get('Zone I',0),   zc.get('Zone 0',0))
+    st.caption("Monte Carlo 10,000-year loss distribution (data-derived parameters)")
+    empirical_params = load_empirical_params()
+    if empirical_params:
+        losses = run_monte_carlo(df, empirical_params)
+    else:
+        st.error("Could not load empirical parameters")
+        st.stop()
     p90, p99, avg = np.percentile(losses,90), np.percentile(losses,99), np.mean(losses)
     
     counts, edges = np.histogram(losses/1e9, bins=80)
@@ -377,34 +428,42 @@ with eval_col3:
         if len(commune_data) > 0:
             comm_zone = commune_data['ZONE_RPA'].mode()[0] if len(commune_data) > 0 else "Unknown"
             comm_wilaya = commune_data['WILAYA'].mode()[0] if len(commune_data) > 0 else "Unknown"
+            policy_type = commune_data['TYPE'].mode()[0] if len(commune_data) > 0 else "Unknown"
             existing_cap = commune_data['CAPITAL_ASSURE'].sum() / 1e9
             
-            # Simple decision logic
-            if comm_zone in ['Zone III', 'Zone IIb'] and new_capital > 2:
-                decision_result = "ADJUST"
-                recommendation = f"Increase premium by 25-30% due to {comm_zone} and size"
-            elif comm_zone == 'Zone III':
-                decision_result = "REJECT"
-                recommendation = f"Zone III is overconcentrated. STOP new policies"
-            elif comm_zone in ['Zone 0', 'Zone I']:
-                decision_result = "ACCEPT"
-                recommendation = f"Low-risk zone. EXPAND business here"
-            else:
-                decision_result = "ADJUST"
-                recommendation = f"Standard underwriting. Monitor exposure"
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Zone", comm_zone)
-            with col2:
-                st.metric("Existing Capital", f"{existing_cap:.1f}B")
-            with col3:
-                st.metric("Wilaya Concentration", f"{existing_cap/df['CAPITAL_ASSURE'].sum()*100:.1f}%")
-            
-            st.markdown(f"### Decision: **{decision_result}**")
-            st.info(recommendation)
-        else:
-            st.error("Commune not found")
+            # Use CatBoost model for decision
+            try:
+                from underwriting_inference import evaluate_policy
+                
+                result = evaluate_policy(
+                    commune=new_commune,
+                    capital_B=new_capital,
+                    wilaya=comm_wilaya,
+                    policy_type=policy_type
+                )
+                
+                decision_result = result['decision']
+                confidence = result['confidence']
+                explanation = result['reasoning']
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Zone", comm_zone)
+                with col2:
+                    st.metric("Existing Capital", f"{existing_cap:.1f}B")
+                with col3:
+                    st.metric("Model Confidence", f"{confidence:.1%}")
+                
+                # Color-code decision
+                decision_color = {"ACCEPT": "🟢", "ADJUST": "🟡", "REJECT": "🔴"}
+                st.markdown(f"### {decision_color.get(decision_result, '⚪')} Decision: **{decision_result}**")
+                
+                if confidence < 0.7:
+                    st.warning(f"⚠️ Low confidence ({confidence:.1%}). Consider manual review.")
+                
+                st.info(explanation)
+            except Exception as e:
+                st.error(f"Error: {e}. Ensure CatBoost model is trained: python train_empirical_models.py")
 
 st.markdown("---")
 
