@@ -290,6 +290,61 @@
         color: var(--danger);
       }
 
+      .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .badge-red {
+        background: rgba(220, 38, 38, 0.1);
+        color: #dc2626;
+      }
+
+      .badge-orange {
+        background: rgba(249, 115, 22, 0.1);
+        color: #f97316;
+      }
+
+      .badge-green {
+        background: rgba(26, 158, 92, 0.1);
+        color: #1a9e5c;
+      }
+
+      .scroll-x {
+        overflow-x: auto;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table thead {
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+      }
+
+      table th {
+        padding: 10px 8px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      table td {
+        padding: 8px;
+        font-size: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      table tbody tr:hover {
+        background: var(--surface2-dim);
+      }
+
       .date-chip {
         background: var(--surface2);
         border: 1px solid var(--border);
@@ -1447,6 +1502,64 @@
               <div class="sim-out" id="simResults"></div>
             </div>
           </div>
+
+          <!-- ── NEW: SEGMENTATION BY NATURE OF RISK ─────────── -->
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl"
+                >Segmentation Capital par Nature de Risque</span
+              >
+              <span class="chip chip-green">Zone × Type</span>
+            </div>
+            <div class="card-bd" id="riskNatureBody"></div>
+          </div>
+
+          <!-- ── NEW: BUILDING VULNERABILITY PROFILE ─────────── -->
+          <div class="g2">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Profil Constructions par Zone</span>
+                <span class="chip chip-green">% Neuf/Ancien/Renforcé</span>
+              </div>
+              <div class="card-bd" id="buildingProfileBody"></div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl"
+                  >Scénario Catastrophe Zone III (M7.5)</span
+                >
+                <span class="chip chip-red">Impact Critique</span>
+              </div>
+              <div class="card-bd" id="zoneIIIScenarioBody"></div>
+            </div>
+          </div>
+
+          <!-- ── NEW: TOP 20 COMMUNES HOTSPOTS ─────────── -->
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl"
+                >Top 20 Communes Critiques — Points Chauds Sismiques</span
+              >
+              <span class="badge badge-red">Cumul de Capital Exposé</span>
+            </div>
+            <div class="card-bd scroll-x">
+              <table id="topCommunesTable">
+                <thead>
+                  <tr>
+                    <th>Rang</th>
+                    <th>Commune</th>
+                    <th>Wilaya</th>
+                    <th>Zone RPA</th>
+                    <th>Capital (Mds)</th>
+                    <th>PML (Mds)</th>
+                    <th>Polices</th>
+                    <th>Loss Ratio %</th>
+                  </tr>
+                </thead>
+                <tbody id="topCommunesBody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         <!-- ── RECOMMANDATIONS ─────────────────── -->
@@ -2267,6 +2380,110 @@
         ).join("");
       }
 
+      /* ── EXTENDED ANALYSIS ─────────────────────────── */
+      function loadExtendedAnalysis() {
+        fetch("dashboard/data/extended_analysis.json")
+          .then((r) => r.json())
+          .then((data) => {
+            buildRiskNature(data.risk_nature);
+            buildBuildingProfiles(data.building_profiles);
+            buildZoneIIIScenario(data.zone_iii_scenario);
+            buildTopCommunes(data.top_communes);
+          })
+          .catch((e) => console.log("Extended analysis:", e));
+      }
+
+      function buildRiskNature(data) {
+        if (!data) return;
+        let html =
+          '<table style="width:100%;font-size:13px;"><thead><tr><th>Zone</th>';
+        const types = Object.keys(data)
+          .filter((z) => z !== "__meta__")
+          .map((z) => Object.keys(data[z]).filter((t) => t !== "__total__"))
+          .flat()
+          .filter((v, i, a) => a.indexOf(v) === i);
+        types.forEach((t) => (html += `<th>${t}</th>`));
+        html += "<th><b>Total</b></th></tr></thead><tbody>";
+        Object.entries(data)
+          .filter(([z]) => z !== "__meta__")
+          .forEach(([zone, types_data]) => {
+            html += `<tr><td><b>${zone}</b></td>`;
+            types.forEach((t) => {
+              const val = types_data[t] || 0;
+              html += `<td>${val.toFixed(1)}</td>`;
+            });
+            html += `<td><b>${(types_data.__total__ || 0).toFixed(1)}</b></td></tr>`;
+          });
+        html += "</tbody></table>";
+        document.getElementById("riskNatureBody").innerHTML = html;
+      }
+
+      function buildBuildingProfiles(data) {
+        if (!data) return;
+        let html =
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;">';
+        Object.entries(data)
+          .filter(([z]) => z !== "__meta__")
+          .forEach(([zone, profiles]) => {
+            html += `<div style="border:1px solid #ddd;padding:10px;border-radius:6px;background:#f9fafb;">
+            <div style="font-weight:bold;font-size:12px;margin-bottom:8px;">${zone}</div>
+            <div style="font-size:11px;">
+              <div>🏗 Neuf: ${(profiles.new || 0).toFixed(1)}%</div>
+              <div>🏢 Moyen: ${(profiles.medium || 0).toFixed(1)}%</div>
+              <div>🏚 Ancien: ${(profiles.old || 0).toFixed(1)}%</div>
+              <div>🛡 Renforcé: ${(profiles.reinforced || 0).toFixed(1)}%</div>
+            </div>
+          </div>`;
+          });
+        html += "</div>";
+        document.getElementById("buildingProfileBody").innerHTML = html;
+      }
+
+      function buildZoneIIIScenario(data) {
+        if (!data) return;
+        document.getElementById("zoneIIIScenarioBody").innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+            <div class="kpi k-orange" style="padding:12px;">
+              <div class="kpi-lbl" style="font-size:11px;">Zone III Capital Exposé</div>
+              <div class="kpi-val orange" style="font-size:18px;">${(data.zone_iii_capital || 0).toFixed(1)} Mds</div>
+            </div>
+            <div class="kpi k-red" style="padding:12px;">
+              <div class="kpi-lbl" style="font-size:11px;">PML M7.5 Estimée</div>
+              <div class="kpi-val red" style="font-size:18px;">${(data.pml_m75 || 0).toFixed(1)} Mds</div>
+            </div>
+            <div class="kpi k-red" style="padding:12px;">
+              <div class="kpi-lbl" style="font-size:11px;">Shortfall Rétention</div>
+              <div class="kpi-val red" style="font-size:18px;">${(data.shortfall || 0).toFixed(1)} Mds</div>
+            </div>
+            <div class="kpi k-green" style="padding:12px;">
+              <div class="kpi-lbl" style="font-size:11px;">Loss Ratio</div>
+              <div class="kpi-val green" style="font-size:18px;">${((data.loss_ratio || 0) * 100).toFixed(1)}%</div>
+            </div>
+          </div>
+        `;
+      }
+
+      function buildTopCommunes(data) {
+        if (!data || !data.communes) return;
+        let html = data.communes
+          .map(
+            (c, i) => `
+          <tr>
+            <td style="font-weight:bold;">${i + 1}</td>
+            <td>${c.commune}</td>
+            <td>${c.wilaya}</td>
+            <td><span class="badge badge-${c.zone === "III" ? "red" : c.zone?.startsWith("II") ? "orange" : "green"}">${c.zone}</span></td>
+            <td style="text-align:right;font-weight:bold;">${c.capital.toFixed(1)}</td>
+            <td style="text-align:right;">${(c.capital * 0.25).toFixed(1)}</td>
+            <td style="text-align:right;">${c.num_policies}</td>
+            <td style="text-align:right;color:#dc2626;">${((c.loss_ratio || 0) * 100).toFixed(1)}%</td>
+          </tr>
+        `,
+          )
+          .join("");
+        document.getElementById("topCommunesBody").innerHTML = html;
+      }
+
       /* ── CHARTS ───────────────────────────── */
       function initCharts() {
         new Chart("catChart", {
@@ -2623,6 +2840,7 @@
       buildHeatmap();
       buildSimulator();
       buildRecs();
+      loadExtendedAnalysis();
       initCharts();
     </script>
   </body>

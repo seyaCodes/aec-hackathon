@@ -1,0 +1,312 @@
+{
+  "risk_nature": {
+    "zones": [
+      "Zone 0",
+      "Zone I",
+      "Zone III",
+      "Zone IIa",
+      "Zone IIb"
+    ],
+    "types": [
+      "Bien Immobilier",
+      "Installation Commerciale",
+      "Installation Industrielle"
+    ],
+    "data": {
+      "Zone 0": {
+        "Bien Immobilier": 18.71,
+        "Installation Commerciale": 2.03,
+        "Installation Industrielle": 0.41,
+        "TOTAL": 21.15
+      },
+      "Zone I": {
+        "Bien Immobilier": 54.49,
+        "Installation Commerciale": 21.62,
+        "Installation Industrielle": 6.41,
+        "TOTAL": 82.52
+      },
+      "Zone III": {
+        "Bien Immobilier": 131.99,
+        "Installation Commerciale": 85.79,
+        "Installation Industrielle": 85.97,
+        "TOTAL": 303.75
+      },
+      "Zone IIa": {
+        "Bien Immobilier": 192.12,
+        "Installation Commerciale": 153.24,
+        "Installation Industrielle": 90.13,
+        "TOTAL": 435.49
+      },
+      "Zone IIb": {
+        "Bien Immobilier": 12.49,
+        "Installation Commerciale": 16.82,
+        "Installation Industrielle": 9.05,
+        "TOTAL": 38.37
+      }
+    }
+  },
+  "building_profiles": {
+    "Zone 0": {
+      "capital_B": 21.15,
+      "new_%": 40,
+      "medium_%": 35,
+      "old_%": 25,
+      "reinforced_pct": 23
+    },
+    "Zone I": {
+      "capital_B": 82.52,
+      "new_%": 38,
+      "medium_%": 38,
+      "old_%": 24,
+      "reinforced_pct": 22
+    },
+    "Zone IIa": {
+      "capital_B": 435.49,
+      "new_%": 30,
+      "medium_%": 45,
+      "old_%": 25,
+      "reinforced_pct": 19
+    },
+    "Zone IIb": {
+      "capital_B": 38.37,
+      "new_%": 25,
+      "medium_%": 50,
+      "old_%": 25,
+      "reinforced_pct": 17
+    },
+    "Zone III": {
+      "capital_B": 303.75,
+      "new_%": 20,
+      "medium_%": 45,
+      "old_%": 35,
+      "reinforced_pct": 14
+    }
+  },
+  "zone_iii_scenario": {
+    "scenario": "M7.5 (Magnitude) — Zone III Epicenter",
+    "total_capital_zone_iii_B": 303.75,
+    "pml_99_loss_B": 91.12,
+    "loss_ratio": 30.0,
+    "top_wilayas_affected": [
+      {
+        "wilaya": "ALGER",
+        "capital_B": 251.19,
+        "estimated_loss_B": 75.36
+      },
+      {
+        "wilaya": "BLIDA",
+        "capital_B": 21.17,
+        "estimated_loss_B": 6.35
+      },
+      {
+        "wilaya": "TIPAZA",
+        "capital_B": 15.23,
+        "estimated_loss_B": 4.57
+      }
+    ],
+    "retained_capacity_B": 70,
+    "shortfall_B": 21.12
+  },
+  "top_communes": [
+    {
+      "rank": 135,
+      "commune": "ALGER",
+      "wilaya": "ALGER",
+      "zone": "Zone III",
+      "capital_B": 62.704,
+      "pml_B": 18.811,
+      "policies": 1324,
+      "loss_ratio_%": 30.0
+    },
+    {
+      "rank": 970,
+      "commune": "ORAN",
+      "wilaya": "ORAN",
+      "zone": "Zone IIa",
+      "capital_B": 60.175,
+      "pml_B": 7.221,
+      "policies": 2977,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 1139,
+      "commune": "SETIF",
+      "wilaya": "SETIF",
+      "zone": "Zone IIa",
+      "capital_B": 52.937,
+      "pml_B": 6.352,
+      "policies": 4072,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 184,
+      "commune": "BATNA",
+      "wilaya": "BATNA",
+      "zone": "Zone I",
+      "capital_B": 37.374,
+      "pml_B": 1.869,
+      "policies": 2084,
+      "loss_ratio_%": 5.0
+    },
+    {
+      "rank": 585,
+      "commune": "EL EULMA",
+      "wilaya": "SETIF",
+      "zone": "Zone IIa",
+      "capital_B": 31.174,
+      "pml_B": 3.741,
+      "policies": 6234,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 459,
+      "commune": "CONSTANTINE",
+      "wilaya": "CONSTANTINE",
+      "zone": "Zone IIa",
+      "capital_B": 24.539,
+      "pml_B": 2.945,
+      "policies": 1983,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 1208,
+      "commune": "SKIKDA",
+      "wilaya": "SKIKDA",
+      "zone": "Zone IIa",
+      "capital_B": 21.226,
+      "pml_B": 2.547,
+      "policies": 370,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 1104,
+      "commune": "ROUIBA",
+      "wilaya": "ALGER",
+      "zone": "Zone III",
+      "capital_B": 18.76,
+      "pml_B": 5.628,
+      "policies": 1000,
+      "loss_ratio_%": 30.0
+    },
+    {
+      "rank": 1354,
+      "commune": "TIZI OUZOU",
+      "wilaya": "TIZI OUZOU",
+      "zone": "Zone IIa",
+      "capital_B": 18.34,
+      "pml_B": 2.201,
+      "policies": 3780,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 431,
+      "commune": "CHERAGA ALGER",
+      "wilaya": "ALGER",
+      "zone": "Zone III",
+      "capital_B": 14.926,
+      "pml_B": 4.478,
+      "policies": 1891,
+      "loss_ratio_%": 30.0
+    },
+    {
+      "rank": 306,
+      "commune": "BORDJ BOU ARRERIDJ",
+      "wilaya": "B.B ARRERIDJ",
+      "zone": "Zone IIa",
+      "capital_B": 13.043,
+      "pml_B": 1.565,
+      "policies": 3857,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 190,
+      "commune": "BEB EZZOUAR",
+      "wilaya": "ALGER",
+      "zone": "Zone III",
+      "capital_B": 12.726,
+      "pml_B": 3.818,
+      "policies": 586,
+      "loss_ratio_%": 30.0
+    },
+    {
+      "rank": 890,
+      "commune": "MASCARA",
+      "wilaya": "MASCARA",
+      "zone": "Zone IIa",
+      "capital_B": 11.337,
+      "pml_B": 1.36,
+      "policies": 2256,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 1355,
+      "commune": "TIZI RACHED",
+      "wilaya": "TIZI OUZOU",
+      "zone": "Zone IIa",
+      "capital_B": 10.47,
+      "pml_B": 1.256,
+      "policies": 313,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 1265,
+      "commune": "TAMANRASSET",
+      "wilaya": "TAMENRASSET",
+      "zone": "Zone 0",
+      "capital_B": 10.374,
+      "pml_B": 0.104,
+      "policies": 2120,
+      "loss_ratio_%": 1.0
+    },
+    {
+      "rank": 1235,
+      "commune": "STAOUELI",
+      "wilaya": "ALGER",
+      "zone": "Zone III",
+      "capital_B": 10.128,
+      "pml_B": 3.038,
+      "policies": 530,
+      "loss_ratio_%": 30.0
+    },
+    {
+      "rank": 177,
+      "commune": "BARAKI",
+      "wilaya": "ALGER",
+      "zone": "Zone III",
+      "capital_B": 9.285,
+      "pml_B": 2.786,
+      "policies": 865,
+      "loss_ratio_%": 30.0
+    },
+    {
+      "rank": 570,
+      "commune": "EL BIAR",
+      "wilaya": "ALGER",
+      "zone": "Zone III",
+      "capital_B": 7.987,
+      "pml_B": 2.396,
+      "policies": 298,
+      "loss_ratio_%": 30.0
+    },
+    {
+      "rank": 626,
+      "commune": "EL KHROUB",
+      "wilaya": "CONSTANTINE",
+      "zone": "Zone IIa",
+      "capital_B": 7.501,
+      "pml_B": 0.9,
+      "policies": 1825,
+      "loss_ratio_%": 12.0
+    },
+    {
+      "rank": 1312,
+      "commune": "TIARET",
+      "wilaya": "TIARET",
+      "zone": "Zone I",
+      "capital_B": 7.32,
+      "pml_B": 0.366,
+      "policies": 1312,
+      "loss_ratio_%": 5.0
+    }
+  ]
+}
