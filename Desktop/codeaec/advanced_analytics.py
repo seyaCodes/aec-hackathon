@@ -339,7 +339,7 @@ class ReinsuranceEngine:
         Args:
             total_capital_B: Total capital in billions
             pml_99_B: 99% PML in billions
-            primary_retention_pct: % of risk retained by primary insurer
+            primary_retention_pct: % of risk retained by primary insurer [DEPRECATED - uses fixed reserve]
             reinsurer_capacity_cost_pct: Cost per $1B of reinsurance capacity
             
         Returns:
@@ -353,9 +353,9 @@ class ReinsuranceEngine:
             }
         """
         
-        # Calculate capacities
-        retained_capacity = total_capital_B * primary_retention_pct
-        transfer_capacity = total_capital_B * (1 - primary_retention_pct)
+        # Calculate capacities — use fixed 70B internal reserve
+        retained_capacity = 70  # GAM proprietary retention limit (internal capital reserves)
+        transfer_capacity = total_capital_B - retained_capacity
         shortfall = max(0, pml_99_B - retained_capacity)
         
         layers = []

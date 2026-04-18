@@ -18,7 +18,7 @@
   "Zone III": {
     "total_capital_B": 303.75,
     "total_pml_B": 91.12,
-    "loss_probability": 1.0,
+    "loss_probability": 0.07,
     "mean_loss_ratio": 0.3,
     "std_loss_ratio": 0.0,
     "num_policies": 37601
@@ -26,7 +26,7 @@
   "Zone IIa": {
     "total_capital_B": 435.49,
     "total_pml_B": 52.26,
-    "loss_probability": 1.0,
+    "loss_probability": 0.025,
     "mean_loss_ratio": 0.12,
     "std_loss_ratio": 0.0,
     "num_policies": 66683
@@ -34,7 +34,7 @@
   "Zone IIb": {
     "total_capital_B": 38.37,
     "total_pml_B": 7.67,
-    "loss_probability": 1.0,
+    "loss_probability": 0.04,
     "mean_loss_ratio": 0.2,
     "std_loss_ratio": 0.0,
     "num_policies": 4670
