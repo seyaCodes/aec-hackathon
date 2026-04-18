@@ -4,6 +4,13 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import json
+from dashboard_analytics import (
+    calculate_zone_vulnerability_ratios,
+    identify_growth_zones,
+    simulate_boumerdes_scenario,
+    calculate_building_type_vulnerability,
+    identify_hotspots_with_retention
+)
 
 st.set_page_config(page_title="GAM — Risk Management Engine", page_icon="🏔️", layout="wide")
 
@@ -144,6 +151,31 @@ def run_monte_carlo(df_filtered, empirical_params):
     
     return losses
 
+@st.cache_data
+def compute_vulnerability_ratios(df, empirical_params):
+    """Compute zone vulnerability ratios"""
+    return calculate_zone_vulnerability_ratios(df, empirical_params)
+
+@st.cache_data
+def compute_growth_zones(df, empirical_params):
+    """Compute geographic growth strategy"""
+    return identify_growth_zones(df, empirical_params)
+
+@st.cache_data
+def compute_boumerdes_scenario(df, empirical_params):
+    """Compute Boumerdes M6.5 scenario"""
+    return simulate_boumerdes_scenario(df, empirical_params)
+
+@st.cache_data
+def compute_building_vulnerability(df):
+    """Compute building type vulnerability breakdown"""
+    return calculate_building_type_vulnerability(df)
+
+@st.cache_data
+def compute_hotspots(df):
+    """Compute hotspots with retention thresholds"""
+    return identify_hotspots_with_retention(df)
+
 try:
     df = load_data()
     decisions = load_decision_data()
@@ -222,6 +254,44 @@ if ceo_panel and 'actions' in ceo_panel:
 st.markdown("---")
 
 # ════════════════════════════════════════════════════════════════
+# SECTION 2.5: VULNERABILITY RATIO KPI (Phase III — CDC Requirement)
+# ════════════════════════════════════════════════════════════════
+st.subheader("📊 Indicateurs de Vulnérabilité — Ratio Capital/Rétention par Zone")
+st.caption("CDC Requirement: Zone | Capital Exposé | Capacité Retention | Ratio | Status")
+
+empirical_params = load_empirical_params()
+if empirical_params:
+    vuln_ratios = compute_vulnerability_ratios(df, empirical_params)
+    
+    # Display as color-coded table
+    if len(vuln_ratios) > 0:
+        # Format for display
+        display_cols = ['Zone', 'Capital_Exposé_B', 'Capacité_Retention_B', 'Ratio', 'Status']
+        display_df = vuln_ratios[display_cols].copy()
+        display_df.columns = ['Zone', 'Capital (B DZD)', 'Retention (B DZD)', 'Ratio', 'Status']
+        
+        # Create metrics row
+        v_cols = st.columns(len(vuln_ratios))
+        for idx, (col, row) in enumerate(zip(v_cols, vuln_ratios.itertuples())):
+            with col:
+                status_color = row.Color
+                st.markdown(f"""
+<div style="background-color: rgba({
+    '229,57,57' if status_color == 'red' else
+    '255,152,0' if status_color == 'orange' else
+    '67,160,71'
+}, 0.1); border-left: 4px solid {'#E53935' if status_color == 'red' else '#FF9800' if status_color == 'orange' else '#43A047'}; padding: 12px; border-radius: 8px;">
+<strong>{row.Zone}</strong><br>
+Capital: <b>{row.Capital_Exposé_B}B</b><br>
+Retention: {row.Capacité_Retention_B}B<br>
+Ratio: <span style="font-size: 18px; font-weight: bold;">{row.Ratio}</span><br>
+{row.Status}
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# ════════════════════════════════════════════════════════════════
 # SECTION 3: RISK MAP & CONCENTRATION
 # ════════════════════════════════════════════════════════════════
 map_col, concentration_col = st.columns([2, 1])
@@ -262,6 +332,57 @@ with concentration_col:
 st.markdown("---")
 
 # ════════════════════════════════════════════════════════════════
+# SECTION 3.5: GEOGRAPHIC GROWTH STRATEGY (Phase III — CDC Requirement)
+# ════════════════════════════════════════════════════════════════
+st.subheader("🌍 Politique d'Implantation — Strategic Geographic Growth")
+st.caption("Where to EXPAND (green zones) vs where to STOP (red zones/moratorium)")
+
+if empirical_params:
+    growth_strategy = compute_growth_zones(df, empirical_params)
+    
+    # Create visual: opportunity vs moratorium zones
+    strat_cols = st.columns([1, 1])
+    
+    with strat_cols[0]:
+        st.markdown("### 🟢 **Zones d'Opportunité** (Expand Here)")
+        if growth_strategy['opportunity_zones']:
+            for zone in growth_strategy['opportunity_zones']:
+                rec = growth_strategy['strategic_recommendations'].get(zone, {})
+                target = rec.get('target_pct', 0) - growth_strategy['current_distribution'].get(zone, 0)
+                st.success(f"**{zone}** → +{target:.0f}% growth potential  \n{rec.get('reason', '')}")
+        else:
+            st.info("No immediate expansion opportunities (zones at capacity)")
+    
+    with strat_cols[1]:
+        st.markdown("### 🔴 **Zones de Moratoire** (Freeze Growth)")
+        if growth_strategy['moratorium_zones']:
+            for zone in growth_strategy['moratorium_zones']:
+                rec = growth_strategy['strategic_recommendations'].get(zone, {})
+                current = growth_strategy['current_distribution'].get(zone, 0)
+                target = rec.get('target_pct', 0)
+                st.error(f"**{zone}** → -{current - target:.1f}% rebalancing needed  \n{rec.get('reason', '')}")
+        else:
+            st.info("No zones in moratorium status")
+    
+    # Summary table of all zones
+    st.markdown("#### Strategic Actions by Zone")
+    summary_actions = []
+    for zone, rec in growth_strategy['strategic_recommendations'].items():
+        summary_actions.append({
+            'Zone': zone,
+            'Action': rec.get('action', 'HOLD'),
+            'Current %': f"{growth_strategy['current_distribution'].get(zone, 0):.1f}%",
+            'Target %': f"{rec.get('target_pct', 0):.1f}%",
+            'Reason': rec.get('reason', ''),
+            'Priority': rec.get('priority', 'LOW')
+        })
+    
+    action_df = pd.DataFrame(summary_actions)
+    st.dataframe(action_df, use_container_width=True, hide_index=True)
+
+st.markdown("---")
+
+# ════════════════════════════════════════════════════════════════
 # SECTION 4: COMMUNE-LEVEL DECISION TABLE
 # ════════════════════════════════════════════════════════════════
 st.subheader("📍 Commune-Level Risk Classification & Actions")
@@ -295,6 +416,82 @@ if decisions is not None:
     stats_c1.metric("REJECT Communes", f"{(dec_filtered['DECISION']=='REJECT').sum()}", "Stop new policies")
     stats_c2.metric("ADJUST Communes", f"{(dec_filtered['DECISION']=='ADJUST').sum()}", "Premium adjustments")
     stats_c3.metric("ACCEPT Communes", f"{(dec_filtered['DECISION']=='ACCEPT').sum()}", "Growth opportunities")
+    
+    # Phase II-B: Hotspot identification with retention thresholds
+    with st.expander("📍 Points Chauds — Hotspot Identification with Retention Thresholds", expanded=False):
+        st.caption("Communes where cumul capital dépasse la capacité de rétention")
+        
+        # Default retention capacity (can be adjusted)
+        retention_capacity = st.number_input("Retention Capacity (B DZD):", 
+                                            min_value=0.5, max_value=5.0, value=1.0, step=0.1)
+        
+        hotspots = compute_hotspots(dff)
+        hotspots['Retention_Threshold_B'] = retention_capacity
+        hotspots['Excess_Over_Retention_B'] = (hotspots.get('capital_B', 0) - retention_capacity).clip(lower=0)
+        
+        # Reclassify with adjusted retention
+        def classify_hotspot(capital_b):
+            if capital_b > retention_capacity * 2:
+                return '🔴 CRITICAL'
+            elif capital_b > retention_capacity * 1.5:
+                return '🟠 HIGH'
+            elif capital_b > retention_capacity:
+                return '🟡 MEDIUM'
+            else:
+                return '🟢 OK'
+        
+        hotspots['Hotspot_Status'] = hotspots.get('capital_B', 0).apply(classify_hotspot)
+        
+        # Display hotspots
+        hotspot_display = hotspots[['WILAYA', 'COMMUNE', 'ZONE_RPA', 'capital_B', 
+                                     'Excess_Over_Retention_B', 'Hotspot_Status']].copy()
+        hotspot_display.columns = ['Wilaya', 'Commune', 'Zone', 'Capital (B)', 
+                                   'Excess Retention (B)', 'Hotspot Status']
+        hotspot_display = hotspot_display[hotspot_display['Excess Retention (B)'] > 0].sort_values('Capital (B)', ascending=False)
+        
+        if len(hotspot_display) > 0:
+            st.dataframe(hotspot_display.head(20), use_container_width=True, hide_index=True)
+            st.info(f"Found {len(hotspot_display)} communes exceeding retention capacity of {retention_capacity}B DZD")
+        else:
+            st.success("✓ No hotspots exceeding retention capacity")
+
+st.markdown("---")
+
+# ════════════════════════════════════════════════════════════════
+# SECTION 4.5: BUILDING TYPE VULNERABILITY (Phase I — CDC Requirement)
+# ════════════════════════════════════════════════════════════════
+with st.expander("🏢 Vulnérabilité Intrinsèque par Type de Construction", expanded=False):
+    st.caption("Building type multipliers affect loss ratio during earthquakes")
+    
+    building_vuln = compute_building_vulnerability(dff)
+    
+    if len(building_vuln) > 0:
+        # Metrics row
+        bv_cols = st.columns(min(3, len(building_vuln)))
+        for idx, (col, row) in enumerate(zip(bv_cols, building_vuln.itertuples())):
+            with col:
+                risk_color = '#E53935' if row.Risk_Level == 'HIGH' else '#FF9800' if row.Risk_Level == 'MEDIUM' else '#43A047'
+                st.markdown(f"""
+<div style="background-color: rgba({
+    '229,57,57' if row.Risk_Level == 'HIGH' else
+    '255,152,0' if row.Risk_Level == 'MEDIUM' else
+    '67,160,71'
+}, 0.1); border-left: 4px solid {risk_color}; padding: 12px; border-radius: 8px;">
+<strong>{row.Building_Type}</strong><br>
+Mult: <b>{row.Vulnerability_Multiplier}×</b><br>
+Capital: {row.Capital_B}B<br>
+Adj. PML: {row.Adjusted_PML_B}B<br>
+<small>{row.Risk_Level} Risk</small>
+</div>
+""", unsafe_allow_html=True)
+            if idx >= 2:
+                break
+        
+        # Full table
+        st.markdown("#### Building Type Risk Breakdown")
+        bv_display = building_vuln[['Building_Type', 'Vulnerability_Multiplier', 'Num_Policies', 'Capital_B', 'Adjusted_PML_B', 'Risk_Level']].copy()
+        bv_display.columns = ['Building Type', 'Multiplier', 'Policies', 'Capital (B)', 'Adj. PML (B)', 'Risk Level']
+        st.dataframe(bv_display, use_container_width=True, hide_index=True)
 
 st.markdown("---")
 
@@ -336,19 +533,52 @@ with scenario_col1:
 
 with scenario_col2:
     st.subheader("Targeted Scenarios")
-    scenario_zone = st.selectbox("Select Zone:", ZONE_ORDER)
-    scenario_wilaya = st.selectbox("Or Select Wilaya:", sorted(df['WILAYA'].unique()))
     
-    # Calculate scenario impact
-    if scenario_zone:
-        zone_cap = df[df['ZONE_RPA']==scenario_zone]['CAPITAL_ASSURE'].sum()
-        zone_pml = df[df['ZONE_RPA']==scenario_zone]['PML_EXPOSE'].sum()
-        pct_total = zone_cap / df['CAPITAL_ASSURE'].sum() * 100
+    # Add Boumerdes named scenario (Phase II-B CDC Requirement)
+    scenario_type = st.radio("Select Scenario Type:", 
+        ["📊 Monte Carlo (Percentiles)", "🗺️ Named Historical: Boumerdes M6.5 (2003)"], 
+        horizontal=False)
+    
+    if scenario_type == "🗺️ Named Historical: Boumerdes M6.5 (2003)":
+        st.markdown("#### Simulation: May 21, 2003 Analogue")
+        st.caption("Epicenter: Boumerdes (36.74°N, 3.65°E) - Magnitude 6.8")
         
-        st.metric("Zone Capital", f"{zone_cap/1e9:.1f}B DZD")
-        st.metric("% of Portfolio", f"{pct_total:.1f}%")
-        st.metric("PML Exposure", f"{zone_pml/1e9:.1f}B DZD")
-        st.info(f"If {scenario_zone} earthquake → Loss ~{zone_pml/1e9:.1f}B DZD")
+        empirical_params = load_empirical_params()
+        boumerdes_sim = compute_boumerdes_scenario(df, empirical_params)
+        
+        st.metric("Insured Loss", f"{boumerdes_sim['insured_loss_B']:.1f}B DZD", 
+                 f"{boumerdes_sim['pml_coverage_pct']:.0f}% of annual PML")
+        st.metric("After Reinsurance", f"{boumerdes_sim['net_loss_after_reinsurance_B']:.1f}B DZD", 
+                 "Net exposure")
+        
+        # Show affected zones
+        st.markdown("**Impact by Zone:**")
+        for zone, impact in boumerdes_sim['by_zone'].items():
+            if impact['loss_B'] > 0:
+                st.write(f"• {zone}: **{impact['loss_B']:.1f}B DZD** ({impact['loss_ratio']*100:.0f}% of zone capital)")
+        
+        # Show affected wilayas
+        st.markdown("**Impact by Wilaya:**")
+        for wilaya, impact in sorted(boumerdes_sim['by_wilaya'].items(), 
+                                      key=lambda x: x[1]['loss_B'], reverse=True):
+            if impact['loss_B'] > 0:
+                st.warning(f"🔴 {wilaya}: **{impact['loss_B']:.1f}B** ({impact['policies']} policies)")
+    
+    else:
+        # Original Monte Carlo percentiles
+        scenario_zone = st.selectbox("Select Zone:", ZONE_ORDER)
+        scenario_wilaya = st.selectbox("Or Select Wilaya:", sorted(df['WILAYA'].unique()))
+        
+        # Calculate scenario impact
+        if scenario_zone:
+            zone_cap = df[df['ZONE_RPA']==scenario_zone]['CAPITAL_ASSURE'].sum()
+            zone_pml = df[df['ZONE_RPA']==scenario_zone]['PML_EXPOSE'].sum()
+            pct_total = zone_cap / df['CAPITAL_ASSURE'].sum() * 100
+            
+            st.metric("Zone Capital", f"{zone_cap/1e9:.1f}B DZD")
+            st.metric("% of Portfolio", f"{pct_total:.1f}%")
+            st.metric("PML Exposure", f"{zone_pml/1e9:.1f}B DZD")
+            st.info(f"If {scenario_zone} earthquake → Loss ~{zone_pml/1e9:.1f}B DZD")
 
 st.markdown("---")
 
