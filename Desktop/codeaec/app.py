@@ -239,7 +239,7 @@ if decisions is not None:
         else:
             return 'background-color: #C8E6C9; font-weight: bold'
     
-    styled_df = dec_display.style.applymap(style_decision, subset=['Decision'])
+    styled_df = dec_display.style.map(style_decision, subset=['Decision'])
     st.dataframe(styled_df, use_container_width=True, height=500)
     
     stats_c1, stats_c2, stats_c3 = st.columns(3)
