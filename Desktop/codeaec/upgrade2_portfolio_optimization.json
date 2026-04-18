@@ -1,0 +1,111 @@
+{
+  "current_metrics": {
+    "total_capital_B": 881303987843.74,
+    "total_pml_B": 155394156186.39,
+    "pml_ratio": 0.176,
+    "high_risk_concentration": 0.388,
+    "zone_breakdown": [
+      {
+        "ZONE": "Zone 0",
+        "Capital_B": 21149767716.18,
+        "PML_B": 211497677.1618,
+        "Policies": 3052,
+        "Current_%": 2.4,
+        "PML_Ratio_%": 1.0
+      },
+      {
+        "ZONE": "Zone I",
+        "Capital_B": 82546899240.9549,
+        "PML_B": 4126125833.8645,
+        "Policies": 10987,
+        "Current_%": 9.4,
+        "PML_Ratio_%": 5.0
+      },
+      {
+        "ZONE": "Zone III",
+        "Capital_B": 303746360145.64,
+        "PML_B": 91123908043.692,
+        "Policies": 37601,
+        "Current_%": 34.5,
+        "PML_Ratio_%": 30.0
+      },
+      {
+        "ZONE": "Zone IIa",
+        "Capital_B": 435494593956.49,
+        "PML_B": 52259351274.7788,
+        "Policies": 66683,
+        "Current_%": 49.4,
+        "PML_Ratio_%": 12.0
+      },
+      {
+        "ZONE": "Zone IIb",
+        "Capital_B": 38366366784.48,
+        "PML_B": 7673273356.896,
+        "Policies": 4670,
+        "Current_%": 4.4,
+        "PML_Ratio_%": 20.0
+      }
+    ]
+  },
+  "optimal_metrics": {
+    "total_capital_B": 881303987843.74,
+    "total_pml_B": 113688214431.84,
+    "pml_ratio": 0.129,
+    "high_risk_concentration": 0.35,
+    "estimated_profit_impact": "+2643911963.5B DZD"
+  },
+  "recommendations": [
+    {
+      "priority": "[CRITICAL]",
+      "action": "Reduce Zone III by 19.5% (171854277629.5B DZD)",
+      "rationale": "Zone III is 19.5% above target. High seismic risk.",
+      "method": "Stop new policies + selective renewal cancellations",
+      "impact": "Reduce PML by ~51556283288.9B (est. 30% loss rate)"
+    },
+    {
+      "priority": "[HIGH]",
+      "action": "Expand Zone I by 15.6% (137483422103.6B DZD)",
+      "rationale": "Zone I is low-risk with profitable margins. Growth opportunity.",
+      "method": "Targeted acquisition + aggressive marketing in low-risk regions",
+      "impact": "Increase profit by ~687417110.5B (est. 0.5% margin)"
+    },
+    {
+      "priority": "[HIGH]",
+      "action": "Reduce PML from 17.6% to 15.0% of capital",
+      "rationale": "PML exceeds safe threshold. Risk of insolvency in tail event.",
+      "method": "Purchase additional reinsurance + reduce high-risk exposures",
+      "impact": "PML reduction of 22913903683.9B DZD"
+    }
+  ],
+  "expected_improvements": {
+    "pml_reduction_%": 26.7,
+    "risk_reduction_%": 9.8
+  },
+  "rebalancing_plan": {
+    "Zone 0": {
+      "current_%": 2.4,
+      "target_%": 15.0,
+      "change": 12.6
+    },
+    "Zone I": {
+      "current_%": 9.4,
+      "target_%": 25.0,
+      "change": 15.6
+    },
+    "Zone IIa": {
+      "current_%": 49.4,
+      "target_%": 25.0,
+      "change": -24.4
+    },
+    "Zone IIb": {
+      "current_%": 4.4,
+      "target_%": 20.0,
+      "change": 15.6
+    },
+    "Zone III": {
+      "current_%": 34.5,
+      "target_%": 15.0,
+      "change": -19.5
+    }
+  }
+}
