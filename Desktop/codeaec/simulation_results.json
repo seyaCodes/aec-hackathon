@@ -1,0 +1,10 @@
+{
+  "n_simulations": 10000,
+  "avg_loss_B": 8.212,
+  "pml_90_B": 10.189,
+  "pml_99_B": 121.245,
+  "pml_995_B": 128.99,
+  "total_capital_B": 883.21,
+  "total_prime_M": 431.61,
+  "pml_to_prime_ratio": 280.9
+}

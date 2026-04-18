@@ -1,0 +1,16 @@
+{
+  "retention_capacity_B": 618.25,
+  "transfer_capacity_B": 264.96,
+  "shortfall_B": 0,
+  "covered_by_layers_B": 0,
+  "uncovered_deficit_B": 0,
+  "layers": [],
+  "financial_impact": {
+    "total_reinsurance_cost_annual_B": 0,
+    "cost_as_%_of_premium": "TBD (depends on premium volume)",
+    "protection_value_annual_B": 0.0,
+    "roi_of_reinsurance": 0,
+    "coverage_achieved_%": 100
+  },
+  "recommendation": "3-layer XL program covers 100% of 0.0B shortfall. Annual cost: 0.000B. ROI: 0.00x."
+}

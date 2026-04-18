@@ -1,0 +1,113 @@
+[
+  {
+    "scenario": "Alger",
+    "scenario_parameters": {
+      "zone": "Zone III",
+      "intensity": "VIII",
+      "capital_exposure_%": 15.0
+    },
+    "loss_estimate": {
+      "gross_loss_B": 35.59,
+      "deductible_B": 1.78,
+      "insured_loss_B": 33.81,
+      "loss_as_%_portfolio": 3.8,
+      "loss_as_%_pml": 21.8
+    },
+    "reinsurance_impact": {
+      "reinsurance_recovery_B": 0,
+      "net_loss_to_company_B": 33.81,
+      "reinsurance_effectiveness_%": 0.0
+    },
+    "financial_impact": {
+      "company_reserves_before_B": 176.64,
+      "company_reserves_after_B": 142.83,
+      "capital_erosion_B": 33.81
+    },
+    "insolvency_risk": {
+      "status": "ELEVATED RISK",
+      "risk_probability_%": 30,
+      "solvency_capital_requirement_B": 105.99,
+      "capital_surplus_deficit_B": 36.85
+    },
+    "liquidity_needs": {
+      "month1_claim_payout_B": 6.76,
+      "available_liquidity_B": 176.64,
+      "liquidity_sufficient": "True",
+      "funding_gap_B": 0
+    }
+  },
+  {
+    "scenario": "Boumerdes",
+    "scenario_parameters": {
+      "zone": "Zone III",
+      "intensity": "VIII",
+      "capital_exposure_%": 8.0
+    },
+    "loss_estimate": {
+      "gross_loss_B": 23.03,
+      "deductible_B": 1.15,
+      "insured_loss_B": 21.88,
+      "loss_as_%_portfolio": 2.5,
+      "loss_as_%_pml": 14.1
+    },
+    "reinsurance_impact": {
+      "reinsurance_recovery_B": 0,
+      "net_loss_to_company_B": 21.88,
+      "reinsurance_effectiveness_%": 0.0
+    },
+    "financial_impact": {
+      "company_reserves_before_B": 176.64,
+      "company_reserves_after_B": 154.76,
+      "capital_erosion_B": 21.88
+    },
+    "insolvency_risk": {
+      "status": "ELEVATED RISK",
+      "risk_probability_%": 30,
+      "solvency_capital_requirement_B": 105.99,
+      "capital_surplus_deficit_B": 48.78
+    },
+    "liquidity_needs": {
+      "month1_claim_payout_B": 4.38,
+      "available_liquidity_B": 176.64,
+      "liquidity_sufficient": "True",
+      "funding_gap_B": 0
+    }
+  },
+  {
+    "scenario": "Blida",
+    "scenario_parameters": {
+      "zone": "Zone IIb",
+      "intensity": "VII",
+      "capital_exposure_%": 6.0
+    },
+    "loss_estimate": {
+      "gross_loss_B": 8.59,
+      "deductible_B": 0.43,
+      "insured_loss_B": 8.16,
+      "loss_as_%_portfolio": 0.9,
+      "loss_as_%_pml": 5.3
+    },
+    "reinsurance_impact": {
+      "reinsurance_recovery_B": 0,
+      "net_loss_to_company_B": 8.16,
+      "reinsurance_effectiveness_%": 0.0
+    },
+    "financial_impact": {
+      "company_reserves_before_B": 176.64,
+      "company_reserves_after_B": 168.48,
+      "capital_erosion_B": 8.16
+    },
+    "insolvency_risk": {
+      "status": "ACCEPTABLE",
+      "risk_probability_%": 5,
+      "solvency_capital_requirement_B": 105.99,
+      "capital_surplus_deficit_B": 62.5
+    },
+    "liquidity_needs": {
+      "month1_claim_payout_B": 1.63,
+      "available_liquidity_B": 176.64,
+      "liquidity_sufficient": "True",
+      "funding_gap_B": 0
+    }
+  }
+]
