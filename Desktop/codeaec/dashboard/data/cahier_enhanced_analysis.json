@@ -1,0 +1,887 @@
+{
+  "metadata": {
+    "analysis_date": "2026-04-18",
+    "cahier_compliance_score": 10,
+    "components": 5
+  },
+  "multi_zone_scenarios": {
+    "zones": {
+      "Zone 0": {
+        "capital_B": 21.14976771618,
+        "magnitude_scenarios": {
+          "M6.5": {
+            "loss_50yr_B": 0.16919814172944003,
+            "loss_100yr_B": 0.25379721259416005,
+            "loss_250yr_B": 0.4229953543236,
+            "loss_ratio_50yr_%": 0.8000000000000002,
+            "loss_ratio_100yr_%": 1.2000000000000002,
+            "loss_ratio_250yr_%": 2.0
+          },
+          "M7.0": {
+            "loss_50yr_B": 0.27494698031034004,
+            "loss_100yr_B": 0.41242047046551006,
+            "loss_250yr_B": 0.68736745077585,
+            "loss_ratio_50yr_%": 1.3,
+            "loss_ratio_100yr_%": 1.95,
+            "loss_ratio_250yr_%": 3.25
+          },
+          "M7.5": {
+            "loss_50yr_B": 0.4229953543236,
+            "loss_100yr_B": 0.6344930314854,
+            "loss_250yr_B": 1.057488385809,
+            "loss_ratio_50yr_%": 2.0,
+            "loss_ratio_100yr_%": 3.0,
+            "loss_ratio_250yr_%": 5.0
+          }
+        }
+      },
+      "Zone I": {
+        "capital_B": 82.52251667729001,
+        "magnitude_scenarios": {
+          "M6.5": {
+            "loss_50yr_B": 1.6504503335458005,
+            "loss_100yr_B": 2.6407205336732806,
+            "loss_250yr_B": 3.961080800509921,
+            "loss_ratio_50yr_%": 2.0000000000000004,
+            "loss_ratio_100yr_%": 3.2,
+            "loss_ratio_250yr_%": 4.8
+          },
+          "M7.0": {
+            "loss_50yr_B": 2.6819817920119258,
+            "loss_100yr_B": 4.291170867219081,
+            "loss_250yr_B": 6.4367563008286215,
+            "loss_ratio_50yr_%": 3.25,
+            "loss_ratio_100yr_%": 5.2,
+            "loss_ratio_250yr_%": 7.8
+          },
+          "M7.5": {
+            "loss_50yr_B": 4.126125833864501,
+            "loss_100yr_B": 6.601801334183201,
+            "loss_250yr_B": 9.902702001274802,
+            "loss_ratio_50yr_%": 5.0,
+            "loss_ratio_100yr_%": 8.0,
+            "loss_ratio_250yr_%": 12.000000000000002
+          }
+        }
+      },
+      "Zone IIa": {
+        "capital_B": 435.49459395649,
+        "magnitude_scenarios": {
+          "M6.5": {
+            "loss_50yr_B": 20.903740509911522,
+            "loss_100yr_B": 31.355610764867283,
+            "loss_250yr_B": 48.77539452312689,
+            "loss_ratio_50yr_%": 4.8,
+            "loss_ratio_100yr_%": 7.200000000000001,
+            "loss_ratio_250yr_%": 11.200000000000003
+          },
+          "M7.0": {
+            "loss_50yr_B": 33.96857832860622,
+            "loss_100yr_B": 50.952867492909334,
+            "loss_250yr_B": 79.26001610008119,
+            "loss_ratio_50yr_%": 7.8,
+            "loss_ratio_100yr_%": 11.700000000000001,
+            "loss_ratio_250yr_%": 18.200000000000003
+          },
+          "M7.5": {
+            "loss_50yr_B": 52.2593512747788,
+            "loss_100yr_B": 78.3890269121682,
+            "loss_250yr_B": 121.93848630781721,
+            "loss_ratio_50yr_%": 12.0,
+            "loss_ratio_100yr_%": 18.000000000000004,
+            "loss_ratio_250yr_%": 28.000000000000004
+          }
+        }
+      },
+      "Zone IIb": {
+        "capital_B": 38.36636678447999,
+        "magnitude_scenarios": {
+          "M6.5": {
+            "loss_50yr_B": 2.7623784084825598,
+            "loss_100yr_B": 3.8366366784479995,
+            "loss_250yr_B": 6.1386186855168,
+            "loss_ratio_50yr_%": 7.200000000000001,
+            "loss_ratio_100yr_%": 10.0,
+            "loss_ratio_250yr_%": 16.000000000000004
+          },
+          "M7.0": {
+            "loss_50yr_B": 4.488864913784159,
+            "loss_100yr_B": 6.234534602477999,
+            "loss_250yr_B": 9.975255363964799,
+            "loss_ratio_50yr_%": 11.7,
+            "loss_ratio_100yr_%": 16.25,
+            "loss_ratio_250yr_%": 26.0
+          },
+          "M7.5": {
+            "loss_50yr_B": 6.9059460212063986,
+            "loss_100yr_B": 9.591591696119998,
+            "loss_250yr_B": 15.346546713791998,
+            "loss_ratio_50yr_%": 18.0,
+            "loss_ratio_100yr_%": 25.0,
+            "loss_ratio_250yr_%": 40.0
+          }
+        }
+      },
+      "Zone III": {
+        "capital_B": 303.74636014564004,
+        "magnitude_scenarios": {
+          "M6.5": {
+            "loss_50yr_B": 30.374636014564004,
+            "loss_100yr_B": 42.52449042038961,
+            "loss_250yr_B": 66.82419923204081,
+            "loss_ratio_50yr_%": 10.0,
+            "loss_ratio_100yr_%": 14.000000000000002,
+            "loss_ratio_250yr_%": 22.0
+          },
+          "M7.0": {
+            "loss_50yr_B": 49.35878352366651,
+            "loss_100yr_B": 69.10229693313312,
+            "loss_250yr_B": 108.58932375206632,
+            "loss_ratio_50yr_%": 16.25,
+            "loss_ratio_100yr_%": 22.750000000000004,
+            "loss_ratio_250yr_%": 35.75000000000001
+          },
+          "M7.5": {
+            "loss_50yr_B": 75.93659003641001,
+            "loss_100yr_B": 106.31122605097401,
+            "loss_250yr_B": 167.06049808010204,
+            "loss_ratio_50yr_%": 25.0,
+            "loss_ratio_100yr_%": 35.0,
+            "loss_ratio_250yr_%": 55.00000000000001
+          }
+        }
+      }
+    }
+  },
+  "vulnerability_matrix": {
+    "grade_mapping": [
+      {
+        "zone": "Zone 0",
+        "type": "Bien Immobilier",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Bien Immobilier",
+        "age": "medium",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Bien Immobilier",
+        "age": "old",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Installation Commerciale",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Installation Commerciale",
+        "age": "medium",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Installation Commerciale",
+        "age": "old",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Installation Industrielle",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Installation Industrielle",
+        "age": "medium",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone 0",
+        "type": "Installation Industrielle",
+        "age": "old",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Bien Immobilier",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Bien Immobilier",
+        "age": "medium",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Bien Immobilier",
+        "age": "old",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Installation Commerciale",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Installation Commerciale",
+        "age": "medium",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Installation Commerciale",
+        "age": "old",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Installation Industrielle",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Installation Industrielle",
+        "age": "medium",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone I",
+        "type": "Installation Industrielle",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Bien Immobilier",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Bien Immobilier",
+        "age": "medium",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Bien Immobilier",
+        "age": "old",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Installation Commerciale",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Installation Commerciale",
+        "age": "medium",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Installation Commerciale",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Installation Industrielle",
+        "age": "new",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Installation Industrielle",
+        "age": "medium",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone IIa",
+        "type": "Installation Industrielle",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Bien Immobilier",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Bien Immobilier",
+        "age": "medium",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Bien Immobilier",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Installation Commerciale",
+        "age": "new",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Installation Commerciale",
+        "age": "medium",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Installation Commerciale",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Installation Industrielle",
+        "age": "new",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Installation Industrielle",
+        "age": "medium",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone IIb",
+        "type": "Installation Industrielle",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Bien Immobilier",
+        "age": "new",
+        "grade": "A"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Bien Immobilier",
+        "age": "medium",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Bien Immobilier",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Installation Commerciale",
+        "age": "new",
+        "grade": "B"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Installation Commerciale",
+        "age": "medium",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Installation Commerciale",
+        "age": "old",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Installation Industrielle",
+        "age": "new",
+        "grade": "C"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Installation Industrielle",
+        "age": "medium",
+        "grade": "D"
+      },
+      {
+        "zone": "Zone III",
+        "type": "Installation Industrielle",
+        "age": "old",
+        "grade": "D"
+      }
+    ],
+    "loss_multipliers": {
+      "A": 0.3,
+      "B": 0.6,
+      "C": 1.0,
+      "D": 1.5
+    },
+    "grade_descriptions": {
+      "A": "Grade A - Moderne, conforme RPA",
+      "B": "Grade B - Moyen, partiellement conforme",
+      "C": "Grade C - Ancien, pré-sismique",
+      "D": "Grade D - Très ancien ou mal construit"
+    }
+  },
+  "balance_diagnostics": {
+    "concentration_index": {
+      "pct_in_top_3_zones": 93.2466229623293,
+      "benchmark": 60,
+      "status": "OVER-CONCENTRATED",
+      "top_3_zones": [
+        {
+          "zone": "Zone IIa",
+          "capital_B": 435.49459395649
+        },
+        {
+          "zone": "Zone III",
+          "capital_B": 303.74636014564004
+        },
+        {
+          "zone": "Zone I",
+          "capital_B": 82.52251667729001
+        }
+      ]
+    },
+    "sector_balance": {
+      "residential_%": 46.70489195086036,
+      "commercial_%": 31.727854374581447,
+      "industrial_%": 21.783620175334526,
+      "ideal_distribution": {
+        "residential": 40,
+        "commercial": 35,
+        "industrial": 25
+      }
+    },
+    "wilaya_saturation": {
+      "max_exposed_wilaya": 251.1896170085,
+      "top_5_wilayas": {
+        "ALGER": 251.1896170085,
+        "SETIF": 100.40241766134,
+        "ORAN": 73.13689581423,
+        "TIZI OUZOU": 66.89092407344,
+        "BATNA": 44.63488977036
+      }
+    }
+  },
+  "strategic_recommendations": {
+    "rebalancing_targets": [
+      {
+        "zone": "Zone IIa",
+        "current_capital_B": 435.49459395649,
+        "action": "REDUCE",
+        "target_capital_B": 84.0,
+        "reduction_B": 351.49459395649,
+        "rationale": "Over-concentrated: 435.5B exceeds retention * 2 (140.0B)",
+        "timeline_months": 12
+      },
+      {
+        "zone": "Zone III",
+        "current_capital_B": 303.74636014564004,
+        "action": "REDUCE",
+        "target_capital_B": 84.0,
+        "reduction_B": 219.74636014564004,
+        "rationale": "Over-concentrated: 303.7B exceeds retention * 2 (140.0B)",
+        "timeline_months": 12
+      }
+    ],
+    "repricing_recommendations": [
+      {
+        "zone": "Zone 0",
+        "current_loss_prob_%": 0.0,
+        "recommended_premium_uplift_%": 0.0,
+        "rationale": "Align premium to empirical loss frequency"
+      },
+      {
+        "zone": "Zone I",
+        "current_loss_prob_%": 1.0,
+        "recommended_premium_uplift_%": 1.5,
+        "rationale": "Align premium to empirical loss frequency"
+      },
+      {
+        "zone": "Zone IIa",
+        "current_loss_prob_%": 2.5,
+        "recommended_premium_uplift_%": 3.75,
+        "rationale": "Align premium to empirical loss frequency"
+      },
+      {
+        "zone": "Zone IIb",
+        "current_loss_prob_%": 4.0,
+        "recommended_premium_uplift_%": 6.0,
+        "rationale": "Align premium to empirical loss frequency"
+      },
+      {
+        "zone": "Zone III",
+        "current_loss_prob_%": 7.000000000000001,
+        "recommended_premium_uplift_%": 10.500000000000002,
+        "rationale": "Align premium to empirical loss frequency"
+      }
+    ],
+    "action_plan": [
+      {
+        "priority": 1,
+        "action": "REDUCE Zone IIa exposure",
+        "rationale": "Zone IIa is 435.49B (51% of portfolio) - highest concentration risk",
+        "target": "Reduce to 105.0B within 12 months"
+      },
+      {
+        "priority": 2,
+        "action": "EXPAND Zone I & Zone 0",
+        "rationale": "Under-concentrated low-risk zones offer pricing opportunity",
+        "target": "Grow Zone I from 82.52B to 120B; Zone 0 from 21.15B to 50B"
+      },
+      {
+        "priority": 3,
+        "action": "REPRICE Industrial sector",
+        "rationale": "Industrial losses 2-3x higher; current pricing inadequate",
+        "target": "Increase industrial premiums by 35-50%"
+      }
+    ]
+  },
+  "industrial_analysis": {
+    "total_industrial_capital_B": 191.97460189690003,
+    "industrial_pct_of_portfolio": 21.73658947729439,
+    "top_30_industrial_exposures": [
+      {
+        "rank": 1,
+        "wilaya": "ALGER",
+        "commune": "ALGER",
+        "zone": "Zone III",
+        "capital_B": 8.38999796933,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 2,
+        "wilaya": "ALGER",
+        "commune": "ALGER",
+        "zone": "Zone III",
+        "capital_B": 8.38999796933,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 3,
+        "wilaya": "ALGER",
+        "commune": "ALGER",
+        "zone": "Zone III",
+        "capital_B": 7.65565969642,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 4,
+        "wilaya": "ALGER",
+        "commune": "ALGER",
+        "zone": "Zone III",
+        "capital_B": 7.65565969642,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 5,
+        "wilaya": "ALGER",
+        "commune": "ALGER",
+        "zone": "Zone III",
+        "capital_B": 7.534944352109999,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 6,
+        "wilaya": "ALGER",
+        "commune": "ALGER",
+        "zone": "Zone III",
+        "capital_B": 7.534944352109999,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 7,
+        "wilaya": "SETIF",
+        "commune": "SETIF",
+        "zone": "Zone IIa",
+        "capital_B": 5.4,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 8,
+        "wilaya": "ALGER",
+        "commune": "ROUIBA",
+        "zone": "Zone III",
+        "capital_B": 5.069594438,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 9,
+        "wilaya": "ALGER",
+        "commune": "ROUIBA",
+        "zone": "Zone III",
+        "capital_B": 5.069594438,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 10,
+        "wilaya": "SETIF",
+        "commune": "SETIF",
+        "zone": "Zone IIa",
+        "capital_B": 4.72013367775,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 11,
+        "wilaya": "SETIF",
+        "commune": "SETIF",
+        "zone": "Zone IIa",
+        "capital_B": 4.72013367775,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 12,
+        "wilaya": "SETIF",
+        "commune": "SETIF",
+        "zone": "Zone IIa",
+        "capital_B": 4.72013367775,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 13,
+        "wilaya": "SETIF",
+        "commune": "SETIF",
+        "zone": "Zone IIa",
+        "capital_B": 4.72013367775,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 14,
+        "wilaya": "ALGER",
+        "commune": "ROUIBA",
+        "zone": "Zone III",
+        "capital_B": 4.709594438,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 15,
+        "wilaya": "ORAN",
+        "commune": "ORAN",
+        "zone": "Zone IIa",
+        "capital_B": 3.7332924470999997,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 16,
+        "wilaya": "ORAN",
+        "commune": "ORAN",
+        "zone": "Zone IIa",
+        "capital_B": 3.7332924470999997,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 17,
+        "wilaya": "ORAN",
+        "commune": "ORAN",
+        "zone": "Zone IIa",
+        "capital_B": 3.7332924470999997,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 18,
+        "wilaya": "ORAN",
+        "commune": "ORAN",
+        "zone": "Zone IIa",
+        "capital_B": 3.7332924470999997,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 19,
+        "wilaya": "MASCARA",
+        "commune": "MASCARA",
+        "zone": "Zone IIa",
+        "capital_B": 2.631462644,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 20,
+        "wilaya": "MASCARA",
+        "commune": "MASCARA",
+        "zone": "Zone IIa",
+        "capital_B": 2.631462644,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 21,
+        "wilaya": "BOUMERDES",
+        "commune": "TIDJELABINE",
+        "zone": "Zone III",
+        "capital_B": 2.102543005,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 22,
+        "wilaya": "TEBESSA",
+        "commune": "TEBESSA",
+        "zone": "Zone I",
+        "capital_B": 2.1,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone I",
+        "risk_flag": "MEDIUM"
+      },
+      {
+        "rank": 23,
+        "wilaya": "AIN DEFLA",
+        "commune": "ARIB",
+        "zone": "Zone IIb",
+        "capital_B": 2.03779883402,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIb",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 24,
+        "wilaya": "BLIDA",
+        "commune": "MOUZAIA",
+        "zone": "Zone III",
+        "capital_B": 1.78090005907,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 25,
+        "wilaya": "BLIDA",
+        "commune": "MOUZAIA",
+        "zone": "Zone III",
+        "capital_B": 1.78090005907,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 26,
+        "wilaya": "BLIDA",
+        "commune": "MOUZAIA",
+        "zone": "Zone III",
+        "capital_B": 1.78090005907,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 27,
+        "wilaya": "BLIDA",
+        "commune": "MOUZAIA",
+        "zone": "Zone III",
+        "capital_B": 1.78090005907,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 28,
+        "wilaya": "ALGER",
+        "commune": "BARAKI",
+        "zone": "Zone III",
+        "capital_B": 1.6854514311600002,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      },
+      {
+        "rank": 29,
+        "wilaya": "EL TAREF",
+        "commune": "BESBES EL TARF",
+        "zone": "Zone IIa",
+        "capital_B": 1.64083362049,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone IIa",
+        "risk_flag": "HIGH"
+      },
+      {
+        "rank": 30,
+        "wilaya": "ALGER",
+        "commune": "BARAKI",
+        "zone": "Zone III",
+        "capital_B": 1.51545143116,
+        "industry_type": "Manufacturing/Factory",
+        "catastrophe_trigger": "M7.0+ in Zone III",
+        "risk_flag": "CRITICAL"
+      }
+    ],
+    "industrial_by_zone": {
+      "Zone 0": 0.4081791,
+      "Zone I": 6.413251206,
+      "Zone III": 85.96848625642,
+      "Zone IIa": 90.13018134583,
+      "Zone IIb": 9.05450398865
+    },
+    "risk_mitigation": [
+      {
+        "measure": "Mandatory structural audits",
+        "scope": "All industrial facilities in Zone III & IIb",
+        "impact": "Reduce vulnerability Grade D → C (15-20% loss reduction)"
+      },
+      {
+        "measure": "Seismic retrofit incentives",
+        "scope": "Industrial facilities pre-2000 in Zones IIa+",
+        "impact": "Upgrade Grade C → B (20-30% loss reduction)"
+      },
+      {
+        "measure": "Catastrophe bond transfer",
+        "scope": "Top 30 industrial exposures exceed retention",
+        "impact": "Transfer 60% of aggregate industrial risk"
+      }
+    ]
+  }
+}

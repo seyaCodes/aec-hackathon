@@ -1174,6 +1174,78 @@
         <span class="nav-badge">6</span>
       </div>
 
+      <div class="nav-item" data-tab="diagnostic">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="1" />
+            <circle cx="19" cy="12" r="1" />
+            <circle cx="5" cy="12" r="1" />
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </div>
+        Diagnostic
+      </div>
+
+      <div class="nav-item" data-tab="strategy">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            <line x1="12" y1="3" x2="12" y2="21" />
+          </svg>
+        </div>
+        Stratégie
+      </div>
+
+      <div class="nav-item" data-tab="scenarios">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+        </div>
+        Scénarios
+      </div>
+
+      <div class="nav-item" data-tab="industrial">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="3" y="4" width="7" height="17" />
+            <path d="M14 9h7v12H14" />
+            <line x1="10" y1="4" x2="10" y2="21" />
+          </svg>
+        </div>
+        Industrie
+      </div>
+
       <div class="sidebar-footer">
         <div class="live-pill">
           <div class="live-dot"></div>
@@ -1594,1254 +1666,1735 @@
             </div>
           </div>
         </div>
+
+        <!-- ── DIAGNOSTIC D'ÉQUILIBRE ─────────────────── -->
+        <div class="panel" id="tab-diagnostic">
+          <h2 style="font-size: 20px; margin-bottom: 20px; color: #1a1a1a">
+            📊 Diagnostic d'Équilibre Portefeuille
+          </h2>
+
+          <div class="g2">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Indice de Concentration</span>
+              </div>
+              <div class="card-bd" id="concentrationBody"></div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Équilibre Secteur</span>
+              </div>
+              <div class="card-bd" id="sectorBalanceBody"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">Saturation Wilayas</span>
+            </div>
+            <div class="card-bd" id="wilayaSaturationBody"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">Top 5 Wilayas Exposées</span>
+            </div>
+            <div class="card-bd scroll-x">
+              <table id="wilayaTable">
+                <thead>
+                  <tr>
+                    <th>Wilaya</th>
+                    <th>Capital (Mds)</th>
+                    <th>% Portefeuille</th>
+                  </tr>
+                </thead>
+                <tbody id="wilayaTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STRATÉGIE REBALANÇAGE ─────────────────── -->
+        <div class="panel" id="tab-strategy">
+          <h2 style="font-size: 20px; margin-bottom: 20px; color: #1a1a1a">
+            🎯 Stratégie de Rebalançage Portefeuille
+          </h2>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">Cibles de Rebalançage par Zone</span>
+            </div>
+            <div class="card-bd scroll-x">
+              <table id="rebalanceTable">
+                <thead>
+                  <tr>
+                    <th>Zone</th>
+                    <th>Capital Actuel</th>
+                    <th>Action</th>
+                    <th>Cible</th>
+                    <th>Ajustement</th>
+                    <th>Délai</th>
+                  </tr>
+                </thead>
+                <tbody id="rebalanceTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl"
+                >Recommandations de Repricing par Zone</span
+              >
+            </div>
+            <div class="card-bd scroll-x">
+              <table id="repricingTable">
+                <thead>
+                  <tr>
+                    <th>Zone</th>
+                    <th>Loss Prob</th>
+                    <th>Prime Uplift</th>
+                    <th>Justification</th>
+                  </tr>
+                </thead>
+                <tbody id="repricingTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">Plan d'Action Stratégique</span>
+            </div>
+            <div class="card-bd" id="actionPlanBody"></div>
+          </div>
+        </div>
+
+        <!-- ── SCÉNARIOS MULTI-CATASTROPHE ─────────────────── -->
+        <div class="panel" id="tab-scenarios">
+          <h2 style="font-size: 20px; margin-bottom: 20px; color: #1a1a1a">
+            ⚡ Scénarios Multi-Catastrophe
+          </h2>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">Pertes Estimées par Zone & Magnitude</span>
+            </div>
+            <div class="card-bd scroll-x">
+              <table id="scenariosTable">
+                <thead>
+                  <tr>
+                    <th>Zone</th>
+                    <th>Capital</th>
+                    <th>M6.5 (50Y)</th>
+                    <th>M7.0 (100Y)</th>
+                    <th>M7.5 (250Y)</th>
+                    <th>Loss %</th>
+                  </tr>
+                </thead>
+                <tbody id="scenariosTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="g2">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Pertes M7.5 par Zone</span>
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-250"><canvas id="m75Chart"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl"
+                  >Courbe d'Excédance (EP) - Tous Scénarios</span
+                >
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-250"><canvas id="epCurveMulti"></canvas></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RISQUE INDUSTRIEL ─────────────────── -->
+        <div class="panel" id="tab-industrial">
+          <h2 style="font-size: 20px; margin-bottom: 20px; color: #1a1a1a">
+            🏭 Analyse Risque Industriel
+          </h2>
+
+          <div class="g2">
+            <div class="kpi k-orange">
+              <div class="kpi-lbl">Capital Industriel Total</div>
+              <div class="kpi-val orange" id="industrialCapital">0 Mds</div>
+              <div class="kpi-foot">% du portefeuille</div>
+            </div>
+            <div class="kpi k-red">
+              <div class="kpi-lbl">TOP 30 Exposures</div>
+              <div class="kpi-val red" id="industrialCount">0</div>
+              <div class="kpi-foot">Installations critiques</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">Distribution Industrielle par Zone</span>
+            </div>
+            <div class="card-bd">
+              <div class="ch ch-200">
+                <canvas id="industrialZoneChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">TOP 30 Installations Critiques</span>
+            </div>
+            <div class="card-bd scroll-x">
+              <table id="industrialTable">
+                <thead>
+                  <tr>
+                    <th>Rang</th>
+                    <th>Wilaya</th>
+                    <th>Commune</th>
+                    <th>Zone</th>
+                    <th>Capital</th>
+                    <th>Flag</th>
+                    <th>Trigger</th>
+                  </tr>
+                </thead>
+                <tbody id="industrialTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-ttl">Mesures de Mitigation Risque</span>
+            </div>
+            <div class="card-bd" id="mitigationBody"></div>
+          </div>
+        </div>
       </div>
       <!-- .content -->
     </div>
     <!-- .main -->
 
     <script>
-      /* ═══════════════════════════════════════════
-   DATA — same as original, backend-ready
-═══════════════════════════════════════════ */
-      const ZONES = [
-        { id: "0", label: "Zone 0", pct: 12, capital: 101.7, color: "#22c55e" },
-        { id: "I", label: "Zone I", pct: 8, capital: 67.8, color: "#84cc16" },
-        {
-          id: "IIa",
-          label: "Zone IIa",
-          pct: 18,
-          capital: 152.5,
-          color: "#eab308",
-        },
-        {
-          id: "IIb",
-          label: "Zone IIb",
-          pct: 38,
-          capital: 321.9,
-          color: "#f97316",
-        },
-        {
-          id: "III",
-          label: "Zone III",
-          pct: 24,
-          capital: 203.4,
-          color: "#ef4444",
-        },
-      ];
+            /* ═══════════════════════════════════════════
+         DATA — same as original, backend-ready
+      ═══════════════════════════════════════════ */
+            const ZONES = [
+              { id: "0", label: "Zone 0", pct: 12, capital: 101.7, color: "#22c55e" },
+              { id: "I", label: "Zone I", pct: 8, capital: 67.8, color: "#84cc16" },
+              {
+                id: "IIa",
+                label: "Zone IIa",
+                pct: 18,
+                capital: 152.5,
+                color: "#eab308",
+              },
+              {
+                id: "IIb",
+                label: "Zone IIb",
+                pct: 38,
+                capital: 321.9,
+                color: "#f97316",
+              },
+              {
+                id: "III",
+                label: "Zone III",
+                pct: 24,
+                capital: 203.4,
+                color: "#ef4444",
+              },
+            ];
 
-      const PORTFOLIO = [
-        {
-          wilaya: "Boumerdès",
-          region: "Nord",
-          zone: "III",
-          cat: "Industriel",
-          contracts: 312,
-          capital: 38200,
-          pct: 4.5,
-        },
-        {
-          wilaya: "Alger",
-          region: "Nord",
-          zone: "IIb",
-          cat: "Commercial",
-          contracts: 1820,
-          capital: 87400,
-          pct: 10.3,
-        },
-        {
-          wilaya: "Blida",
-          region: "Nord",
-          zone: "IIb",
-          cat: "Résidentiel",
-          contracts: 1240,
-          capital: 62100,
-          pct: 7.3,
-        },
-        {
-          wilaya: "Tipaza",
-          region: "Nord",
-          zone: "IIb",
-          cat: "Résidentiel",
-          contracts: 890,
-          capital: 44300,
-          pct: 5.2,
-        },
-        {
-          wilaya: "Béjaïa",
-          region: "Nord-Est",
-          zone: "IIb",
-          cat: "Commercial",
-          contracts: 720,
-          capital: 38900,
-          pct: 4.6,
-        },
-        {
-          wilaya: "Tizi Ouzou",
-          region: "Nord-Est",
-          zone: "III",
-          cat: "Résidentiel",
-          contracts: 980,
-          capital: 52600,
-          pct: 6.2,
-        },
-        {
-          wilaya: "Sétif",
-          region: "Hauts-Plat",
-          zone: "IIb",
-          cat: "Industriel",
-          contracts: 640,
-          capital: 41200,
-          pct: 4.9,
-        },
-        {
-          wilaya: "Oran",
-          region: "Nord-Ouest",
-          zone: "IIb",
-          cat: "Commercial",
-          contracts: 1100,
-          capital: 71800,
-          pct: 8.5,
-        },
-        {
-          wilaya: "Constantine",
-          region: "Nord-Est",
-          zone: "IIa",
-          cat: "Commercial",
-          contracts: 740,
-          capital: 45600,
-          pct: 5.4,
-        },
-        {
-          wilaya: "Annaba",
-          region: "Nord-Est",
-          zone: "IIa",
-          cat: "Industriel",
-          contracts: 560,
-          capital: 32400,
-          pct: 3.8,
-        },
-        {
-          wilaya: "Guelma",
-          region: "Nord-Est",
-          zone: "IIa",
-          cat: "Résidentiel",
-          contracts: 310,
-          capital: 18700,
-          pct: 2.2,
-        },
-        {
-          wilaya: "M'sila",
-          region: "Hauts-Plat",
-          zone: "I",
-          cat: "Résidentiel",
-          contracts: 420,
-          capital: 22100,
-          pct: 2.6,
-        },
-        {
-          wilaya: "Djelfa",
-          region: "Hauts-Plat",
-          zone: "I",
-          cat: "Résidentiel",
-          contracts: 390,
-          capital: 19800,
-          pct: 2.3,
-        },
-        {
-          wilaya: "Tamanrasset",
-          region: "Sud",
-          zone: "0",
-          cat: "Industriel",
-          contracts: 180,
-          capital: 21400,
-          pct: 2.5,
-        },
-        {
-          wilaya: "Adrar",
-          region: "Sud",
-          zone: "0",
-          cat: "Industriel",
-          contracts: 140,
-          capital: 17200,
-          pct: 2.0,
-        },
-        {
-          wilaya: "Ghardaïa",
-          region: "Sud",
-          zone: "0",
-          cat: "Commercial",
-          contracts: 220,
-          capital: 15800,
-          pct: 1.9,
-        },
-      ];
+            const PORTFOLIO = [
+              {
+                wilaya: "Boumerdès",
+                region: "Nord",
+                zone: "III",
+                cat: "Industriel",
+                contracts: 312,
+                capital: 38200,
+                pct: 4.5,
+              },
+              {
+                wilaya: "Alger",
+                region: "Nord",
+                zone: "IIb",
+                cat: "Commercial",
+                contracts: 1820,
+                capital: 87400,
+                pct: 10.3,
+              },
+              {
+                wilaya: "Blida",
+                region: "Nord",
+                zone: "IIb",
+                cat: "Résidentiel",
+                contracts: 1240,
+                capital: 62100,
+                pct: 7.3,
+              },
+              {
+                wilaya: "Tipaza",
+                region: "Nord",
+                zone: "IIb",
+                cat: "Résidentiel",
+                contracts: 890,
+                capital: 44300,
+                pct: 5.2,
+              },
+              {
+                wilaya: "Béjaïa",
+                region: "Nord-Est",
+                zone: "IIb",
+                cat: "Commercial",
+                contracts: 720,
+                capital: 38900,
+                pct: 4.6,
+              },
+              {
+                wilaya: "Tizi Ouzou",
+                region: "Nord-Est",
+                zone: "III",
+                cat: "Résidentiel",
+                contracts: 980,
+                capital: 52600,
+                pct: 6.2,
+              },
+              {
+                wilaya: "Sétif",
+                region: "Hauts-Plat",
+                zone: "IIb",
+                cat: "Industriel",
+                contracts: 640,
+                capital: 41200,
+                pct: 4.9,
+              },
+              {
+                wilaya: "Oran",
+                region: "Nord-Ouest",
+                zone: "IIb",
+                cat: "Commercial",
+                contracts: 1100,
+                capital: 71800,
+                pct: 8.5,
+              },
+              {
+                wilaya: "Constantine",
+                region: "Nord-Est",
+                zone: "IIa",
+                cat: "Commercial",
+                contracts: 740,
+                capital: 45600,
+                pct: 5.4,
+              },
+              {
+                wilaya: "Annaba",
+                region: "Nord-Est",
+                zone: "IIa",
+                cat: "Industriel",
+                contracts: 560,
+                capital: 32400,
+                pct: 3.8,
+              },
+              {
+                wilaya: "Guelma",
+                region: "Nord-Est",
+                zone: "IIa",
+                cat: "Résidentiel",
+                contracts: 310,
+                capital: 18700,
+                pct: 2.2,
+              },
+              {
+                wilaya: "M'sila",
+                region: "Hauts-Plat",
+                zone: "I",
+                cat: "Résidentiel",
+                contracts: 420,
+                capital: 22100,
+                pct: 2.6,
+              },
+              {
+                wilaya: "Djelfa",
+                region: "Hauts-Plat",
+                zone: "I",
+                cat: "Résidentiel",
+                contracts: 390,
+                capital: 19800,
+                pct: 2.3,
+              },
+              {
+                wilaya: "Tamanrasset",
+                region: "Sud",
+                zone: "0",
+                cat: "Industriel",
+                contracts: 180,
+                capital: 21400,
+                pct: 2.5,
+              },
+              {
+                wilaya: "Adrar",
+                region: "Sud",
+                zone: "0",
+                cat: "Industriel",
+                contracts: 140,
+                capital: 17200,
+                pct: 2.0,
+              },
+              {
+                wilaya: "Ghardaïa",
+                region: "Sud",
+                zone: "0",
+                cat: "Commercial",
+                contracts: 220,
+                capital: 15800,
+                pct: 1.9,
+              },
+            ];
 
-      const ALERTS = [
-        {
-          type: "danger",
-          icon: "⚡",
-          title: "Cumul critique · Alger Est",
-          desc: "Capital cumulé dépasse 45 Mds DZD (seuil 40 Mds)",
-          time: "Il y a 4 min",
-        },
-        {
-          type: "warn",
-          icon: "◈",
-          title: "Nouveau contrat Zone III · Boumerdès",
-          desc: "Engagement 450 M DZD · Sous-souscription recommandée",
-          time: "Il y a 18 min",
-        },
-        {
-          type: "info",
-          icon: "◎",
-          title: "Capteur S-047 · Activité faible",
-          desc: "Magnitude 2.1 · Profondeur 12 km · Alger Centre",
-          time: "Il y a 34 min",
-        },
-        {
-          type: "ok",
-          icon: "✔",
-          title: "Rapport mensuel généré",
-          desc: "Tableau de bord cumuls · Avril 2026 · 58 pages",
-          time: "Il y a 1h",
-        },
-        {
-          type: "warn",
-          icon: "◈",
-          title: "Renouvellement traité XL",
-          desc: "Capacité actuelle insuffisante vs PML recalculé",
-          time: "Il y a 2h",
-        },
-      ];
+            const ALERTS = [
+              {
+                type: "danger",
+                icon: "⚡",
+                title: "Cumul critique · Alger Est",
+                desc: "Capital cumulé dépasse 45 Mds DZD (seuil 40 Mds)",
+                time: "Il y a 4 min",
+              },
+              {
+                type: "warn",
+                icon: "◈",
+                title: "Nouveau contrat Zone III · Boumerdès",
+                desc: "Engagement 450 M DZD · Sous-souscription recommandée",
+                time: "Il y a 18 min",
+              },
+              {
+                type: "info",
+                icon: "◎",
+                title: "Capteur S-047 · Activité faible",
+                desc: "Magnitude 2.1 · Profondeur 12 km · Alger Centre",
+                time: "Il y a 34 min",
+              },
+              {
+                type: "ok",
+                icon: "✔",
+                title: "Rapport mensuel généré",
+                desc: "Tableau de bord cumuls · Avril 2026 · 58 pages",
+                time: "Il y a 1h",
+              },
+              {
+                type: "warn",
+                icon: "◈",
+                title: "Renouvellement traité XL",
+                desc: "Capacité actuelle insuffisante vs PML recalculé",
+                time: "Il y a 2h",
+              },
+            ];
 
-      const RECS = [
-        {
-          num: "01",
-          prio: "CRITIQUE",
-          pcls: "p-hi",
-          title: "Plafonnement des cumuls zone III",
-          text: "Introduire un plafond de 15 Mds DZD par commune en zone III. Le cumul actuel de Boumerdès (38 Mds) dépasse de 153% la capacité de rétention unitaire. Mise en place d'un comité d'engagement au-delà de 2 Mds par police.",
-        },
-        {
-          num: "02",
-          prio: "CRITIQUE",
-          pcls: "p-hi",
-          title: "Cession en réassurance proportionnelle · Traité QS",
-          text: "Négocier un traité Quote-Part de 60% sur les risques en zone III et IIb. Compléter par un XL catastrophe à 200 Mds DZD pour couvrir le déficit de 127 Mds face au PML M7.5. Revue annuelle obligatoire.",
-        },
-        {
-          num: "03",
-          prio: "HAUTE",
-          pcls: "p-med",
-          title: "Révision de la politique de tarification différenciée RPA",
-          text: "Appliquer un coefficient multiplicateur selon la zone RPA : ×1.0 Zone 0, ×1.4 Zone I, ×1.9 Zone IIa, ×2.8 Zone IIb, ×4.2 Zone III. Intégrer la vulnérabilité intrinsèque (type de construction, année, étages).",
-        },
-        {
-          num: "04",
-          prio: "OPPORTUNITÉ",
-          pcls: "p-ok",
-          title: "Développement commercial ciblé · Zones 0 et I",
-          text: "Les wilayas du Sud (Tamanrasset, Adrar, Illizi) classées Zone 0 représentent seulement 2% du portefeuille malgré un potentiel industriel croissant. Campagne de prospection B2B à lancer H2 2026.",
-        },
-        {
-          num: "05",
-          prio: "OPPORTUNITÉ",
-          pcls: "p-ok",
-          title: "Équilibrage géographique · Hauts-Plateaux Zone I",
-          text: "M'sila, Djelfa, Tiaret offrent un potentiel en biens agricoles et industriels légers. Objectif : porter la part de Zone I de 8% à 20% d'ici 2028 pour rééquilibrer le profil de risque.",
-        },
-        {
-          num: "06",
-          prio: "INNOVATION",
-          pcls: "p-mid",
-          title: "Déploiement IoT et assurance paramétrique",
-          text: "Installer 250 accéléromètres sur les biens prioritaires en zone III. Lancer un produit paramétrique déclenché sur PGA pour les installations industrielles. Réduction du délai sinistres de 45 jours à 48h.",
-        },
-      ];
+            const RECS = [
+              {
+                num: "01",
+                prio: "CRITIQUE",
+                pcls: "p-hi",
+                title: "Plafonnement des cumuls zone III",
+                text: "Introduire un plafond de 15 Mds DZD par commune en zone III. Le cumul actuel de Boumerdès (38 Mds) dépasse de 153% la capacité de rétention unitaire. Mise en place d'un comité d'engagement au-delà de 2 Mds par police.",
+              },
+              {
+                num: "02",
+                prio: "CRITIQUE",
+                pcls: "p-hi",
+                title: "Cession en réassurance proportionnelle · Traité QS",
+                text: "Négocier un traité Quote-Part de 60% sur les risques en zone III et IIb. Compléter par un XL catastrophe à 200 Mds DZD pour couvrir le déficit de 127 Mds face au PML M7.5. Revue annuelle obligatoire.",
+              },
+              {
+                num: "03",
+                prio: "HAUTE",
+                pcls: "p-med",
+                title: "Révision de la politique de tarification différenciée RPA",
+                text: "Appliquer un coefficient multiplicateur selon la zone RPA : ×1.0 Zone 0, ×1.4 Zone I, ×1.9 Zone IIa, ×2.8 Zone IIb, ×4.2 Zone III. Intégrer la vulnérabilité intrinsèque (type de construction, année, étages).",
+              },
+              {
+                num: "04",
+                prio: "OPPORTUNITÉ",
+                pcls: "p-ok",
+                title: "Développement commercial ciblé · Zones 0 et I",
+                text: "Les wilayas du Sud (Tamanrasset, Adrar, Illizi) classées Zone 0 représentent seulement 2% du portefeuille malgré un potentiel industriel croissant. Campagne de prospection B2B à lancer H2 2026.",
+              },
+              {
+                num: "05",
+                prio: "OPPORTUNITÉ",
+                pcls: "p-ok",
+                title: "Équilibrage géographique · Hauts-Plateaux Zone I",
+                text: "M'sila, Djelfa, Tiaret offrent un potentiel en biens agricoles et industriels légers. Objectif : porter la part de Zone I de 8% à 20% d'ici 2028 pour rééquilibrer le profil de risque.",
+              },
+              {
+                num: "06",
+                prio: "INNOVATION",
+                pcls: "p-mid",
+                title: "Déploiement IoT et assurance paramétrique",
+                text: "Installer 250 accéléromètres sur les biens prioritaires en zone III. Lancer un produit paramétrique déclenché sur PGA pour les installations industrielles. Réduction du délai sinistres de 45 jours à 48h.",
+              },
+            ];
 
-      /* ═══════════════════════════════════════════
-   CHART DEFAULTS
-═══════════════════════════════════════════ */
-      Chart.defaults.font = { family: "'IBM Plex Mono', monospace", size: 10 };
-      Chart.defaults.color = "#8faa92";
-      const gColor = "rgba(0,0,0,0.05)";
+            /* ═══════════════════════════════════════════
+         CHART DEFAULTS
+      ═══════════════════════════════════════════ */
+            Chart.defaults.font = { family: "'IBM Plex Mono', monospace", size: 10 };
+            Chart.defaults.color = "#8faa92";
+            const gColor = "rgba(0,0,0,0.05)";
 
-      function baseOpts(extra = {}) {
-        return {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: {
-              grid: { color: gColor },
-              ticks: { color: "#8faa92" },
-              ...extra.x,
-            },
-            y: {
-              grid: { color: gColor },
-              ticks: { color: "#8faa92" },
-              ...extra.y,
-            },
-          },
-        };
-      }
+            function baseOpts(extra = {}) {
+              return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: {
+                    grid: { color: gColor },
+                    ticks: { color: "#8faa92" },
+                    ...extra.x,
+                  },
+                  y: {
+                    grid: { color: gColor },
+                    ticks: { color: "#8faa92" },
+                    ...extra.y,
+                  },
+                },
+              };
+            }
 
-      /* ═══════════════════════════════════════════
-   BUILD FUNCTIONS
-═══════════════════════════════════════════ */
+            /* ═══════════════════════════════════════════
+         BUILD FUNCTIONS
+      ═══════════════════════════════════════════ */
 
-      function buildZoneBar() {
-        const bar = document.getElementById("zonebar");
-        const leg = document.getElementById("zonelegend");
-        ZONES.forEach((z) => {
-          const seg = document.createElement("div");
-          seg.className = "zs";
-          seg.style.cssText = `flex:${z.pct};background:${z.color};`;
-          seg.style.color = z.id === "0" || z.id === "I" ? "#166534" : "#fff";
-          seg.textContent = z.pct + "%";
-          bar.appendChild(seg);
+            function buildZoneBar() {
+              const bar = document.getElementById("zonebar");
+              const leg = document.getElementById("zonelegend");
+              ZONES.forEach((z) => {
+                const seg = document.createElement("div");
+                seg.className = "zs";
+                seg.style.cssText = `flex:${z.pct};background:${z.color};`;
+                seg.style.color = z.id === "0" || z.id === "I" ? "#166534" : "#fff";
+                seg.textContent = z.pct + "%";
+                bar.appendChild(seg);
 
-          const li = document.createElement("div");
-          li.className = "zleg-i";
-          li.innerHTML = `<span class="zdot" style="background:${z.color};"></span>${z.label} · ${z.capital} Mds`;
-          leg.appendChild(li);
-        });
-      }
+                const li = document.createElement("div");
+                li.className = "zleg-i";
+                li.innerHTML = `<span class="zdot" style="background:${z.color};"></span>${z.label} · ${z.capital} Mds`;
+                leg.appendChild(li);
+              });
+            }
 
-      function buildTop5() {
-        const TOP = [
-          { name: "Alger", zone: "IIb", capital: 87.4, color: "#f97316" },
-          { name: "Oran", zone: "IIb", capital: 71.8, color: "#f97316" },
-          { name: "Blida", zone: "IIb", capital: 62.1, color: "#f97316" },
-          { name: "Tizi Ouzou", zone: "III", capital: 52.6, color: "#ef4444" },
-          { name: "Boumerdès", zone: "III", capital: 38.2, color: "#ef4444" },
-        ];
-        const max = 87.4;
-        const el = document.getElementById("top5prog");
-        el.innerHTML = TOP.map(
-          (w) => `
-    <div class="prog">
-      <div class="prog-lbl">
-        <span>${w.name}</span>
-        <span style="color:${w.color}">${w.capital} Mds</span>
-      </div>
-      <div class="prog-track">
-        <div class="prog-fill" style="width:${(w.capital / max) * 100}%;background:${w.color};"></div>
-      </div>
-    </div>
-  `,
-        ).join("");
-      }
-
-      function buildAlerts() {
-        const colors = {
-          danger: ["#fef2f2", "#b91c1c"],
-          warn: ["#fffbeb", "#92400e"],
-          info: ["#f0fdf4", "#166534"],
-          ok: ["#f0fdf4", "#15803d"],
-        };
-        document.getElementById("alertFeed").innerHTML = ALERTS.map((a) => {
-          const [bg, tc] = colors[a.type];
-          return `<div class="alert-item">
-      <div class="alert-icon" style="background:${bg};color:${tc};">${a.icon}</div>
-      <div>
-        <div class="alert-title">${a.title}</div>
-        <div class="alert-desc">${a.desc}</div>
-        <div class="alert-time">${a.time}</div>
-      </div>
-    </div>`;
-        }).join("");
-      }
-
-      const ZONE_PILL = {
-        0: "p0",
-        I: "pI",
-        IIa: "pIIa",
-        IIb: "pIIb",
-        III: "pIII",
-      };
-
-      function buildPortfolioTable(filterZone = "all", filterCat = "all") {
-        const filtered = PORTFOLIO.filter(
-          (r) =>
-            (filterZone === "all" || r.zone === filterZone) &&
-            (filterCat === "all" || r.cat === filterCat),
-        );
-        document.getElementById("filterCount").textContent =
-          filtered.length + " enregistrements";
-        const STATUS = {
-          III: ["p-hi", "Surconcentré"],
-          IIb: ["p-med", "Élevé"],
-          IIa: ["p-mid", "Modéré"],
-          I: ["p-ok", "Sous-exploité"],
-          0: ["p-ok", "Sous-exploité"],
-        };
-        document.getElementById("portfolioBody").innerHTML = filtered
-          .map((r) => {
-            const [sc, sl] = STATUS[r.zone] || ["p-mid", "Normal"];
-            return `<tr>
-      <td style="font-weight:600;">${r.wilaya}</td>
-      <td style="color:var(--t3);font-size:11px;">${r.region}</td>
-      <td><span class="pill ${ZONE_PILL[r.zone]}">${r.zone}</span></td>
-      <td style="font-size:11px;">${r.cat}</td>
-      <td style="font-family:var(--mono);">${r.contracts.toLocaleString()}</td>
-      <td style="font-family:var(--mono);font-weight:600;">${r.capital.toLocaleString()}</td>
-      <td style="font-family:var(--mono);">${r.pct}%</td>
-      <td><span class="pill ${sc}">${sl}</span></td>
-    </tr>`;
-          })
-          .join("");
-      }
-
-      /* ── LEAFLET GIS MAP ────────────────────── */
-      let mapInited = false;
-      function initMap() {
-        if (mapInited) return;
-        mapInited = true;
-
-        const map = L.map("gismap", {
-          center: [28.5, 2.5],
-          zoom: 5,
-          zoomControl: true,
-        });
-
-        // Clean light tile
-        L.tileLayer(
-          "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-          {
-            attribution: "© OpenStreetMap © CARTO",
-            maxZoom: 18,
-          },
-        ).addTo(map);
-
-        const ZONE_COLORS = {
-          0: "#22c55e",
-          I: "#84cc16",
-          IIa: "#eab308",
-          IIb: "#f97316",
-          III: "#ef4444",
-        };
-
-        const CITIES = [
-          {
-            name: "Alger",
-            lat: 36.74,
-            lng: 3.06,
-            zone: "IIb",
-            cap: 87.4,
-            contracts: 1820,
-          },
-          {
-            name: "Blida",
-            lat: 36.47,
-            lng: 2.83,
-            zone: "IIb",
-            cap: 62.1,
-            contracts: 1240,
-          },
-          {
-            name: "Boumerdès",
-            lat: 36.76,
-            lng: 3.48,
-            zone: "III",
-            cap: 38.2,
-            contracts: 312,
-          },
-          {
-            name: "Tizi Ouzou",
-            lat: 36.72,
-            lng: 4.05,
-            zone: "III",
-            cap: 52.6,
-            contracts: 980,
-          },
-          {
-            name: "Béjaïa",
-            lat: 36.75,
-            lng: 5.08,
-            zone: "IIb",
-            cap: 38.9,
-            contracts: 720,
-          },
-          {
-            name: "Tipaza",
-            lat: 36.59,
-            lng: 2.45,
-            zone: "IIb",
-            cap: 44.3,
-            contracts: 890,
-          },
-          {
-            name: "Oran",
-            lat: 35.7,
-            lng: -0.62,
-            zone: "IIb",
-            cap: 71.8,
-            contracts: 1100,
-          },
-          {
-            name: "Constantine",
-            lat: 36.36,
-            lng: 6.61,
-            zone: "IIa",
-            cap: 45.6,
-            contracts: 740,
-          },
-          {
-            name: "Annaba",
-            lat: 36.9,
-            lng: 7.76,
-            zone: "IIa",
-            cap: 32.4,
-            contracts: 560,
-          },
-          {
-            name: "Sétif",
-            lat: 36.19,
-            lng: 5.41,
-            zone: "IIb",
-            cap: 41.2,
-            contracts: 640,
-          },
-          {
-            name: "M'sila",
-            lat: 35.7,
-            lng: 4.54,
-            zone: "I",
-            cap: 22.1,
-            contracts: 420,
-          },
-          {
-            name: "Djelfa",
-            lat: 34.67,
-            lng: 3.26,
-            zone: "I",
-            cap: 19.8,
-            contracts: 390,
-          },
-          {
-            name: "Ghardaïa",
-            lat: 32.49,
-            lng: 3.67,
-            zone: "0",
-            cap: 15.8,
-            contracts: 220,
-          },
-          {
-            name: "Tamanrasset",
-            lat: 22.78,
-            lng: 5.52,
-            zone: "0",
-            cap: 21.4,
-            contracts: 180,
-          },
-          {
-            name: "Adrar",
-            lat: 27.87,
-            lng: -0.29,
-            zone: "0",
-            cap: 17.2,
-            contracts: 140,
-          },
-          {
-            name: "Guelma",
-            lat: 36.46,
-            lng: 7.43,
-            zone: "IIa",
-            cap: 18.7,
-            contracts: 310,
-          },
-        ];
-
-        CITIES.forEach((c) => {
-          const col = ZONE_COLORS[c.zone];
-          const radius = Math.max(8, Math.sqrt(c.cap) * 1.8);
-
-          const circle = L.circleMarker([c.lat, c.lng], {
-            radius,
-            fillColor: col,
-            color: "#ffffff",
-            weight: 2,
-            fillOpacity: 0.82,
-          }).addTo(map);
-
-          const zoneDesc = {
-            0: "Aléa négligeable",
-            I: "Aléa faible",
-            IIa: "Aléa modéré",
-            IIb: "Aléa moyen",
-            III: "Aléa élevé",
-          };
-
-          circle.bindPopup(
-            `
-      <div style="font-family:'Plus Jakarta Sans',sans-serif;">
-        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#0e1a0f;">${c.name}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-          <span style="background:${col};color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace;">Zone ${c.zone}</span>
-          <span style="font-size:11px;color:#4a6b4e;">${zoneDesc[c.zone]}</span>
-        </div>
-        <div style="border-top:1px solid #e4ece5;margin:8px 0;"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
-          <div><div style="color:#8faa92;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;">Capital</div><div style="font-weight:700;color:#0e1a0f;">${c.cap} Mds DZD</div></div>
-          <div><div style="color:#8faa92;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;">Contrats</div><div style="font-weight:700;color:#0e1a0f;">${c.contracts.toLocaleString()}</div></div>
-        </div>
-      </div>
-    `,
-            { maxWidth: 220 },
-          );
-
-          // Pulse animation for high-risk zones
-          if (c.zone === "III") {
-            const pulse = L.circleMarker([c.lat, c.lng], {
-              radius: radius + 6,
-              fillColor: "transparent",
-              color: col,
-              weight: 1.5,
-              fillOpacity: 0,
-              opacity: 0.4,
-            }).addTo(map);
-
-            let growing = true;
-            let r = radius + 6;
-            setInterval(() => {
-              if (growing) {
-                r += 1;
-                if (r > radius + 14) growing = false;
-              } else {
-                r -= 1;
-                if (r < radius + 4) growing = true;
-              }
-              pulse.setRadius(r);
-              pulse.setStyle({ opacity: (radius + 14 - r) / 20 });
-            }, 80);
-          }
-        });
-      }
-
-      /* ── HEATMAP ──────────────────────────── */
-      function buildHeatmap() {
-        const cats = ["Résidentiel", "Commercial", "Industriel"];
-        const zones = ["Zone 0", "Zone I", "Zone IIa", "Zone IIb", "Zone III"];
-        const data = [
-          [18, 12, 8],
-          [14, 18, 6],
-          [24, 28, 22],
-          [82, 74, 68],
-          [62, 44, 72],
-        ];
-        const max = 82;
-
-        let html = `<div class="heatmap-grid">
-    <div></div>
-    ${cats.map((c) => `<div class="hm-head">${c}</div>`).join("")}`;
-
-        data.forEach((row, zi) => {
-          html += `<div class="hm-label">${zones[zi]}</div>`;
-          row.forEach((val) => {
-            const pct = val / max;
-            const a = 0.1 + pct * 0.85;
-            const bg = `rgba(239,68,68,${a.toFixed(2)})`;
-            const tc = pct > 0.5 ? "#fff" : "#7f1d1d";
-            html += `<div class="hm-cell" style="background:${bg};color:${tc};" title="${val} Mds DZD">${val}</div>`;
-          });
-        });
-        html += `</div><div style="font-size:10px;color:var(--t3);margin-top:8px;font-family:var(--mono);">Valeurs en Mds DZD · Intensité = exposition</div>`;
-        document.getElementById("heatmapBody").innerHTML = html;
-      }
-
-      /* ── IOT ─────────────────────────────── */
-      function buildSensors() {
-        const sensors = [
-          {
-            name: "S-012 Alger Centre",
-            val: 0.04,
-            status: "ok",
-            lbl: "Inactif",
-          },
-          {
-            name: "S-047 Boumerdès",
-            val: 0.12,
-            status: "warn",
-            lbl: "Micro-sismicité",
-          },
-          { name: "S-089 Oran Ville", val: 0.02, status: "ok", lbl: "Normal" },
-          {
-            name: "S-103 Tizi Ouzou",
-            val: 0.08,
-            status: "warn",
-            lbl: "Activité faible",
-          },
-          { name: "S-156 Blida", val: 0.03, status: "ok", lbl: "Normal" },
-          { name: "S-201 Béjaïa", val: 0.05, status: "ok", lbl: "Normal" },
-        ];
-        const sc = { ok: "#22c55e", warn: "#d97706", danger: "#dc2626" };
-        const sf = { ok: "#22c55e", warn: "#f97316" };
-        document.getElementById("sensorGrid").innerHTML = sensors
-          .map(
-            (s) => `
-    <div class="sensor">
-      <div class="s-top">
-        <div class="s-name">${s.name}</div>
-        <div class="s-dot" style="background:${sc[s.status]};box-shadow:0 0 5px ${sc[s.status]};"></div>
-      </div>
-      <div><span class="s-val">${s.val.toFixed(2)}</span><span class="s-unit">g PGA</span></div>
-      <div class="s-bar"><div class="s-fill" style="width:${(s.val / 0.2) * 100}%;background:${sf[s.status] || "#ef4444"};"></div></div>
-      <div class="s-lbl">${s.lbl}</div>
-    </div>
-  `,
-          )
-          .join("");
-      }
-
-      function buildNetworkStatus() {
-        const regions = [
-          { name: "Grand Nord", total: 120, active: 118 },
-          { name: "Nord-Est", total: 68, active: 65 },
-          { name: "Nord-Ouest", total: 42, active: 41 },
-          { name: "Hauts-Plateaux", total: 12, active: 10 },
-          { name: "Sahara", total: 5, active: 4 },
-        ];
-        const el = document.getElementById("networkStatus");
-        el.innerHTML = regions
-          .map((r) => {
-            const pct = Math.round((r.active / r.total) * 100);
-            const col = pct >= 95 ? "#22c55e" : "#d97706";
-            return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
-      <div style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;"></div>
-      <div style="flex:1;font-size:12px;font-weight:500;">${r.name}</div>
-      <div style="font-size:11px;font-family:var(--mono);color:var(--t3);">${r.active}/${r.total}</div>
-      <div style="width:56px;height:4px;background:var(--border);border-radius:2px;">
-        <div style="width:${pct}%;height:100%;background:${col};border-radius:2px;"></div>
-      </div>
-      <div style="font-size:11px;font-family:var(--mono);font-weight:600;width:30px;text-align:right;">${pct}%</div>
-    </div>`;
-          })
-          .join("");
-      }
-
-      /* ── SIMULATOR ────────────────────────── */
-      function buildSimulator() {
-        const zf = { III: 1.0, IIb: 0.75, IIb2: 0.7, IIa: 0.45 };
-        function calc(mag, zone, depth) {
-          const base = Math.pow(10, (mag - 4.5) * 0.8) * 8;
-          const df = Math.max(0.3, 1 - (depth - 5) / 60);
-          return Math.round(base * (zf[zone] || 0.5) * df * 10) / 10;
-        }
-        function update() {
-          const mag = parseFloat(document.getElementById("magSlider").value);
-          const zone = document.getElementById("epicZone").value;
-          const depth = parseInt(document.getElementById("depthSlider").value);
-          document.getElementById("magVal").textContent = mag.toFixed(1);
-          document.getElementById("depthVal").textContent = depth + " km";
-          const pml = calc(mag, zone, depth);
-          const deficit = Math.max(0, pml - 85);
-          const ratio = Math.round((pml / 847.3) * 100);
-          document.getElementById("simResults").innerHTML = `
-      <div class="kpi ${pml > 85 ? "k-red" : "k-green"}">
-        <div class="kpi-lbl">PML estimé</div>
-        <div class="kpi-val ${pml > 85 ? "red" : "green"}">${pml.toFixed(0)} Mds</div>
-        <div class="kpi-foot">DZD · impact direct</div>
-      </div>
-      <div class="kpi ${deficit > 0 ? "k-red" : "k-green"}">
-        <div class="kpi-lbl">Déficit couverture</div>
-        <div class="kpi-val ${deficit > 0 ? "red" : "green"}">${deficit > 0 ? "+" + deficit.toFixed(0) + " Mds" : "Couvert"}</div>
-        <div class="kpi-foot">${deficit > 0 ? "Dépasse rétention" : "Sous rétention"}</div>
-      </div>
-      <div class="kpi ${ratio > 20 ? "k-red" : ratio > 10 ? "k-orange" : "k-green"}">
-        <div class="kpi-lbl">% du portefeuille</div>
-        <div class="kpi-val ${ratio > 20 ? "red" : ratio > 10 ? "orange" : "green"}">${ratio}%</div>
-        <div class="kpi-foot">Capital affecté</div>
-      </div>
-    `;
-        }
-        ["magSlider", "depthSlider"].forEach((id) =>
-          document.getElementById(id).addEventListener("input", update),
-        );
-        document.getElementById("epicZone").addEventListener("change", update);
-        update();
-      }
-
-      /* ── RECS ─────────────────────────────── */
-      function buildRecs() {
-        document.getElementById("recList").innerHTML = RECS.map(
-          (r) => `
-    <div class="rec-card">
-      <div class="rec-head">
-        <div class="rec-num">${r.num}</div>
-        <div style="display:flex;align-items:center;gap:10px;flex:1;">
-          <span class="pill ${r.pcls}">${r.prio}</span>
-          <div class="rec-title">${r.title}</div>
-        </div>
-      </div>
-      <div class="rec-body">${r.text}</div>
-    </div>
-  `,
-        ).join("");
-      }
-
-      /* ── EXTENDED ANALYSIS ─────────────────────────── */
-      function loadExtendedAnalysis() {
-        fetch("dashboard/data/extended_analysis.json")
-          .then((r) => r.json())
-          .then((data) => {
-            buildRiskNature(data.risk_nature);
-            buildBuildingProfiles(data.building_profiles);
-            buildZoneIIIScenario(data.zone_iii_scenario);
-            buildTopCommunes(data.top_communes);
-          })
-          .catch((e) => console.log("Extended analysis:", e));
-      }
-
-      function buildRiskNature(data) {
-        if (!data) return;
-        let html =
-          '<table style="width:100%;font-size:13px;"><thead><tr><th>Zone</th>';
-        const types = Object.keys(data)
-          .filter((z) => z !== "__meta__")
-          .map((z) => Object.keys(data[z]).filter((t) => t !== "__total__"))
-          .flat()
-          .filter((v, i, a) => a.indexOf(v) === i);
-        types.forEach((t) => (html += `<th>${t}</th>`));
-        html += "<th><b>Total</b></th></tr></thead><tbody>";
-        Object.entries(data)
-          .filter(([z]) => z !== "__meta__")
-          .forEach(([zone, types_data]) => {
-            html += `<tr><td><b>${zone}</b></td>`;
-            types.forEach((t) => {
-              const val = types_data[t] || 0;
-              html += `<td>${val.toFixed(1)}</td>`;
-            });
-            html += `<td><b>${(types_data.__total__ || 0).toFixed(1)}</b></td></tr>`;
-          });
-        html += "</tbody></table>";
-        document.getElementById("riskNatureBody").innerHTML = html;
-      }
-
-      function buildBuildingProfiles(data) {
-        if (!data) return;
-        let html =
-          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;">';
-        Object.entries(data)
-          .filter(([z]) => z !== "__meta__")
-          .forEach(([zone, profiles]) => {
-            html += `<div style="border:1px solid #ddd;padding:10px;border-radius:6px;background:#f9fafb;">
-            <div style="font-weight:bold;font-size:12px;margin-bottom:8px;">${zone}</div>
-            <div style="font-size:11px;">
-              <div>🏗 Neuf: ${(profiles.new || 0).toFixed(1)}%</div>
-              <div>🏢 Moyen: ${(profiles.medium || 0).toFixed(1)}%</div>
-              <div>🏚 Ancien: ${(profiles.old || 0).toFixed(1)}%</div>
-              <div>🛡 Renforcé: ${(profiles.reinforced || 0).toFixed(1)}%</div>
+            function buildTop5() {
+              const TOP = [
+                { name: "Alger", zone: "IIb", capital: 87.4, color: "#f97316" },
+                { name: "Oran", zone: "IIb", capital: 71.8, color: "#f97316" },
+                { name: "Blida", zone: "IIb", capital: 62.1, color: "#f97316" },
+                { name: "Tizi Ouzou", zone: "III", capital: 52.6, color: "#ef4444" },
+                { name: "Boumerdès", zone: "III", capital: 38.2, color: "#ef4444" },
+              ];
+              const max = 87.4;
+              const el = document.getElementById("top5prog");
+              el.innerHTML = TOP.map(
+                (w) => `
+          <div class="prog">
+            <div class="prog-lbl">
+              <span>${w.name}</span>
+              <span style="color:${w.color}">${w.capital} Mds</span>
             </div>
-          </div>`;
-          });
-        html += "</div>";
-        document.getElementById("buildingProfileBody").innerHTML = html;
-      }
-
-      function buildZoneIIIScenario(data) {
-        if (!data) return;
-        document.getElementById("zoneIIIScenarioBody").innerHTML = `
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
-            <div class="kpi k-orange" style="padding:12px;">
-              <div class="kpi-lbl" style="font-size:11px;">Zone III Capital Exposé</div>
-              <div class="kpi-val orange" style="font-size:18px;">${(data.zone_iii_capital || 0).toFixed(1)} Mds</div>
-            </div>
-            <div class="kpi k-red" style="padding:12px;">
-              <div class="kpi-lbl" style="font-size:11px;">PML M7.5 Estimée</div>
-              <div class="kpi-val red" style="font-size:18px;">${(data.pml_m75 || 0).toFixed(1)} Mds</div>
-            </div>
-            <div class="kpi k-red" style="padding:12px;">
-              <div class="kpi-lbl" style="font-size:11px;">Shortfall Rétention</div>
-              <div class="kpi-val red" style="font-size:18px;">${(data.shortfall || 0).toFixed(1)} Mds</div>
-            </div>
-            <div class="kpi k-green" style="padding:12px;">
-              <div class="kpi-lbl" style="font-size:11px;">Loss Ratio</div>
-              <div class="kpi-val green" style="font-size:18px;">${((data.loss_ratio || 0) * 100).toFixed(1)}%</div>
+            <div class="prog-track">
+              <div class="prog-fill" style="width:${(w.capital / max) * 100}%;background:${w.color};"></div>
             </div>
           </div>
-        `;
-      }
-
-      function buildTopCommunes(data) {
-        if (!data || !data.communes) return;
-        let html = data.communes
-          .map(
-            (c, i) => `
-          <tr>
-            <td style="font-weight:bold;">${i + 1}</td>
-            <td>${c.commune}</td>
-            <td>${c.wilaya}</td>
-            <td><span class="badge badge-${c.zone === "III" ? "red" : c.zone?.startsWith("II") ? "orange" : "green"}">${c.zone}</span></td>
-            <td style="text-align:right;font-weight:bold;">${c.capital.toFixed(1)}</td>
-            <td style="text-align:right;">${(c.capital * 0.25).toFixed(1)}</td>
-            <td style="text-align:right;">${c.num_policies}</td>
-            <td style="text-align:right;color:#dc2626;">${((c.loss_ratio || 0) * 100).toFixed(1)}%</td>
-          </tr>
         `,
-          )
-          .join("");
-        document.getElementById("topCommunesBody").innerHTML = html;
-      }
+              ).join("");
+            }
 
-      /* ── CHARTS ───────────────────────────── */
-      function initCharts() {
-        new Chart("catChart", {
-          type: "doughnut",
-          data: {
-            labels: ["Résidentiel", "Commercial", "Industriel", "Autre"],
-            datasets: [
-              {
-                data: [387, 218, 162, 80],
-                backgroundColor: ["#1a9e5c", "#3b82f6", "#f97316", "#94a3b8"],
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "bottom",
-                labels: {
-                  padding: 14,
-                  boxWidth: 10,
-                  font: { family: "'Plus Jakarta Sans'" },
+            function buildAlerts() {
+              const colors = {
+                danger: ["#fef2f2", "#b91c1c"],
+                warn: ["#fffbeb", "#92400e"],
+                info: ["#f0fdf4", "#166534"],
+                ok: ["#f0fdf4", "#15803d"],
+              };
+              document.getElementById("alertFeed").innerHTML = ALERTS.map((a) => {
+                const [bg, tc] = colors[a.type];
+                return `<div class="alert-item">
+            <div class="alert-icon" style="background:${bg};color:${tc};">${a.icon}</div>
+            <div>
+              <div class="alert-title">${a.title}</div>
+              <div class="alert-desc">${a.desc}</div>
+              <div class="alert-time">${a.time}</div>
+            </div>
+          </div>`;
+              }).join("");
+            }
+
+            const ZONE_PILL = {
+              0: "p0",
+              I: "pI",
+              IIa: "pIIa",
+              IIb: "pIIb",
+              III: "pIII",
+            };
+
+            function buildPortfolioTable(filterZone = "all", filterCat = "all") {
+              const filtered = PORTFOLIO.filter(
+                (r) =>
+                  (filterZone === "all" || r.zone === filterZone) &&
+                  (filterCat === "all" || r.cat === filterCat),
+              );
+              document.getElementById("filterCount").textContent =
+                filtered.length + " enregistrements";
+              const STATUS = {
+                III: ["p-hi", "Surconcentré"],
+                IIb: ["p-med", "Élevé"],
+                IIa: ["p-mid", "Modéré"],
+                I: ["p-ok", "Sous-exploité"],
+                0: ["p-ok", "Sous-exploité"],
+              };
+              document.getElementById("portfolioBody").innerHTML = filtered
+                .map((r) => {
+                  const [sc, sl] = STATUS[r.zone] || ["p-mid", "Normal"];
+                  return `<tr>
+            <td style="font-weight:600;">${r.wilaya}</td>
+            <td style="color:var(--t3);font-size:11px;">${r.region}</td>
+            <td><span class="pill ${ZONE_PILL[r.zone]}">${r.zone}</span></td>
+            <td style="font-size:11px;">${r.cat}</td>
+            <td style="font-family:var(--mono);">${r.contracts.toLocaleString()}</td>
+            <td style="font-family:var(--mono);font-weight:600;">${r.capital.toLocaleString()}</td>
+            <td style="font-family:var(--mono);">${r.pct}%</td>
+            <td><span class="pill ${sc}">${sl}</span></td>
+          </tr>`;
+                })
+                .join("");
+            }
+
+            /* ── LEAFLET GIS MAP ────────────────────── */
+            let mapInited = false;
+            function initMap() {
+              if (mapInited) return;
+              mapInited = true;
+
+              const map = L.map("gismap", {
+                center: [28.5, 2.5],
+                zoom: 5,
+                zoomControl: true,
+              });
+
+              // Clean light tile
+              L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+                  attribution: "© OpenStreetMap © CARTO",
+                  maxZoom: 18,
                 },
-              },
-            },
-          },
-        });
+              ).addTo(map);
 
-        new Chart("cumulChart", {
-          type: "doughnut",
-          data: {
-            labels: ["Zone IIb + III", "Autres zones"],
-            datasets: [
-              {
-                data: [74, 26],
-                backgroundColor: ["#ef4444", "#e4ece5"],
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "bottom",
-                labels: { padding: 10, boxWidth: 10 },
-              },
-            },
-          },
-        });
+              const ZONE_COLORS = {
+                0: "#22c55e",
+                I: "#84cc16",
+                IIa: "#eab308",
+                IIb: "#f97316",
+                III: "#ef4444",
+              };
 
-        const months = [
-          "Mai",
-          "Jun",
-          "Jul",
-          "Aoû",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Déc",
-          "Jan",
-          "Fév",
-          "Mar",
-          "Avr",
-        ];
-        new Chart("trendChart", {
-          type: "line",
-          data: {
-            labels: months,
-            datasets: [
-              {
-                data: [
-                  710, 718, 724, 729, 735, 742, 748, 756, 763, 769, 778, 784,
-                ],
-                borderColor: "#1a9e5c",
-                borderWidth: 2,
-                tension: 0.4,
-                pointRadius: 0,
-                fill: true,
-                backgroundColor: "rgba(26,158,92,0.06)",
-              },
-            ],
-          },
-          options: { ...baseOpts() },
-        });
+              const CITIES = [
+                {
+                  name: "Alger",
+                  lat: 36.74,
+                  lng: 3.06,
+                  zone: "IIb",
+                  cap: 87.4,
+                  contracts: 1820,
+                },
+                {
+                  name: "Blida",
+                  lat: 36.47,
+                  lng: 2.83,
+                  zone: "IIb",
+                  cap: 62.1,
+                  contracts: 1240,
+                },
+                {
+                  name: "Boumerdès",
+                  lat: 36.76,
+                  lng: 3.48,
+                  zone: "III",
+                  cap: 38.2,
+                  contracts: 312,
+                },
+                {
+                  name: "Tizi Ouzou",
+                  lat: 36.72,
+                  lng: 4.05,
+                  zone: "III",
+                  cap: 52.6,
+                  contracts: 980,
+                },
+                {
+                  name: "Béjaïa",
+                  lat: 36.75,
+                  lng: 5.08,
+                  zone: "IIb",
+                  cap: 38.9,
+                  contracts: 720,
+                },
+                {
+                  name: "Tipaza",
+                  lat: 36.59,
+                  lng: 2.45,
+                  zone: "IIb",
+                  cap: 44.3,
+                  contracts: 890,
+                },
+                {
+                  name: "Oran",
+                  lat: 35.7,
+                  lng: -0.62,
+                  zone: "IIb",
+                  cap: 71.8,
+                  contracts: 1100,
+                },
+                {
+                  name: "Constantine",
+                  lat: 36.36,
+                  lng: 6.61,
+                  zone: "IIa",
+                  cap: 45.6,
+                  contracts: 740,
+                },
+                {
+                  name: "Annaba",
+                  lat: 36.9,
+                  lng: 7.76,
+                  zone: "IIa",
+                  cap: 32.4,
+                  contracts: 560,
+                },
+                {
+                  name: "Sétif",
+                  lat: 36.19,
+                  lng: 5.41,
+                  zone: "IIb",
+                  cap: 41.2,
+                  contracts: 640,
+                },
+                {
+                  name: "M'sila",
+                  lat: 35.7,
+                  lng: 4.54,
+                  zone: "I",
+                  cap: 22.1,
+                  contracts: 420,
+                },
+                {
+                  name: "Djelfa",
+                  lat: 34.67,
+                  lng: 3.26,
+                  zone: "I",
+                  cap: 19.8,
+                  contracts: 390,
+                },
+                {
+                  name: "Ghardaïa",
+                  lat: 32.49,
+                  lng: 3.67,
+                  zone: "0",
+                  cap: 15.8,
+                  contracts: 220,
+                },
+                {
+                  name: "Tamanrasset",
+                  lat: 22.78,
+                  lng: 5.52,
+                  zone: "0",
+                  cap: 21.4,
+                  contracts: 180,
+                },
+                {
+                  name: "Adrar",
+                  lat: 27.87,
+                  lng: -0.29,
+                  zone: "0",
+                  cap: 17.2,
+                  contracts: 140,
+                },
+                {
+                  name: "Guelma",
+                  lat: 36.46,
+                  lng: 7.43,
+                  zone: "IIa",
+                  cap: 18.7,
+                  contracts: 310,
+                },
+              ];
 
-        new Chart("ratioChart", {
-          type: "bar",
-          data: {
-            labels: ["Z.0", "Z.I", "Z.IIa", "Z.IIb", "Z.III"],
-            datasets: [
-              {
-                label: "Capital",
-                data: [102, 68, 152, 322, 203],
-                backgroundColor: [
-                  "#22c55e",
-                  "#84cc16",
-                  "#eab308",
-                  "#f97316",
-                  "#ef4444",
-                ],
-                borderWidth: 0,
-                borderRadius: 4,
-              },
-              {
-                label: "Rétention",
-                data: Array(5).fill(85),
+              CITIES.forEach((c) => {
+                const col = ZONE_COLORS[c.zone];
+                const radius = Math.max(8, Math.sqrt(c.cap) * 1.8);
+
+                const circle = L.circleMarker([c.lat, c.lng], {
+                  radius,
+                  fillColor: col,
+                  color: "#ffffff",
+                  weight: 2,
+                  fillOpacity: 0.82,
+                }).addTo(map);
+
+                const zoneDesc = {
+                  0: "Aléa négligeable",
+                  I: "Aléa faible",
+                  IIa: "Aléa modéré",
+                  IIb: "Aléa moyen",
+                  III: "Aléa élevé",
+                };
+
+                circle.bindPopup(
+                  `
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;">
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#0e1a0f;">${c.name}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <span style="background:${col};color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace;">Zone ${c.zone}</span>
+                <span style="font-size:11px;color:#4a6b4e;">${zoneDesc[c.zone]}</span>
+              </div>
+              <div style="border-top:1px solid #e4ece5;margin:8px 0;"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
+                <div><div style="color:#8faa92;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;">Capital</div><div style="font-weight:700;color:#0e1a0f;">${c.cap} Mds DZD</div></div>
+                <div><div style="color:#8faa92;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;">Contrats</div><div style="font-weight:700;color:#0e1a0f;">${c.contracts.toLocaleString()}</div></div>
+              </div>
+            </div>
+          `,
+                  { maxWidth: 220 },
+                );
+
+                // Pulse animation for high-risk zones
+                if (c.zone === "III") {
+                  const pulse = L.circleMarker([c.lat, c.lng], {
+                    radius: radius + 6,
+                    fillColor: "transparent",
+                    color: col,
+                    weight: 1.5,
+                    fillOpacity: 0,
+                    opacity: 0.4,
+                  }).addTo(map);
+
+                  let growing = true;
+                  let r = radius + 6;
+                  setInterval(() => {
+                    if (growing) {
+                      r += 1;
+                      if (r > radius + 14) growing = false;
+                    } else {
+                      r -= 1;
+                      if (r < radius + 4) growing = true;
+                    }
+                    pulse.setRadius(r);
+                    pulse.setStyle({ opacity: (radius + 14 - r) / 20 });
+                  }, 80);
+                }
+              });
+            }
+
+            /* ── HEATMAP ──────────────────────────── */
+            function buildHeatmap() {
+              const cats = ["Résidentiel", "Commercial", "Industriel"];
+              const zones = ["Zone 0", "Zone I", "Zone IIa", "Zone IIb", "Zone III"];
+              const data = [
+                [18, 12, 8],
+                [14, 18, 6],
+                [24, 28, 22],
+                [82, 74, 68],
+                [62, 44, 72],
+              ];
+              const max = 82;
+
+              let html = `<div class="heatmap-grid">
+          <div></div>
+          ${cats.map((c) => `<div class="hm-head">${c}</div>`).join("")}`;
+
+              data.forEach((row, zi) => {
+                html += `<div class="hm-label">${zones[zi]}</div>`;
+                row.forEach((val) => {
+                  const pct = val / max;
+                  const a = 0.1 + pct * 0.85;
+                  const bg = `rgba(239,68,68,${a.toFixed(2)})`;
+                  const tc = pct > 0.5 ? "#fff" : "#7f1d1d";
+                  html += `<div class="hm-cell" style="background:${bg};color:${tc};" title="${val} Mds DZD">${val}</div>`;
+                });
+              });
+              html += `</div><div style="font-size:10px;color:var(--t3);margin-top:8px;font-family:var(--mono);">Valeurs en Mds DZD · Intensité = exposition</div>`;
+              document.getElementById("heatmapBody").innerHTML = html;
+            }
+
+            /* ── IOT ─────────────────────────────── */
+            function buildSensors() {
+              const sensors = [
+                {
+                  name: "S-012 Alger Centre",
+                  val: 0.04,
+                  status: "ok",
+                  lbl: "Inactif",
+                },
+                {
+                  name: "S-047 Boumerdès",
+                  val: 0.12,
+                  status: "warn",
+                  lbl: "Micro-sismicité",
+                },
+                { name: "S-089 Oran Ville", val: 0.02, status: "ok", lbl: "Normal" },
+                {
+                  name: "S-103 Tizi Ouzou",
+                  val: 0.08,
+                  status: "warn",
+                  lbl: "Activité faible",
+                },
+                { name: "S-156 Blida", val: 0.03, status: "ok", lbl: "Normal" },
+                { name: "S-201 Béjaïa", val: 0.05, status: "ok", lbl: "Normal" },
+              ];
+              const sc = { ok: "#22c55e", warn: "#d97706", danger: "#dc2626" };
+              const sf = { ok: "#22c55e", warn: "#f97316" };
+              document.getElementById("sensorGrid").innerHTML = sensors
+                .map(
+                  (s) => `
+          <div class="sensor">
+            <div class="s-top">
+              <div class="s-name">${s.name}</div>
+              <div class="s-dot" style="background:${sc[s.status]};box-shadow:0 0 5px ${sc[s.status]};"></div>
+            </div>
+            <div><span class="s-val">${s.val.toFixed(2)}</span><span class="s-unit">g PGA</span></div>
+            <div class="s-bar"><div class="s-fill" style="width:${(s.val / 0.2) * 100}%;background:${sf[s.status] || "#ef4444"};"></div></div>
+            <div class="s-lbl">${s.lbl}</div>
+          </div>
+        `,
+                )
+                .join("");
+            }
+
+            function buildNetworkStatus() {
+              const regions = [
+                { name: "Grand Nord", total: 120, active: 118 },
+                { name: "Nord-Est", total: 68, active: 65 },
+                { name: "Nord-Ouest", total: 42, active: 41 },
+                { name: "Hauts-Plateaux", total: 12, active: 10 },
+                { name: "Sahara", total: 5, active: 4 },
+              ];
+              const el = document.getElementById("networkStatus");
+              el.innerHTML = regions
+                .map((r) => {
+                  const pct = Math.round((r.active / r.total) * 100);
+                  const col = pct >= 95 ? "#22c55e" : "#d97706";
+                  return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;"></div>
+            <div style="flex:1;font-size:12px;font-weight:500;">${r.name}</div>
+            <div style="font-size:11px;font-family:var(--mono);color:var(--t3);">${r.active}/${r.total}</div>
+            <div style="width:56px;height:4px;background:var(--border);border-radius:2px;">
+              <div style="width:${pct}%;height:100%;background:${col};border-radius:2px;"></div>
+            </div>
+            <div style="font-size:11px;font-family:var(--mono);font-weight:600;width:30px;text-align:right;">${pct}%</div>
+          </div>`;
+                })
+                .join("");
+            }
+
+            /* ── SIMULATOR ────────────────────────── */
+            function buildSimulator() {
+              const zf = { III: 1.0, IIb: 0.75, IIb2: 0.7, IIa: 0.45 };
+              function calc(mag, zone, depth) {
+                const base = Math.pow(10, (mag - 4.5) * 0.8) * 8;
+                const df = Math.max(0.3, 1 - (depth - 5) / 60);
+                return Math.round(base * (zf[zone] || 0.5) * df * 10) / 10;
+              }
+              function update() {
+                const mag = parseFloat(document.getElementById("magSlider").value);
+                const zone = document.getElementById("epicZone").value;
+                const depth = parseInt(document.getElementById("depthSlider").value);
+                document.getElementById("magVal").textContent = mag.toFixed(1);
+                document.getElementById("depthVal").textContent = depth + " km";
+                const pml = calc(mag, zone, depth);
+                const deficit = Math.max(0, pml - 85);
+                const ratio = Math.round((pml / 847.3) * 100);
+                document.getElementById("simResults").innerHTML = `
+            <div class="kpi ${pml > 85 ? "k-red" : "k-green"}">
+              <div class="kpi-lbl">PML estimé</div>
+              <div class="kpi-val ${pml > 85 ? "red" : "green"}">${pml.toFixed(0)} Mds</div>
+              <div class="kpi-foot">DZD · impact direct</div>
+            </div>
+            <div class="kpi ${deficit > 0 ? "k-red" : "k-green"}">
+              <div class="kpi-lbl">Déficit couverture</div>
+              <div class="kpi-val ${deficit > 0 ? "red" : "green"}">${deficit > 0 ? "+" + deficit.toFixed(0) + " Mds" : "Couvert"}</div>
+              <div class="kpi-foot">${deficit > 0 ? "Dépasse rétention" : "Sous rétention"}</div>
+            </div>
+            <div class="kpi ${ratio > 20 ? "k-red" : ratio > 10 ? "k-orange" : "k-green"}">
+              <div class="kpi-lbl">% du portefeuille</div>
+              <div class="kpi-val ${ratio > 20 ? "red" : ratio > 10 ? "orange" : "green"}">${ratio}%</div>
+              <div class="kpi-foot">Capital affecté</div>
+            </div>
+          `;
+              }
+              ["magSlider", "depthSlider"].forEach((id) =>
+                document.getElementById(id).addEventListener("input", update),
+              );
+              document.getElementById("epicZone").addEventListener("change", update);
+              update();
+            }
+
+            /* ── RECS ─────────────────────────────── */
+            function buildRecs() {
+              document.getElementById("recList").innerHTML = RECS.map(
+                (r) => `
+          <div class="rec-card">
+            <div class="rec-head">
+              <div class="rec-num">${r.num}</div>
+              <div style="display:flex;align-items:center;gap:10px;flex:1;">
+                <span class="pill ${r.pcls}">${r.prio}</span>
+                <div class="rec-title">${r.title}</div>
+              </div>
+            </div>
+            <div class="rec-body">${r.text}</div>
+          </div>
+        `,
+              ).join("");
+            }
+
+            /* ── EXTENDED ANALYSIS ─────────────────────────── */
+            function loadExtendedAnalysis() {
+              fetch("dashboard/data/extended_analysis.json")
+                .then((r) => r.json())
+                .then((data) => {
+                  buildRiskNature(data.risk_nature);
+                  buildBuildingProfiles(data.building_profiles);
+                  buildZoneIIIScenario(data.zone_iii_scenario);
+                  buildTopCommunes(data.top_communes);
+                })
+                .catch((e) => console.log("Extended analysis:", e));
+            }
+
+            function buildRiskNature(data) {
+              if (!data) return;
+              let html =
+                '<table style="width:100%;font-size:13px;"><thead><tr><th>Zone</th>';
+              const types = Object.keys(data)
+                .filter((z) => z !== "__meta__")
+                .map((z) => Object.keys(data[z]).filter((t) => t !== "__total__"))
+                .flat()
+                .filter((v, i, a) => a.indexOf(v) === i);
+              types.forEach((t) => (html += `<th>${t}</th>`));
+              html += "<th><b>Total</b></th></tr></thead><tbody>";
+              Object.entries(data)
+                .filter(([z]) => z !== "__meta__")
+                .forEach(([zone, types_data]) => {
+                  html += `<tr><td><b>${zone}</b></td>`;
+                  types.forEach((t) => {
+                    const val = types_data[t] || 0;
+                    html += `<td>${val.toFixed(1)}</td>`;
+                  });
+                  html += `<td><b>${(types_data.__total__ || 0).toFixed(1)}</b></td></tr>`;
+                });
+              html += "</tbody></table>";
+              document.getElementById("riskNatureBody").innerHTML = html;
+            }
+
+            function buildBuildingProfiles(data) {
+              if (!data) return;
+              let html =
+                '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;">';
+              Object.entries(data)
+                .filter(([z]) => z !== "__meta__")
+                .forEach(([zone, profiles]) => {
+                  html += `<div style="border:1px solid #ddd;padding:10px;border-radius:6px;background:#f9fafb;">
+                  <div style="font-weight:bold;font-size:12px;margin-bottom:8px;">${zone}</div>
+                  <div style="font-size:11px;">
+                    <div>🏗 Neuf: ${(profiles.new || 0).toFixed(1)}%</div>
+                    <div>🏢 Moyen: ${(profiles.medium || 0).toFixed(1)}%</div>
+                    <div>🏚 Ancien: ${(profiles.old || 0).toFixed(1)}%</div>
+                    <div>🛡 Renforcé: ${(profiles.reinforced || 0).toFixed(1)}%</div>
+                  </div>
+                </div>`;
+                });
+              html += "</div>";
+              document.getElementById("buildingProfileBody").innerHTML = html;
+            }
+
+            function buildZoneIIIScenario(data) {
+              if (!data) return;
+              document.getElementById("zoneIIIScenarioBody").innerHTML = `
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+                  <div class="kpi k-orange" style="padding:12px;">
+                    <div class="kpi-lbl" style="font-size:11px;">Zone III Capital Exposé</div>
+                    <div class="kpi-val orange" style="font-size:18px;">${(data.zone_iii_capital || 0).toFixed(1)} Mds</div>
+                  </div>
+                  <div class="kpi k-red" style="padding:12px;">
+                    <div class="kpi-lbl" style="font-size:11px;">PML M7.5 Estimée</div>
+                    <div class="kpi-val red" style="font-size:18px;">${(data.pml_m75 || 0).toFixed(1)} Mds</div>
+                  </div>
+                  <div class="kpi k-red" style="padding:12px;">
+                    <div class="kpi-lbl" style="font-size:11px;">Shortfall Rétention</div>
+                    <div class="kpi-val red" style="font-size:18px;">${(data.shortfall || 0).toFixed(1)} Mds</div>
+                  </div>
+                  <div class="kpi k-green" style="padding:12px;">
+                    <div class="kpi-lbl" style="font-size:11px;">Loss Ratio</div>
+                    <div class="kpi-val green" style="font-size:18px;">${((data.loss_ratio || 0) * 100).toFixed(1)}%</div>
+                  </div>
+                </div>
+              `;
+            }
+
+            function buildTopCommunes(data) {
+              if (!data || !data.communes) return;
+              let html = data.communes
+                .map(
+                  (c, i) => `
+                <tr>
+                  <td style="font-weight:bold;">${i + 1}</td>
+                  <td>${c.commune}</td>
+                  <td>${c.wilaya}</td>
+                  <td><span class="badge badge-${c.zone === "III" ? "red" : c.zone?.startsWith("II") ? "orange" : "green"}">${c.zone}</span></td>
+                  <td style="text-align:right;font-weight:bold;">${c.capital.toFixed(1)}</td>
+                  <td style="text-align:right;">${(c.capital * 0.25).toFixed(1)}</td>
+                  <td style="text-align:right;">${c.num_policies}</td>
+                  <td style="text-align:right;color:#dc2626;">${((c.loss_ratio || 0) * 100).toFixed(1)}%</td>
+                </tr>
+              `,
+                )
+                .join("");
+              document.getElementById("topCommunesBody").innerHTML = html;
+            }
+
+            /* ── CAHIER ENHANCED ANALYSIS ─────────────────── */
+            function loadCahierAnalysis() {
+              fetch("dashboard/data/cahier_enhanced_analysis.json")
+                .then((r) => r.json())
+                .then((data) => {
+                  buildDiagnostic(data.balance_diagnostics);
+                  buildStrategy(data.strategic_recommendations);
+                  buildScenarios(data.multi_zone_scenarios);
+                  buildIndustrial(data.industrial_analysis);
+                })
+                .catch((e) => console.log("Cahier analysis:", e));
+            }
+
+            function buildDiagnostic(diagnostics) {
+              if (!diagnostics) return;
+
+              // Concentration
+              const conc = diagnostics.concentration_index;
+              const concStatus = conc.pct_in_top_3_zones > 60 ? "CRITIQUE" : "ACCEPTABLE";
+              const concColor = conc.pct_in_top_3_zones > 60 ? "#dc2626" : "#1a9e5c";
+              document.getElementById("concentrationBody").innerHTML = `
+                <div style="text-align:center;padding:16px;">
+                  <div style="font-size:28px;font-weight:bold;color:${concColor};">${conc.pct_in_top_3_zones.toFixed(1)}%</div>
+                  <div style="font-size:12px;color:#666;margin-top:8px;">Capital en Top 3 zones</div>
+                  <div style="font-size:11px;color:${concColor};margin-top:4px;font-weight:600;">Status: ${concStatus}</div>
+                  <div style="font-size:10px;color:#999;margin-top:6px;">Benchmark: 60% (acceptable)</div>
+                  <div style="font-size:11px;margin-top:12px;padding:8px;background:#f0f0f0;border-radius:4px;">
+                    ${conc.top_3_zones.map((z) => `${z.zone}: ${z.capital_B.toFixed(1)}B`).join(" · ")}
+                  </div>
+                </div>
+              `;
+
+              // Sector Balance
+              const sector = diagnostics.sector_balance;
+              document.getElementById("sectorBalanceBody").innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                  <div style="text-align:center;padding:12px;background:#f0f8f0;border-radius:6px;">
+                    <div style="font-weight:bold;font-size:14px;">${sector.residential_%.toFixed(1)}%</div>
+                    <div style="font-size:11px;color:#666;">Résidentiel</div>
+                    <div style="font-size:9px;color:#999;">Cible: 40%</div>
+                  </div>
+                  <div style="text-align:center;padding:12px;background:#f0f8ff;border-radius:6px;">
+                    <div style="font-weight:bold;font-size:14px;">${sector.commercial_%.toFixed(1)}%</div>
+                    <div style="font-size:11px;color:#666;">Commercial</div>
+                    <div style="font-size:9px;color:#999;">Cible: 35%</div>
+                  </div>
+                  <div style="text-align:center;padding:12px;background:#ffe0e0;border-radius:6px;">
+                    <div style="font-weight:bold;font-size:14px;">${sector.industrial_%.toFixed(1)}%</div>
+                    <div style="font-size:11px;color:#666;">Industriel</div>
+                    <div style="font-size:9px;color:#999;">Cible: 25%</div>
+                  </div>
+                </div>
+              `;
+
+              // Wilaya Saturation
+              const wilaya = diagnostics.wilaya_saturation;
+              document.getElementById("wilayaSaturationBody").innerHTML = `
+                <div style="padding:12px;">
+                  <div style="font-size:12px;margin-bottom:12px;">
+                    <strong>Max Exposée:</strong> ${wilaya.max_exposed_wilaya} · ${
+                (wilaya.top_5_wilayas[wilaya.max_exposed_wilaya] || 0).toFixed(1)
+              }B
+                  </div>
+                  <div style="font-size:11px;color:#666;">Top 5 Distribution</div>
+                </div>
+              `;
+
+              const wilayaList = Object.entries(wilaya.top_5_wilayas).map(
+                ([w, cap]) => ({
+                  wilaya: w,
+                  capital: cap,
+                })
+              );
+              const totalWilaya = wilayaList.reduce((a, b) => a + b.capital, 0);
+
+              let wilayaRows = wilayaList
+                .map(
+                  (w, i) =>
+                    `<tr><td>${w.wilaya}</td><td style="text-align:right;font-weight:bold;">${w.capital.toFixed(1)}</td><td style="text-align:right;">${(
+                      (w.capital / totalWilaya) *
+                      100
+                    ).toFixed(1)}%</td></tr>`,
+                )
+                .join("");
+              document.getElementById("wilayaTableBody").innerHTML = wilayaRows;
+            }
+
+            function buildStrategy(recommendations) {
+              if (!recommendations) return;
+
+              // Rebalancing
+              let rebalRows = recommendations.rebalancing_targets
+                .map(
+                  (t) =>
+                    `<tr>
+                    <td><strong>${t.zone}</strong></td>
+                    <td>${t.current_capital_B.toFixed(1)}</td>
+                    <td><span class="badge badge-${t.action === "REDUCE" ? "red" : "green"}">${t.action}</span></td>
+                    <td>${t.action === "REDUCE" ? t.reduction_B?.toFixed(1) : t.expansion_B?.toFixed(1)}</td>
+                    <td>${((t.action === "REDUCE" ? t.reduction_B : t.expansion_B) || 0).toFixed(1)} Mds</td>
+                    <td>${t.timeline_months} mois</td>
+                  </tr>`,
+                )
+                .join("");
+              document.getElementById("rebalanceTableBody").innerHTML = rebalRows;
+
+              // Repricing
+              let repricRows = recommendations.repricing_recommendations
+                .map(
+                  (r) =>
+                    `<tr>
+                    <td><strong>${r.zone}</strong></td>
+                    <td>${r.current_loss_prob_%.toFixed(2)}%</td>
+                    <td><strong>${r.recommended_premium_uplift_%.toFixed(1)}%</strong></td>
+                    <td style="font-size:11px;">${r.rationale}</td>
+                  </tr>`,
+                )
+                .join("");
+              document.getElementById("repricingTableBody").innerHTML = repricRows;
+
+              // Action plan
+              let actionHtml = recommendations.action_plan
+                .map(
+                  (a) =>
+                    `<div style="margin-bottom:16px;padding:12px;background:#f9fafb;border-left:4px solid #1a9e5c;border-radius:4px;">
+                    <div style="font-weight:bold;margin-bottom:4px;">P${a.priority} - ${a.action}</div>
+                    <div style="font-size:12px;color:#666;margin-bottom:8px;">${a.rationale}</div>
+                    <div style="font-size:11px;background:#e8f5e9;padding:8px;border-radius:3px;color:#1a5e3c;"><strong>Cible:</strong> ${a.target}</div>
+                  </div>`,
+                )
+                .join("");
+              document.getElementById("actionPlanBody").innerHTML = actionHtml;
+            }
+
+            function buildScenarios(scenarios) {
+              if (!scenarios || !scenarios.zones) return;
+
+              let rows = Object.entries(scenarios.zones)
+                .map(([zone, data]) => {
+                  const m75 = data.magnitude_scenarios["M7.5"];
+                  return `<tr>
+                    <td><strong>${zone}</strong></td>
+                    <td>${data.capital_B.toFixed(1)}</td>
+                    <td>${data.magnitude_scenarios["M6.5"].loss_50yr_B.toFixed(1)}</td>
+                    <td>${data.magnitude_scenarios["M7.0"].loss_100yr_B.toFixed(1)}</td>
+                    <td>${m75.loss_250yr_B.toFixed(1)}</td>
+                    <td style="color:#dc2626;font-weight:bold;">${m75.loss_ratio_250yr_%.toFixed(1)}%</td>
+                  </tr>`;
+                })
+                .join("");
+              document.getElementById("scenariosTableBody").innerHTML = rows;
+
+              // M7.5 Chart
+              const m75Data = Object.entries(scenarios.zones).map(([zone, data]) => ({
+                zone: zone.replace("Zone ", ""),
+                loss: data.magnitude_scenarios["M7.5"].loss_250yr_B,
+              }));
+
+              new Chart("m75Chart", {
+                type: "bar",
+                data: {
+                  labels: m75Data.map((d) => d.zone),
+                  datasets: [
+                    {
+                      label: "Perte M7.5 (250Y)",
+                      data: m75Data.map((d) => d.loss),
+                      backgroundColor: ["#22c55e", "#84cc16", "#eab308", "#f97316", "#ef4444"],
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: { y: { beginAtZero: true } },
+                },
+              });
+
+              // EP Curve
+              const allLosses = Object.entries(scenarios.zones).flatMap(([zone, data]) => [
+                data.magnitude_scenarios["M6.5"].loss_50yr_B,
+                data.magnitude_scenarios["M7.0"].loss_100yr_B,
+                data.magnitude_scenarios["M7.5"].loss_250yr_B,
+              ]);
+              allLosses.sort((a, b) => b - a);
+              const probs = allLosses.map((l, i) => (1 / (i + 1)) * 100);
+
+              new Chart("epCurveMulti", {
                 type: "line",
-                borderColor: "#64748b",
-                borderDash: [5, 4],
-                borderWidth: 1.5,
-                pointRadius: 0,
-                fill: false,
-              },
-            ],
-          },
-          options: { ...baseOpts({ x: { grid: { display: false } } }) },
-        });
+                data: {
+                  labels: allLosses.map((l) => l.toFixed(0)),
+                  datasets: [
+                    {
+                      label: "Exceedance Probability",
+                      data: probs,
+                      borderColor: "#ef4444",
+                      tension: 0.4,
+                      fill: true,
+                      backgroundColor: "rgba(239,68,68,0.1)",
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: true } },
+                },
+              });
+            }
 
-        new Chart("exposureBar", {
-          type: "bar",
-          data: {
-            labels: [
-              "Alger",
-              "Oran",
-              "Blida",
-              "Tizi O.",
-              "Sétif",
-              "Béjaïa",
-              "Const.",
-              "Boumerdès",
-            ],
-            datasets: [
-              {
-                data: [87.4, 71.8, 62.1, 52.6, 41.2, 38.9, 45.6, 38.2],
-                backgroundColor: [
-                  "#f97316",
-                  "#f97316",
-                  "#f97316",
-                  "#ef4444",
-                  "#f97316",
-                  "#f97316",
-                  "#eab308",
-                  "#ef4444",
-                ],
-                borderWidth: 0,
-                borderRadius: 4,
-              },
-            ],
-          },
-          options: { ...baseOpts(), indexAxis: "y" },
-        });
+            function buildIndustrial(industrial) {
+              if (!industrial) return;
 
-        new Chart("epCurve", {
-          type: "line",
-          data: {
-            labels: [
-              "10 ans",
-              "25 ans",
-              "50 ans",
-              "100 ans",
-              "200 ans",
-              "250 ans",
-              "500 ans",
-            ],
-            datasets: [
-              {
-                label: "PML (Mds)",
-                data: [12, 28, 52, 88, 152, 178, 212],
-                borderColor: "#ef4444",
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true,
-                backgroundColor: "rgba(239,68,68,0.06)",
-                pointRadius: 3,
-                pointBackgroundColor: "#ef4444",
-              },
-              {
-                label: "Rétention max",
-                data: Array(7).fill(85),
-                borderColor: "#94a3b8",
-                borderDash: [6, 4],
-                borderWidth: 1.5,
-                pointRadius: 0,
-                fill: false,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "bottom",
-                labels: { boxWidth: 10, padding: 10 },
-              },
-            },
-            scales: {
-              x: { grid: { color: gColor } },
-              y: { grid: { color: gColor } },
-            },
-          },
-        });
+              document.getElementById("industrialCapital").textContent =
+                industrial.total_industrial_capital_B.toFixed(1) + " Mds";
+              document.getElementById("industrialCount").textContent = industrial.top_30_industrial_exposures.length;
 
-        new Chart("lossBar", {
-          type: "bar",
-          data: {
-            labels: ["Zone 0", "Zone I", "Zone IIa", "Zone IIb", "Zone III"],
-            datasets: [
-              {
-                data: [8, 22, 48, 128, 212],
-                backgroundColor: [
-                  "#22c55e",
-                  "#84cc16",
-                  "#eab308",
-                  "#f97316",
-                  "#ef4444",
-                ],
-                borderWidth: 0,
-                borderRadius: 4,
-              },
-            ],
-          },
-          options: { ...baseOpts({ x: { grid: { display: false } } }) },
-        });
+              // Zone chart
+              const indByZone = industrial.industrial_by_zone;
+              new Chart("industrialZoneChart", {
+                type: "doughnut",
+                data: {
+                  labels: Object.keys(indByZone),
+                  datasets: [
+                    {
+                      data: Object.values(indByZone),
+                      backgroundColor: ["#22c55e", "#84cc16", "#eab308", "#f97316", "#ef4444"],
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { position: "bottom" } },
+                },
+              });
 
-        const seismoData = [
-          0, 0, 0.8, 0, 0, 1.2, 0, 0, 0, 2.1, 0, 0, 0.5, 0, 0, 0, 1.8, 0, 0.3,
-          0, 0, 0, 1.1, 0,
-        ];
-        new Chart("seismoChart", {
-          type: "bar",
-          data: {
-            labels: Array.from({ length: 24 }, (_, i) => i + "h"),
-            datasets: [
-              {
-                data: seismoData,
-                backgroundColor: seismoData.map((v) =>
-                  v > 1.5 ? "#ef4444" : v > 0.8 ? "#f97316" : "#22c55e",
+              // Top 30 table
+              let indRows = industrial.top_30_industrial_exposures
+                .map(
+                  (f, i) =>
+                    `<tr>
+                    <td>${i + 1}</td>
+                    <td>${f.wilaya}</td>
+                    <td>${f.commune}</td>
+                    <td><span class="badge badge-${f.zone === "III" ? "red" : f.zone?.startsWith("II") ? "orange" : "green"}">${f.zone}</span></td>
+                    <td style="text-align:right;font-weight:bold;">${f.capital_B.toFixed(1)}</td>
+                    <td><span class="badge badge-${f.risk_flag === "CRITICAL" ? "red" : f.risk_flag === "HIGH" ? "orange" : "green"}">${f.risk_flag}</span></td>
+                    <td style="font-size:10px;">${f.catastrophe_trigger}</td>
+                  </tr>`,
+                )
+                .join("");
+              document.getElementById("industrialTableBody").innerHTML = indRows;
+
+              // Mitigation
+              let mitHtml = industrial.risk_mitigation
+                .map(
+                  (m) =>
+                    `<div style="margin-bottom:12px;padding:10px;background:#fff3cd;border-left:3px solid #ff9800;border-radius:3px;">
+                    <div style="font-weight:bold;margin-bottom:4px;">${m.measure}</div>
+                    <div style="font-size:11px;color:#666;margin-bottom:6px;">Champ: ${m.scope}</div>
+                    <div style="font-size:11px;color:#d97706;">Impact: ${m.impact}</div>
+                  </div>`,
+                )
+                .join("");
+              document.getElementById("mitigationBody").innerHTML = mitHtml;
+            }
+
+            /* ── CHARTS ───────────────────────────── */
+            function initCharts() {
+              new Chart("catChart", {
+                type: "doughnut",
+                data: {
+                  labels: ["Résidentiel", "Commercial", "Industriel", "Autre"],
+                  datasets: [
+                    {
+                      data: [387, 218, 162, 80],
+                      backgroundColor: ["#1a9e5c", "#3b82f6", "#f97316", "#94a3b8"],
+                      borderWidth: 0,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "bottom",
+                      labels: {
+                        padding: 14,
+                        boxWidth: 10,
+                        font: { family: "'Plus Jakarta Sans'" },
+                      },
+                    },
+                  },
+                },
+              });
+
+              new Chart("cumulChart", {
+                type: "doughnut",
+                data: {
+                  labels: ["Zone IIb + III", "Autres zones"],
+                  datasets: [
+                    {
+                      data: [74, 26],
+                      backgroundColor: ["#ef4444", "#e4ece5"],
+                      borderWidth: 0,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "bottom",
+                      labels: { padding: 10, boxWidth: 10 },
+                    },
+                  },
+                },
+              });
+
+              const months = [
+                "Mai",
+                "Jun",
+                "Jul",
+                "Aoû",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Déc",
+                "Jan",
+                "Fév",
+                "Mar",
+                "Avr",
+              ];
+              new Chart("trendChart", {
+                type: "line",
+                data: {
+                  labels: months,
+                  datasets: [
+                    {
+                      data: [
+                        710, 718, 724, 729, 735, 742, 748, 756, 763, 769, 778, 784,
+                      ],
+                      borderColor: "#1a9e5c",
+                      borderWidth: 2,
+                      tension: 0.4,
+                      pointRadius: 0,
+                      fill: true,
+                      backgroundColor: "rgba(26,158,92,0.06)",
+                    },
+                  ],
+                },
+                options: { ...baseOpts() },
+              });
+
+              new Chart("ratioChart", {
+                type: "bar",
+                data: {
+                  labels: ["Z.0", "Z.I", "Z.IIa", "Z.IIb", "Z.III"],
+                  datasets: [
+                    {
+                      label: "Capital",
+                      data: [102, 68, 152, 322, 203],
+                      backgroundColor: [
+                        "#22c55e",
+                        "#84cc16",
+                        "#eab308",
+                        "#f97316",
+                        "#ef4444",
+                      ],
+                      borderWidth: 0,
+                      borderRadius: 4,
+                    },
+                    {
+                      label: "Rétention",
+                      data: Array(5).fill(85),
+                      type: "line",
+                      borderColor: "#64748b",
+                      borderDash: [5, 4],
+                      borderWidth: 1.5,
+                      pointRadius: 0,
+                      fill: false,
+                    },
+                  ],
+                },
+                options: { ...baseOpts({ x: { grid: { display: false } } }) },
+              });
+
+              new Chart("exposureBar", {
+                type: "bar",
+                data: {
+                  labels: [
+                    "Alger",
+                    "Oran",
+                    "Blida",
+                    "Tizi O.",
+                    "Sétif",
+                    "Béjaïa",
+                    "Const.",
+                    "Boumerdès",
+                  ],
+                  datasets: [
+                    {
+                      data: [87.4, 71.8, 62.1, 52.6, 41.2, 38.9, 45.6, 38.2],
+                      backgroundColor: [
+                        "#f97316",
+                        "#f97316",
+                        "#f97316",
+                        "#ef4444",
+                        "#f97316",
+                        "#f97316",
+                        "#eab308",
+                        "#ef4444",
+                      ],
+                      borderWidth: 0,
+                      borderRadius: 4,
+                    },
+                  ],
+                },
+                options: { ...baseOpts(), indexAxis: "y" },
+              });
+
+              new Chart("epCurve", {
+                type: "line",
+                data: {
+                  labels: [
+                    "10 ans",
+                    "25 ans",
+                    "50 ans",
+                    "100 ans",
+                    "200 ans",
+                    "250 ans",
+                    "500 ans",
+                  ],
+                  datasets: [
+                    {
+                      label: "PML (Mds)",
+                      data: [12, 28, 52, 88, 152, 178, 212],
+                      borderColor: "#ef4444",
+                      borderWidth: 2,
+                      tension: 0.4,
+                      fill: true,
+                      backgroundColor: "rgba(239,68,68,0.06)",
+                      pointRadius: 3,
+                      pointBackgroundColor: "#ef4444",
+                    },
+                    {
+                      label: "Rétention max",
+                      data: Array(7).fill(85),
+                      borderColor: "#94a3b8",
+                      borderDash: [6, 4],
+                      borderWidth: 1.5,
+                      pointRadius: 0,
+                      fill: false,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "bottom",
+                      labels: { boxWidth: 10, padding: 10 },
+                    },
+                  },
+                  scales: {
+                    x: { grid: { color: gColor } },
+                    y: { grid: { color: gColor } },
+                  },
+                },
+              });
+
+              new Chart("lossBar", {
+                type: "bar",
+                data: {
+                  labels: ["Zone 0", "Zone I", "Zone IIa", "Zone IIb", "Zone III"],
+                  datasets: [
+                    {
+                      data: [8, 22, 48, 128, 212],
+                      backgroundColor: [
+                        "#22c55e",
+                        "#84cc16",
+                        "#eab308",
+                        "#f97316",
+                        "#ef4444",
+                      ],
+                      borderWidth: 0,
+                      borderRadius: 4,
+                    },
+                  ],
+                },
+                options: { ...baseOpts({ x: { grid: { display: false } } }) },
+              });
+
+              const seismoData = [
+                0, 0, 0.8, 0, 0, 1.2, 0, 0, 0, 2.1, 0, 0, 0.5, 0, 0, 0, 1.8, 0, 0.3,
+                0, 0, 0, 1.1, 0,
+              ];
+              new Chart("seismoChart", {
+                type: "bar",
+                data: {
+                  labels: Array.from({ length: 24 }, (_, i) => i + "h"),
+                  datasets: [
+                    {
+                      data: seismoData,
+                      backgroundColor: seismoData.map((v) =>
+                        v > 1.5 ? "#ef4444" : v > 0.8 ? "#f97316" : "#22c55e",
+                      ),
+                      borderWidth: 0,
+                      borderRadius: 2,
+                    },
+                  ],
+                },
+                options: {
+                  ...baseOpts({
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
+                    y: {
+                      title: { display: true, text: "Magnitude", font: { size: 9 } },
+                    },
+                  }),
+                },
+              });
+
+              new Chart("kpiChart", {
+                type: "bar",
+                data: {
+                  labels: [
+                    "Concentration IIb+III",
+                    "PML/SI (%)",
+                    "Part Zone 0+I",
+                    "Couverture IoT",
+                  ],
+                  datasets: [
+                    {
+                      label: "Situation 2026",
+                      data: [74, 25, 20, 89],
+                      backgroundColor: "rgba(239,68,68,0.7)",
+                      borderWidth: 0,
+                      borderRadius: 4,
+                    },
+                    {
+                      label: "Cible 2028",
+                      data: [55, 16, 35, 95],
+                      backgroundColor: "rgba(26,158,92,0.7)",
+                      borderWidth: 0,
+                      borderRadius: 4,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "bottom",
+                      labels: { boxWidth: 10, padding: 12 },
+                    },
+                  },
+                  scales: {
+                    x: { grid: { display: false } },
+                    y: {
+                      grid: { color: gColor },
+                      max: 100,
+                      ticks: { callback: (v) => v + "%" },
+                    },
+                  },
+                },
+              });
+            }
+
+            /* ── TABS ────────────────────────────── */
+            const TAB_TITLES = {
+              overview: "Vue d'ensemble",
+              portfolio: "Portefeuille",
+              map: "Cartographie RPA · SIG",
+              pml: "Analyse PML",
+              reco: "Recommandations stratégiques",
+            };
+
+            document.querySelectorAll(".nav-item[data-tab]").forEach((item) => {
+              item.addEventListener("click", () => {
+                document
+                  .querySelectorAll(".nav-item")
+                  .forEach((n) => n.classList.remove("active"));
+                document
+                  .querySelectorAll(".panel")
+                  .forEach((p) => p.classList.remove("active"));
+                item.classList.add("active");
+                const tab = item.dataset.tab;
+                document.getElementById("tab-" + tab).classList.add("active");
+                document.getElementById("topbar-title").textContent =
+                  TAB_TITLES[tab] || tab;
+                if (tab === "map") initMap();
+              });
+            });
+
+            document
+              .getElementById("filterZone")
+              .addEventListener("change", (e) =>
+                buildPortfolioTable(
+                  e.target.value,
+                  document.getElementById("filterCat").value,
                 ),
-                borderWidth: 0,
-                borderRadius: 2,
-              },
-            ],
-          },
-          options: {
-            ...baseOpts({
-              x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
-              y: {
-                title: { display: true, text: "Magnitude", font: { size: 9 } },
-              },
-            }),
-          },
-        });
+              );
+            document
+              .getElementById("filterCat")
+              .addEventListener("change", (e) =>
+                buildPortfolioTable(
+                  document.getElementById("filterZone").value,
+                  e.target.value,
+                ),
+              );
 
-        new Chart("kpiChart", {
-          type: "bar",
-          data: {
-            labels: [
-              "Concentration IIb+III",
-              "PML/SI (%)",
-              "Part Zone 0+I",
-              "Couverture IoT",
-            ],
-            datasets: [
-              {
-                label: "Situation 2026",
-                data: [74, 25, 20, 89],
-                backgroundColor: "rgba(239,68,68,0.7)",
-                borderWidth: 0,
-                borderRadius: 4,
-              },
-              {
-                label: "Cible 2028",
-                data: [55, 16, 35, 95],
-                backgroundColor: "rgba(26,158,92,0.7)",
-                borderWidth: 0,
-                borderRadius: 4,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "bottom",
-                labels: { boxWidth: 10, padding: 12 },
-              },
-            },
-            scales: {
-              x: { grid: { display: false } },
-              y: {
-                grid: { color: gColor },
-                max: 100,
-                ticks: { callback: (v) => v + "%" },
-              },
-            },
-          },
-        });
-      }
-
-      /* ── TABS ────────────────────────────── */
-      const TAB_TITLES = {
-        overview: "Vue d'ensemble",
-        portfolio: "Portefeuille",
-        map: "Cartographie RPA · SIG",
-        pml: "Analyse PML",
-        reco: "Recommandations stratégiques",
-      };
-
-      document.querySelectorAll(".nav-item[data-tab]").forEach((item) => {
-        item.addEventListener("click", () => {
-          document
-            .querySelectorAll(".nav-item")
-            .forEach((n) => n.classList.remove("active"));
-          document
-            .querySelectorAll(".panel")
-            .forEach((p) => p.classList.remove("active"));
-          item.classList.add("active");
-          const tab = item.dataset.tab;
-          document.getElementById("tab-" + tab).classList.add("active");
-          document.getElementById("topbar-title").textContent =
-            TAB_TITLES[tab] || tab;
-          if (tab === "map") initMap();
-        });
-      });
-
-      document
-        .getElementById("filterZone")
-        .addEventListener("change", (e) =>
-          buildPortfolioTable(
-            e.target.value,
-            document.getElementById("filterCat").value,
-          ),
-        );
-      document
-        .getElementById("filterCat")
-        .addEventListener("change", (e) =>
-          buildPortfolioTable(
-            document.getElementById("filterZone").value,
-            e.target.value,
-          ),
-        );
-
-      /* ── BOOT ────────────────────────────── */
-      buildZoneBar();
-      buildTop5();
-      buildAlerts();
-      buildPortfolioTable();
-      buildHeatmap();
-      buildSimulator();
-      buildRecs();
-      loadExtendedAnalysis();
-      initCharts();
+            /* ── BOOT ────────────────────────────── */
+            buildZoneBar();
+            buildTop5();
+            buildAlerts();
+            buildPortfolioTable();
+            buildHeatmap();
+            buildSimulator();
+            buildRecs();
+            loadExtendedAnalysis();
+            loadCahierAnalysis();
+            initCharts();
     </script>
   </body>
 </html>
