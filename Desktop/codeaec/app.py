@@ -1,18 +1,21 @@
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import json
 
-st.set_page_config(page_title="GAM — Analyse Sismique CATNAT", page_icon="🏔️", layout="wide")
+st.set_page_config(page_title="GAM — Risk Management Engine", page_icon="🏔️", layout="wide")
 
 st.markdown("""<style>
 .metric-card{background:#f8f9fa;border-radius:10px;padding:16px 20px;margin-bottom:8px}
 .metric-label{font-size:12px;color:#666;margin-bottom:4px}
 .metric-value{font-size:26px;font-weight:700;color:#1a1a1a}
 .metric-sub{font-size:11px;color:#999;margin-top:2px}
+.action-card{padding:12px;border-radius:8px;margin-bottom:10px}
+.action-high{background:#FFEBEE;border-left:4px solid #E53935}
+.action-medium{background:#FFF3E0;border-left:4px solid #FF9800}
+.action-low{background:#E8F5E9;border-left:4px solid #43A047}
 </style>""", unsafe_allow_html=True)
 
 ZONE_COLORS = {'Zone 0':'#43A047','Zone I':'#8BC34A','Zone IIa':'#FFC107','Zone IIb':'#FF9800','Zone III':'#E53935'}
@@ -49,6 +52,30 @@ def load_data():
     return df
 
 @st.cache_data
+def load_decision_data():
+    try:
+        decisions = pd.read_csv('decision_output_final.csv')
+        return decisions
+    except:
+        return None
+
+@st.cache_data
+def load_ceo_panel():
+    try:
+        with open('ceo_decision_panel.json','r',encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return None
+
+@st.cache_data
+def load_ai_log():
+    try:
+        with open('ai_underwriting_log.json','r',encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return None
+
+@st.cache_data
 def run_monte_carlo(cap3, cap2b, cap2a, cap1, cap0):
     np.random.seed(42)
     N = 10_000
@@ -70,12 +97,17 @@ def run_monte_carlo(cap3, cap2b, cap2a, cap1, cap0):
 
 try:
     df = load_data()
-except FileNotFoundError:
-    st.error(" gam_master_data.csv not found — put it in the SAME folder as app.py")
+    decisions = load_decision_data()
+    ceo_panel = load_ceo_panel()
+    ai_log = load_ai_log()
+except FileNotFoundError as e:
+    st.error(f"Missing data file: {e}")
     st.stop()
 
-# ── Sidebar ───────────────────────────────────────────────────
-st.sidebar.title("🔍 Filtres")
+# ════════════════════════════════════════════════════════════════
+# SECTION 0: SIDEBAR & FILTERS
+# ════════════════════════════════════════════════════════════════
+st.sidebar.title("🔍 Filters & Configuration")
 all_zones   = [z for z in ZONE_ORDER if z in df['ZONE_RPA'].values]
 sel_zones   = st.sidebar.multiselect("Zone RPA99", all_zones, default=all_zones)
 all_wil     = sorted(df['WILAYA'].dropna().unique())
@@ -83,21 +115,22 @@ sel_wil     = st.sidebar.multiselect("Wilaya", all_wil, default=all_wil[:12])
 all_types   = sorted(df['TYPE'].dropna().unique())
 sel_types   = st.sidebar.multiselect("Type", all_types, default=all_types)
 st.sidebar.markdown("---")
-st.sidebar.caption(f" {len(df):,} polices · 2023–2025")
+st.sidebar.caption(f"{len(df):,} policies · 2023–2025")
 
 mask = df['ZONE_RPA'].isin(sel_zones) & df['WILAYA'].isin(sel_wil) & df['TYPE'].isin(sel_types)
 dff  = df[mask].copy()
 
-# ── Title ─────────────────────────────────────────────────────
-st.title(" GAM — Tableau de Bord Sismique CATNAT")
-st.caption("Portefeuille garantie Tremblement de Terre · RPA99 · CatBoost AI · Monte Carlo 10 000 simulations")
-st.markdown("---")
-
 if len(dff) == 0:
-    st.warning("Aucun résultat — élargissez les filtres.")
+    st.warning("No results — expand filters.")
     st.stop()
 
-# ── KPIs ──────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════════
+# SECTION 1: OVERVIEW (Top KPIs)
+# ════════════════════════════════════════════════════════════════
+st.title("🏔️ GAM — Catastrophe Risk Management Engine")
+st.caption("Seismic Portfolio Analysis · RPA99 · AI Decision Support · Real-time Scenario Simulation")
+st.markdown("---")
+
 tot_cap   = dff['CAPITAL_ASSURE'].sum()
 tot_prime = dff['PRIME_NETTE'].sum()
 tot_pml   = dff['PML_EXPOSE'].sum()
@@ -105,11 +138,11 @@ hi_pct    = dff[dff['ZONE_RPA'].isin(['Zone III','Zone IIb'])]['CAPITAL_ASSURE']
 
 c1,c2,c3,c4,c5 = st.columns(5)
 for col, lbl, val, sub, color in [
-    (c1,"Polices",f"{len(dff):,}",f"sur {len(df):,}","#1a1a1a"),
-    (c2,"Capital assuré",f"{tot_cap/1e9:.1f} B","Milliards DZD","#1a1a1a"),
-    (c3,"PML estimé",f"{tot_pml/1e9:.1f} B","Perte max. probable","#B71C1C"),
-    (c4,"Zones risque élevé",f"{hi_pct:.1f}%","Capital IIb + III","#E65100"),
-    (c5,"Primes nettes",f"{tot_prime/1e6:.0f} M",f"Ratio {tot_prime/tot_cap*100:.3f}%","#1a1a1a"),
+    (c1,"Total Policies",f"{len(dff):,}",f"of {len(df):,}","#1a1a1a"),
+    (c2,"Capital Insured",f"{tot_cap/1e9:.1f}B","Billion DZD","#1a1a1a"),
+    (c3,"PML 99% Loss",f"{tot_pml/1e9:.1f}B","Worst case","#E53935"),
+    (c4,"High Risk %",f"{hi_pct:.1f}%","Zone IIb+III","#FF9800"),
+    (c5,"Annual Premium",f"{tot_prime/1e6:.0f}M",f"{tot_prime/tot_cap*100:.3f}% of cap","#1a1a1a"),
 ]:
     col.markdown(f"""<div class="metric-card"><div class="metric-label">{lbl}</div>
     <div class="metric-value" style="color:{color}">{val}</div>
@@ -117,11 +150,54 @@ for col, lbl, val, sub, color in [
 
 st.markdown("---")
 
-# ── Chart row 1 ───────────────────────────────────────────────
-cl, cr = st.columns(2)
+# ════════════════════════════════════════════════════════════════
+# SECTION 2: PORTFOLIO ACTIONS (Auto-generated from decisions)
+# ════════════════════════════════════════════════════════════════
+st.subheader("🚨 Portfolio Actions — Executive Summary")
+st.caption("Auto-generated strategic recommendations based on risk data analysis")
 
-with cl:
-    st.subheader("Capital par zone RPA99")
+if ceo_panel and 'actions' in ceo_panel:
+    cols = st.columns(min(3, len(ceo_panel['actions'])))
+    for idx, action in enumerate(ceo_panel['actions'][:3]):
+        with cols[idx % len(cols)]:
+            priority_class = 'action-high' if '[CRITICAL]' in action['priority'] else 'action-medium' if '[HIGH]' in action['priority'] else 'action-low'
+            st.markdown(f"""
+<div class="action-card {priority_class}">
+<strong>{action['priority']}</strong><br>
+{action['action']}<br>
+<small><em>{action['why']}</em></small><br>
+<small>→ {action['how']}</small>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# ════════════════════════════════════════════════════════════════
+# SECTION 3: RISK MAP & CONCENTRATION
+# ════════════════════════════════════════════════════════════════
+map_col, concentration_col = st.columns([2, 1])
+
+with map_col:
+    st.subheader("🗺️ Concentration Heat Map — Algérie")
+    md = dff.groupby(['WILAYA','ZONE_RPA'],dropna=False).agg(
+        Capital_B=('CAPITAL_ASSURE',lambda x:round(x.sum()/1e9,2)),
+        PML_B=('PML_EXPOSE',lambda x:round(x.sum()/1e9,2)),
+        Polices=('NUMERO_POLICE','count')).reset_index()
+    md['lat'] = md['WILAYA'].map(lambda w: WILAYA_COORDS.get(w,(None,None))[0])
+    md['lon'] = md['WILAYA'].map(lambda w: WILAYA_COORDS.get(w,(None,None))[1])
+    md = md.dropna(subset=['lat','lon'])
+    md = md[md['Capital_B']>0]
+    fig_map = px.scatter_mapbox(md,lat='lat',lon='lon',size='Capital_B',color='ZONE_RPA',
+        color_discrete_map=ZONE_COLORS,hover_name='WILAYA',
+        hover_data={'Capital_B':':.2f','PML_B':':.2f','Polices':True,'lat':False,'lon':False},
+        size_max=60,zoom=4.5,center={'lat':28.0,'lon':2.5},mapbox_style='carto-positron',
+        labels={'Capital_B':'Capital (B DZD)','PML_B':'PML (B DZD)','ZONE_RPA':'Zone RPA'})
+    fig_map.update_layout(height=400,margin=dict(l=0,r=0,t=0,b=0),
+        legend=dict(orientation='h',y=0,x=1,xanchor='right'))
+    st.plotly_chart(fig_map, use_container_width=True)
+
+with concentration_col:
+    st.subheader("Risk Distribution")
     za = dff.groupby('ZONE_RPA', dropna=False).agg(Cap=('CAPITAL_ASSURE',lambda x:round(x.sum()/1e9,1))).reset_index()
     za = za[za['ZONE_RPA'].isin(ZONE_ORDER)]
     za['s'] = za['ZONE_RPA'].map({z:i for i,z in enumerate(ZONE_ORDER)})
@@ -130,43 +206,71 @@ with cl:
                   color_discrete_map=ZONE_COLORS, text=za['Cap'].apply(lambda x:f"{x:.0f}B"),
                   labels={'Cap':'Capital (B DZD)','ZONE_RPA':''})
     fig1.update_traces(textposition='outside')
-    fig1.update_layout(showlegend=False,height=280,plot_bgcolor='rgba(0,0,0,0)',
+    fig1.update_layout(showlegend=False,height=300,plot_bgcolor='rgba(0,0,0,0)',
                        paper_bgcolor='rgba(0,0,0,0)',margin=dict(l=0,r=50,t=10,b=0))
     st.plotly_chart(fig1, use_container_width=True)
 
-with cr:
-    st.subheader("Top wilayas par exposition")
-    wa = dff.groupby(['WILAYA','ZONE_RPA'], dropna=False).agg(
-        Cap=('CAPITAL_ASSURE',lambda x:round(x.sum()/1e9,1))).reset_index()
-    wa = wa.sort_values('Cap',ascending=False).head(12)
-    fig2 = px.bar(wa, x='WILAYA', y='Cap', color='ZONE_RPA', color_discrete_map=ZONE_COLORS,
-                  labels={'Cap':'Capital (B DZD)','WILAYA':'','ZONE_RPA':'Zone'})
-    fig2.update_layout(height=280,plot_bgcolor='rgba(0,0,0,0)',paper_bgcolor='rgba(0,0,0,0)',
-                       margin=dict(l=0,r=0,t=10,b=0),
-                       xaxis=dict(tickangle=-30,tickfont=dict(size=9)),
-                       legend=dict(orientation='h',y=1.05,x=1,xanchor='right',font=dict(size=9)))
-    st.plotly_chart(fig2, use_container_width=True)
+st.markdown("---")
+
+# ════════════════════════════════════════════════════════════════
+# SECTION 4: COMMUNE-LEVEL DECISION TABLE
+# ════════════════════════════════════════════════════════════════
+st.subheader("📍 Commune-Level Risk Classification & Actions")
+st.caption("Actionable decisions for each high-risk commune (sorted by exposure)")
+
+if decisions is not None:
+    # Filter to selected wilayas/zones
+    dec_filtered = decisions[
+        (decisions['WILAYA'].isin(sel_wil)) & 
+        (decisions['ZONE_RPA'].isin(sel_zones))
+    ].sort_values('capital_B', ascending=False)
+    
+    # Create color-coded display
+    display_cols = ['WILAYA','COMMUNE','ZONE_RPA','capital_B','pml_B','DECISION','ACTION']
+    dec_display = dec_filtered[display_cols].head(30).copy()
+    dec_display.columns = ['Wilaya','Commune','Zone','Capital (B)','PML (B)','Decision','Action']
+    
+    # Create styled dataframe
+    def style_decision(val):
+        if 'REJECT' in str(val):
+            return 'background-color: #FFCDD2; font-weight: bold'
+        elif 'ADJUST' in str(val):
+            return 'background-color: #FFE0B2; font-weight: bold'
+        else:
+            return 'background-color: #C8E6C9; font-weight: bold'
+    
+    styled_df = dec_display.style.applymap(style_decision, subset=['Decision'])
+    st.dataframe(styled_df, use_container_width=True, height=500)
+    
+    stats_c1, stats_c2, stats_c3 = st.columns(3)
+    stats_c1.metric("REJECT Communes", f"{(dec_filtered['DECISION']=='REJECT').sum()}", "Stop new policies")
+    stats_c2.metric("ADJUST Communes", f"{(dec_filtered['DECISION']=='ADJUST').sum()}", "Premium adjustments")
+    stats_c3.metric("ACCEPT Communes", f"{(dec_filtered['DECISION']=='ACCEPT').sum()}", "Growth opportunities")
 
 st.markdown("---")
 
-# ── Chart row 2: Monte Carlo + Type + Ratio ───────────────────
-cm, ct = st.columns([3,2])
+# ════════════════════════════════════════════════════════════════
+# SECTION 5: MONTE CARLO & SCENARIO SIMULATION
+# ════════════════════════════════════════════════════════════════
+st.subheader("⚡ Scenario Simulation — What If Earthquake?")
 
-with cm:
-    st.subheader(" Monte Carlo — Distribution des pertes (10 000 ans)")
+scenario_col1, scenario_col2 = st.columns([2, 1])
+
+with scenario_col1:
+    st.caption("Monte Carlo 10,000-year loss distribution")
     zc = df.groupby('ZONE_RPA')['CAPITAL_ASSURE'].sum()
     losses = run_monte_carlo(
         zc.get('Zone III',0), zc.get('Zone IIb',0), zc.get('Zone IIa',0),
         zc.get('Zone I',0),   zc.get('Zone 0',0))
     p90, p99, avg = np.percentile(losses,90), np.percentile(losses,99), np.mean(losses)
-    st.caption(f"**PML 99% = {p99/1e9:.1f} B DZD** · Ratio PML/Primes = {p99/df['PRIME_NETTE'].sum():.0f}x")
+    
     counts, edges = np.histogram(losses/1e9, bins=80)
     mids = [(edges[i]+edges[i+1])/2 for i in range(len(counts))]
     bcolors = ['#E53935' if m>=p99/1e9 else '#FF9800' if m>=p90/1e9 else '#90A4AE' for m in mids]
     fig_mc = go.Figure()
     fig_mc.add_trace(go.Bar(x=mids,y=counts,marker_color=bcolors,
-                            hovertemplate='Perte: %{x:.1f}B<br>Années: %{y}<extra></extra>'))
-    for x,color,txt,pos in [(avg/1e9,'#43A047',f"Moy {avg/1e9:.1f}B","top right"),
+                            hovertemplate='Loss: %{x:.1f}B<br>Years: %{y}<extra></extra>'))
+    for x,color,txt,pos in [(avg/1e9,'#43A047',f"Avg {avg/1e9:.1f}B","top right"),
                              (p90/1e9,'#FF9800',f"PML90% {p90/1e9:.1f}B","top right"),
                              (p99/1e9,'#E53935',f"PML99% {p99/1e9:.1f}B","top left")]:
         fig_mc.add_vline(x=x,line_color=color,line_width=2+(x==p99/1e9)*0.5,
@@ -174,75 +278,137 @@ with cm:
                          annotation_text=txt,annotation_position=pos,
                          annotation_font=dict(size=10,color=color))
     fig_mc.update_layout(height=300,showlegend=False,
-                         xaxis_title='Perte annuelle (B DZD)',yaxis_title="Nb d'années",
+                         xaxis_title='Annual Loss (B DZD)',yaxis_title="Years (out of 10,000)",
                          plot_bgcolor='rgba(0,0,0,0)',paper_bgcolor='rgba(0,0,0,0)',
                          margin=dict(l=0,r=20,t=20,b=0))
     st.plotly_chart(fig_mc, use_container_width=True)
-    m1,m2,m3 = st.columns(3)
-    m1.metric("PML 99%", f"{p99/1e9:.1f} B DZD")
-    m2.metric("Perte moyenne", f"{avg/1e9:.1f} B DZD")
-    m3.metric("PML / Primes", f"{p99/df['PRIME_NETTE'].sum():.0f}x", delta="Insuffisant", delta_color='inverse')
 
-with ct:
-    st.subheader("Par type de risque")
-    ta = dff.groupby('TYPE',dropna=False)['CAPITAL_ASSURE'].sum().reset_index()
-    ta.columns = ['Type','Capital']
-    ta = ta[ta['Capital']>0]
-    ta['Capital_B'] = ta['Capital']/1e9
-    fig_t = px.pie(ta,values='Capital_B',names='Type',hole=0.45,
-                   color='Type',color_discrete_map={'Bien Immobilier':'#5C6BC0',
-                   'Installation Commerciale':'#26A69A','Installation Industrielle':'#FFA726'})
-    fig_t.update_traces(textinfo='percent+label',
-                        hovertemplate='%{label}<br>%{value:.1f}B<br>%{percent}<extra></extra>')
-    fig_t.update_layout(height=230,showlegend=False,
-                        plot_bgcolor='rgba(0,0,0,0)',paper_bgcolor='rgba(0,0,0,0)',margin=dict(l=0,r=0,t=0,b=0))
-    st.plotly_chart(fig_t, use_container_width=True)
+with scenario_col2:
+    st.subheader("Targeted Scenarios")
+    scenario_zone = st.selectbox("Select Zone:", ZONE_ORDER)
+    scenario_wilaya = st.selectbox("Or Select Wilaya:", sorted(df['WILAYA'].unique()))
+    
+    # Calculate scenario impact
+    if scenario_zone:
+        zone_cap = df[df['ZONE_RPA']==scenario_zone]['CAPITAL_ASSURE'].sum()
+        zone_pml = df[df['ZONE_RPA']==scenario_zone]['PML_EXPOSE'].sum()
+        pct_total = zone_cap / df['CAPITAL_ASSURE'].sum() * 100
+        
+        st.metric("Zone Capital", f"{zone_cap/1e9:.1f}B DZD")
+        st.metric("% of Portfolio", f"{pct_total:.1f}%")
+        st.metric("PML Exposure", f"{zone_pml/1e9:.1f}B DZD")
+        st.info(f"If {scenario_zone} earthquake → Loss ~{zone_pml/1e9:.1f}B DZD")
 
-    st.subheader("Ratio Prime / Capital")
-    ra = df.groupby('ZONE_RPA',dropna=False).agg(cap=('CAPITAL_ASSURE','sum'),prime=('PRIME_NETTE','sum')).reset_index()
+st.markdown("---")
+
+# ════════════════════════════════════════════════════════════════
+# SECTION 6: PREMIUM ADEQUACY
+# ════════════════════════════════════════════════════════════════
+st.subheader("💰 Premium Adequacy Analysis")
+st.caption("Recommended vs. Current Premium Rates by Risk Zone")
+
+prem_col1, prem_col2 = st.columns(2)
+
+with prem_col1:
+    ra = df.groupby('ZONE_RPA',dropna=False).agg(
+        cap=('CAPITAL_ASSURE','sum'),
+        prime=('PRIME_NETTE','sum'),
+        pml=('PML_EXPOSE','sum')).reset_index()
     ra = ra[ra['ZONE_RPA'].isin(ZONE_ORDER)]
     ra['ratio'] = ra['prime']/ra['cap']*100
+    ra['required'] = ra['pml']/ra['cap']*100  # PML-based required premium
+    ra['gap'] = ra['required'] - ra['ratio']
     ra['s'] = ra['ZONE_RPA'].map({z:i for i,z in enumerate(ZONE_ORDER)})
     ra = ra.sort_values('s')
-    fig_r = px.bar(ra,x='ZONE_RPA',y='ratio',color='ZONE_RPA',color_discrete_map=ZONE_COLORS,
-                   text=ra['ratio'].apply(lambda x:f"{x:.3f}%"),labels={'ratio':'Ratio P/C (%)','ZONE_RPA':''})
-    fig_r.update_traces(textposition='outside',textfont_size=9)
-    fig_r.update_layout(height=190,showlegend=False,plot_bgcolor='rgba(0,0,0,0)',
-                        paper_bgcolor='rgba(0,0,0,0)',margin=dict(l=0,r=0,t=20,b=0))
-    st.plotly_chart(fig_r, use_container_width=True)
+    
+    fig_prem = go.Figure()
+    fig_prem.add_trace(go.Bar(x=ra['ZONE_RPA'], y=ra['ratio'], name='Current Premium', 
+                              marker_color='#90CAF9'))
+    fig_prem.add_trace(go.Bar(x=ra['ZONE_RPA'], y=ra['required'], name='Required Premium',
+                              marker_color='#E53935'))
+    fig_prem.update_layout(barmode='group', height=300, title="Current vs Required Premium Rates (%)",
+                          plot_bgcolor='rgba(0,0,0,0)',paper_bgcolor='rgba(0,0,0,0)',
+                          xaxis_title='Zone RPA99', yaxis_title='Premium Rate (%)')
+    st.plotly_chart(fig_prem, use_container_width=True)
+
+with prem_col2:
+    st.write("**Premium Gap Analysis**")
+    gap_data = ra[['ZONE_RPA','ratio','required','gap']].copy()
+    gap_data.columns = ['Zone','Current %','Required %','Gap %']
+    gap_data['Current %'] = gap_data['Current %'].apply(lambda x: f"{x:.3f}%")
+    gap_data['Required %'] = gap_data['Required %'].apply(lambda x: f"{x:.3f}%")
+    gap_data['Gap %'] = gap_data['Gap %'].apply(lambda x: f"{x:+.3f}%" if abs(x) > 0.01 else "✓ OK")
+    st.dataframe(gap_data, use_container_width=True, hide_index=True)
+    st.warning(f"**Action Required:** Zone III is underpriced by ~{ra[ra['ZONE_RPA']=='Zone III']['gap'].values[0]:.2f}% — implement immediate rate increase")
 
 st.markdown("---")
 
-# ── Map ───────────────────────────────────────────────────────
-st.subheader("🗺️ Carte de concentration — Algérie")
-md = dff.groupby(['WILAYA','ZONE_RPA'],dropna=False).agg(
-    Capital_B=('CAPITAL_ASSURE',lambda x:round(x.sum()/1e9,2)),
-    PML_B=('PML_EXPOSE',lambda x:round(x.sum()/1e9,2)),
-    Polices=('NUMERO_POLICE','count')).reset_index()
-md['lat'] = md['WILAYA'].map(lambda w: WILAYA_COORDS.get(w,(None,None))[0])
-md['lon'] = md['WILAYA'].map(lambda w: WILAYA_COORDS.get(w,(None,None))[1])
-md = md.dropna(subset=['lat','lon'])
-md = md[md['Capital_B']>0]
-fig_map = px.scatter_mapbox(md,lat='lat',lon='lon',size='Capital_B',color='ZONE_RPA',
-    color_discrete_map=ZONE_COLORS,hover_name='WILAYA',
-    hover_data={'Capital_B':':.2f','PML_B':':.2f','Polices':True,'lat':False,'lon':False},
-    size_max=60,zoom=4.5,center={'lat':28.0,'lon':2.5},mapbox_style='carto-positron',
-    labels={'Capital_B':'Capital (B DZD)','PML_B':'PML (B DZD)','ZONE_RPA':'Zone RPA'})
-fig_map.update_layout(height=500,margin=dict(l=0,r=0,t=0,b=0),
-    legend=dict(orientation='h',y=0,x=1,xanchor='right'))
-st.plotly_chart(fig_map, use_container_width=True)
+# ════════════════════════════════════════════════════════════════
+# SECTION 7: AI UNDERWRITING ASSISTANT
+# ════════════════════════════════════════════════════════════════
+st.subheader("🤖 AI Underwriting Assistant — New Policy Evaluator")
+st.caption("Instant decision support: ACCEPT / ADJUST / REJECT")
+
+with st.expander("📋 View AI Decision Examples from Portfolio", expanded=False):
+    if ai_log:
+        for i, decision in enumerate(ai_log, 1):
+            cols = st.columns([2, 3])
+            with cols[0]:
+                status_icon = "✅" if decision['decision'] == 'ACCEPT' else "⚠️" if decision['decision'] == 'ADJUST' else "❌"
+                st.markdown(f"**{status_icon} {decision['decision']}**")
+            with cols[1]:
+                st.caption(f"{decision.get('commune', 'Unknown')} · {decision.get('zone', 'N/A')}")
+            st.write(decision.get('reasoning', 'N/A'))
+            st.divider()
+
+# Interactive policy evaluator
+st.write("**➕ Evaluate New Policy**")
+eval_col1, eval_col2, eval_col3 = st.columns(3)
+
+with eval_col1:
+    new_commune = st.selectbox("Commune:", sorted(df['COMMUNE'].unique()), key='new_commune')
+with eval_col2:
+    new_capital = st.number_input("Capital (Billion DZD):", min_value=0.1, max_value=100.0, value=1.0, step=0.5)
+with eval_col3:
+    st.write("")  # spacing
+    if st.button("🔍 Evaluate Policy", use_container_width=True):
+        # Find commune info
+        commune_data = df[df['COMMUNE'] == new_commune]
+        if len(commune_data) > 0:
+            comm_zone = commune_data['ZONE_RPA'].mode()[0] if len(commune_data) > 0 else "Unknown"
+            comm_wilaya = commune_data['WILAYA'].mode()[0] if len(commune_data) > 0 else "Unknown"
+            existing_cap = commune_data['CAPITAL_ASSURE'].sum() / 1e9
+            
+            # Simple decision logic
+            if comm_zone in ['Zone III', 'Zone IIb'] and new_capital > 2:
+                decision_result = "ADJUST"
+                recommendation = f"Increase premium by 25-30% due to {comm_zone} and size"
+            elif comm_zone == 'Zone III':
+                decision_result = "REJECT"
+                recommendation = f"Zone III is overconcentrated. STOP new policies"
+            elif comm_zone in ['Zone 0', 'Zone I']:
+                decision_result = "ACCEPT"
+                recommendation = f"Low-risk zone. EXPAND business here"
+            else:
+                decision_result = "ADJUST"
+                recommendation = f"Standard underwriting. Monitor exposure"
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Zone", comm_zone)
+            with col2:
+                st.metric("Existing Capital", f"{existing_cap:.1f}B")
+            with col3:
+                st.metric("Wilaya Concentration", f"{existing_cap/df['CAPITAL_ASSURE'].sum()*100:.1f}%")
+            
+            st.markdown(f"### Decision: **{decision_result}**")
+            st.info(recommendation)
+        else:
+            st.error("Commune not found")
 
 st.markdown("---")
 
-
-st.subheader(" Recommandations stratégiques")
-r1,r2,r3 = st.columns(3)
-with r1:
-    st.error("** Surconcentration — ALGER**\n\nALGER = 251 Mrd DZD en Zone III = 28.4% du portefeuille.\n\n→ Plafonner cumuls par commune à 50 Mrd DZD\n→ Refuser polices industrielles >500M sans réassurance")
-with r2:
-    st.warning("** Tarification inadaptée**\n\nZone III 0.058% vs Zone I 0.033% — écart = 1.8x seulement, doit être 5x.\n\n→ Appliquer facteur 5.0x en Zone III\n→ Révision tarifaire immédiate")
-with r3:
-    st.success("** Croissance — zones sous-représentées**\n\nZone 0+I = 11.7% seulement. Adrar, Bechar, Ouargla = risque minimal.\n\n→ Développer ces wilayas\n→ Objectif 25% du portefeuille en 3 ans")
-
-st.markdown("---")
-st.caption("GAM · CATNAT 2023–2025 · RPA99/2003 · CatBoost AI · Monte Carlo 10 000 ans")
+# ════════════════════════════════════════════════════════════════
+# FOOTER
+# ════════════════════════════════════════════════════════════════
+st.caption("GAM — Catastrophe Risk Engine · RPA99/2003 · CatBoost AI · Monte Carlo 10,000 scenarios · Decision Intelligence Layer")
