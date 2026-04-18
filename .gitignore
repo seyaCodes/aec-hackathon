@@ -1,0 +1,43 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data & Outputs (large files)
+*.npy
+*.pkl
+*.pickle
+*.parquet
+catboost_info/
+
+# Streamlit
+.streamlit/
+.streamlitrc
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Logs
+*.log
+output_*.log
+
+# Temp
+*.tmp
+*.temp
