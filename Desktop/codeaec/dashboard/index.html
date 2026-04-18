@@ -1,1205 +1,1835 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SismAssur · GAM Assurance</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
-  <style>
-    :root {
-      --bg:        #f5f7f5;
-      --sidebar:   #0f1a10;
-      --surface:   #ffffff;
-      --surface2:  #f0f5f1;
-      --border:    #e4ece5;
-      --border2:   #d0dcd2;
-
-      --t1:        #0e1a0f;
-      --t2:        #4a6b4e;
-      --t3:        #8faa92;
-
-      --green:     #1a9e5c;
-      --green2:    #0f7a44;
-      --green-glow:rgba(26,158,92,0.12);
-      --green-dim: rgba(26,158,92,0.08);
-
-      --z0:   #22c55e;
-      --z1:   #84cc16;
-      --z2a:  #eab308;
-      --z2b:  #f97316;
-      --z3:   #ef4444;
-
-      --danger:    #dc2626;
-      --warn:      #d97706;
-
-      --font: 'Plus Jakarta Sans', sans-serif;
-      --mono: 'IBM Plex Mono', monospace;
-
-      --sidebar-w: 220px;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--t1);
-      min-height: 100vh;
-      display: flex;
-    }
-
-    /* ── SIDEBAR ─────────────────────────────── */
-    .sidebar {
-      width: var(--sidebar-w);
-      background: var(--sidebar);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      left: 0; top: 0; bottom: 0;
-      z-index: 200;
-      flex-shrink: 0;
-    }
-
-    .sidebar-brand {
-      padding: 22px 20px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-
-    .brand-icon {
-      width: 34px; height: 34px;
-      background: var(--green);
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .brand-icon svg {
-      width: 18px; height: 18px;
-      stroke: #fff; fill: none;
-      stroke-width: 2; stroke-linecap: round;
-    }
-
-    .brand-text .b-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.2px;
-      line-height: 1.1;
-    }
-
-    .brand-text .b-sub {
-      font-size: 10px;
-      color: rgba(255,255,255,0.35);
-      font-family: var(--mono);
-      margin-top: 2px;
-    }
-
-    .sidebar-section {
-      padding: 18px 14px 6px;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
-      font-family: var(--mono);
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 14px;
-      cursor: pointer;
-      border-radius: 8px;
-      margin: 2px 8px;
-      color: rgba(255,255,255,0.5);
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.15s;
-      position: relative;
-      user-select: none;
-    }
-
-    .nav-item:hover {
-      color: rgba(255,255,255,0.85);
-      background: rgba(255,255,255,0.05);
-    }
-
-    .nav-item.active {
-      color: #fff;
-      background: var(--green);
-    }
-
-    .nav-item.active .nav-icon { opacity: 1; }
-
-    .nav-icon {
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.6;
-      flex-shrink: 0;
-    }
-
-    .nav-badge {
-      margin-left: auto;
-      background: var(--danger);
-      color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 10px;
-      font-family: var(--mono);
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 14px 12px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .live-pill {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      background: rgba(26,158,92,0.15);
-      border: 1px solid rgba(26,158,92,0.3);
-      border-radius: 7px;
-      padding: 8px 12px;
-    }
-
-    .live-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-      animation: blink 1.6s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
-
-    .live-text {
-      font-size: 11px;
-      color: #6fd49a;
-      font-family: var(--mono);
-    }
-
-    /* ── MAIN ────────────────────────────────── */
-    .main {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── TOPBAR ──────────────────────────────── */
-    .topbar {
-      height: 58px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 28px;
-      gap: 16px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .topbar-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--t1);
-      letter-spacing: -0.3px;
-    }
-
-    .topbar-sub {
-      font-size: 11px;
-      color: var(--t3);
-      font-family: var(--mono);
-    }
-
-    .topbar-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .chip {
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 600;
-      font-family: var(--mono);
-      letter-spacing: 0.3px;
-    }
-
-    .chip-green {
-      background: var(--green-dim);
-      border: 1px solid rgba(26,158,92,0.2);
-      color: var(--green2);
-    }
-
-    .chip-red {
-      background: rgba(220,38,38,0.08);
-      border: 1px solid rgba(220,38,38,0.2);
-      color: var(--danger);
-    }
-
-    .date-chip {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--t2);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-family: var(--mono);
-    }
-
-    /* ── PANEL CONTENT ───────────────────────── */
-    .content {
-      padding: 24px 28px 40px;
-      flex: 1;
-    }
-
-    .panel { display: none; }
-    .panel.active { display: block; }
-
-    /* ── KPI CARDS ───────────────────────────── */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .kpi {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 16px 14px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .kpi::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      border-radius: 12px 12px 0 0;
-    }
-
-    .kpi.k-green::after  { background: var(--green); }
-    .kpi.k-red::after    { background: var(--danger); }
-    .kpi.k-orange::after { background: var(--warn); }
-    .kpi.k-neutral::after{ background: var(--border2); }
-
-    .kpi-lbl {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--t3);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-      font-family: var(--mono);
-    }
-
-    .kpi-val {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.8px;
-      color: var(--t1);
-      line-height: 1;
-    }
-
-    .kpi-val.red    { color: var(--danger); }
-    .kpi-val.orange { color: var(--warn); }
-    .kpi-val.green  { color: var(--green2); }
-
-    .kpi-foot {
-      font-size: 10px;
-      color: var(--t3);
-      margin-top: 5px;
-      font-family: var(--mono);
-    }
-
-    /* ── GRID HELPERS ────────────────────────── */
-    .g2  { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .g3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-    .g13 { display: grid; grid-template-columns: 1fr 340px; gap: 16px; margin-bottom: 16px; }
-    .g31 { display: grid; grid-template-columns: 340px 1fr; gap: 16px; margin-bottom: 16px; }
-    .mb { margin-bottom: 16px; }
-
-    /* ── CARD ────────────────────────────────── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .card-hd {
-      padding: 14px 18px 11px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .card-ttl {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--t1);
-      letter-spacing: -0.1px;
-    }
-
-    .card-meta {
-      font-size: 10px;
-      color: var(--t3);
-      font-family: var(--mono);
-    }
-
-    .card-bd { padding: 16px 18px; }
-
-    /* ── MAP ─────────────────────────────────── */
-    #gismap {
-      height: 460px;
-      width: 100%;
-      border-radius: 0 0 12px 12px;
-    }
-
-    /* ── ZONE BAR ────────────────────────────── */
-    .zonebar-wrap {
-      height: 28px;
-      display: flex;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
-
-    .zs {
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: 700; font-family: var(--mono);
-      transition: flex 0.7s ease;
-    }
-
-    .zleg {
-      display: flex; flex-wrap: wrap; gap: 12px;
-    }
-
-    .zleg-i {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 11px; color: var(--t2); font-family: var(--mono);
-    }
-
-    .zdot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
-
-    /* ── TABLE ───────────────────────────────── */
-    .scroll-x { overflow-x: auto; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-
-    th {
-      text-align: left;
-      padding: 9px 14px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--t3);
-      border-bottom: 1px solid var(--border);
-      font-family: var(--mono);
-      white-space: nowrap;
-      background: var(--surface2);
-    }
-
-    td {
-      padding: 9px 14px;
-      border-bottom: 1px solid var(--border);
-      color: var(--t1);
-      vertical-align: middle;
-    }
-
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--surface2); }
-
-    .pill {
-      display: inline-flex; align-items: center;
-      padding: 2px 8px; border-radius: 5px;
-      font-size: 10px; font-weight: 600;
-      font-family: var(--mono); letter-spacing: 0.3px;
-    }
-
-    .p0  { background: #dcfce7; color: #15803d; }
-    .pI  { background: #ecfccb; color: #3f6212; }
-    .pIIa{ background: #fef9c3; color: #854d0e; }
-    .pIIb{ background: #ffedd5; color: #9a3412; }
-    .pIII{ background: #fee2e2; color: #b91c1c; }
-    .p-ok  { background: #dcfce7; color: #15803d; }
-    .p-hi  { background: #fee2e2; color: #b91c1c; }
-    .p-med { background: #ffedd5; color: #9a3412; }
-    .p-mid { background: #fef9c3; color: #854d0e; }
-
-    /* ── PROGRESS ────────────────────────────── */
-    .prog { margin-bottom: 11px; }
-    .prog-lbl {
-      display: flex; justify-content: space-between;
-      font-size: 12px; margin-bottom: 5px; color: var(--t2);
-    }
-    .prog-lbl span:first-child { font-weight: 600; color: var(--t1); }
-    .prog-lbl span:last-child { font-family: var(--mono); font-size: 11px; }
-    .prog-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .prog-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(.16,1,.3,1); }
-
-    /* ── ALERT FEED ──────────────────────────── */
-    .alert-list { display: flex; flex-direction: column; gap: 8px; }
-
-    .alert-item {
-      display: flex; gap: 10px; align-items: flex-start;
-      padding: 10px 12px; border-radius: 9px;
-      border: 1px solid var(--border);
-    }
-
-    .alert-icon {
-      width: 28px; height: 28px; border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; flex-shrink: 0;
-    }
-
-    .alert-title  { font-size: 12px; font-weight: 600; color: var(--t1); margin-bottom: 2px; }
-    .alert-desc   { font-size: 11px; color: var(--t2); font-family: var(--mono); }
-    .alert-time   { font-size: 10px; color: var(--t3); font-family: var(--mono); margin-top: 3px; }
-
-    /* ── REC CARDS ───────────────────────────── */
-    .rec-list { display: flex; flex-direction: column; gap: 10px; }
-
-    .rec-card {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .rec-head {
-      display: flex; align-items: center; gap: 10px;
-      padding: 11px 14px;
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .rec-num {
-      font-size: 11px; font-weight: 700; font-family: var(--mono);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      width: 26px; height: 26px;
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--t2); flex-shrink: 0;
-    }
-
-    .rec-title { font-size: 13px; font-weight: 700; color: var(--t1); }
-
-    .rec-body { padding: 12px 14px; font-size: 12px; color: var(--t2); line-height: 1.65; }
-
-    /* ── SIMULATOR ───────────────────────────── */
-    .sim-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
-    .sim-field { flex: 1; min-width: 180px; }
-    .sim-lbl { font-size: 11px; font-weight: 600; color: var(--t2); margin-bottom: 6px; font-family: var(--mono); }
-    .sim-read { font-size: 20px; font-weight: 800; color: var(--t1); margin-top: 5px; font-family: var(--mono); letter-spacing: -0.5px; }
-
-    input[type=range] { width: 100%; accent-color: var(--green); }
-
-    select.sim-sel {
-      width: 100%; font-size: 12px; padding: 8px 10px;
-      border-radius: 8px; border: 1px solid var(--border2);
-      background: var(--surface); color: var(--t1);
-      font-family: var(--font);
-    }
-
-    .sim-out { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-    /* ── DIAGNOSTIC BANNER ───────────────────── */
-    .diag {
-      display: flex; gap: 12px; align-items: flex-start;
-      padding: 13px 16px; border-radius: 10px; margin-bottom: 16px;
-      background: #fef2f2; border: 1px solid rgba(220,38,38,0.18);
-    }
-
-    .diag-icon  { font-size: 20px; flex-shrink: 0; }
-    .diag-title { font-size: 13px; font-weight: 700; color: var(--danger); margin-bottom: 3px; }
-    .diag-desc  { font-size: 11px; color: var(--danger); opacity: 0.8; font-family: var(--mono); }
-
-    /* ── HEATMAP ─────────────────────────────── */
-    .heatmap-grid {
-      display: grid;
-      grid-template-columns: 90px 1fr 1fr 1fr;
-      gap: 3px;
-      font-size: 11px;
-    }
-
-    .hm-head { font-family: var(--mono); font-size: 9px; color: var(--t3); padding: 5px; text-align: center; text-transform: uppercase; letter-spacing: .5px; }
-    .hm-label { font-family: var(--mono); font-size: 9px; color: var(--t2); display: flex; align-items: center; }
-    .hm-cell {
-      border-radius: 5px; padding: 9px 6px;
-      text-align: center; font-weight: 700; font-family: var(--mono);
-      font-size: 11px; cursor: default;
-      transition: transform 0.15s;
-    }
-    .hm-cell:hover { transform: scale(1.05); }
-
-    /* ── IOT ─────────────────────────────────── */
-    .iot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
-
-    .sensor {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px; padding: 13px;
-    }
-
-    .s-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .s-name { font-size: 11px; font-weight: 600; color: var(--t1); }
-    .s-dot { width: 7px; height: 7px; border-radius: 50%; }
-    .s-val { font-size: 22px; font-weight: 800; font-family: var(--mono); color: var(--t1); }
-    .s-unit { font-size: 10px; color: var(--t2); margin-left: 2px; }
-    .s-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; }
-    .s-fill { height: 100%; border-radius: 2px; transition: width 1.5s ease; }
-    .s-lbl { font-size: 10px; color: var(--t3); margin-top: 5px; font-family: var(--mono); }
-
-    /* ── FILTER BAR ──────────────────────────── */
-    .filter-bar {
-      display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center;
-    }
-
-    .filter-bar select {
-      font-size: 12px; padding: 7px 12px;
-      border-radius: 8px; border: 1px solid var(--border2);
-      background: var(--surface); color: var(--t1);
-      font-family: var(--font); cursor: pointer;
-    }
-
-    .filter-count {
-      margin-left: auto;
-      font-size: 11px; color: var(--t3); font-family: var(--mono);
-    }
-
-    /* ── CHART ───────────────────────────────── */
-    .ch { position: relative; }
-    .ch-200 { height: 200px; }
-    .ch-220 { height: 220px; }
-    .ch-240 { height: 240px; }
-    .ch-260 { height: 260px; }
-    .ch-160 { height: 160px; }
-
-    /* ── SECTION LABEL ───────────────────────── */
-    .sec-lbl {
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.7px;
-      color: var(--t2); margin: 18px 0 10px;
-    }
-
-    /* ── MAP LEGEND OVERLAY ──────────────────── */
-    .map-legend {
-      position: absolute;
-      bottom: 24px; right: 12px;
-      background: rgba(255,255,255,0.95);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      z-index: 500;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .ml-title {
-      font-size: 9px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.7px;
-      color: var(--t3); margin-bottom: 8px; font-family: var(--mono);
-    }
-
-    .ml-item {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 11px; color: var(--t2); margin-bottom: 5px;
-      font-family: var(--mono);
-    }
-
-    .ml-item:last-child { margin-bottom: 0; }
-
-    .ml-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      flex-shrink: 0; border: 2px solid rgba(0,0,0,0.15);
-    }
-
-    /* Leaflet overrides */
-    .leaflet-popup-content-wrapper {
-      border-radius: 10px !important;
-      font-family: var(--font) !important;
-      font-size: 12px !important;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
-    }
-    .leaflet-popup-content { margin: 12px 14px !important; }
-  </style>
-</head>
-<body>
-
-<!-- ════════════════ SIDEBAR ════════════════ -->
-<aside class="sidebar">
-  <div class="sidebar-brand">
-    <div class="brand-icon">
-      <svg viewBox="0 0 24 24"><polyline points="2,12 5,12 7,6 9,18 11,10 13,14 15,12 22,12"/></svg>
-    </div>
-    <div class="brand-text">
-      <div class="b-name">SismAssur</div>
-      <div class="b-sub">GAM Assurance</div>
-    </div>
-  </div>
-
-  <div class="sidebar-section">Navigation</div>
-
-  <div class="nav-item active" data-tab="overview">
-    <div class="nav-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    </div>
-    Vue d'ensemble
-  </div>
-
-  <div class="nav-item" data-tab="portfolio">
-    <div class="nav-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
-    </div>
-    Portefeuille
-  </div>
-
-  <div class="nav-item" data-tab="map">
-    <div class="nav-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-    </div>
-    Cartographie RPA
-  </div>
-
-  <div class="nav-item" data-tab="pml">
-    <div class="nav-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    </div>
-    Analyse PML
-  </div>
-
-  <div class="nav-item" data-tab="iot">
-    <div class="nav-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 7.76a6 6 0 0 0 0 8.49"/><path d="M20.07 4.93a10 10 0 0 1 0 14.14"/><path d="M3.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-    </div>
-    Réseau IoT
-  </div>
-
-  <div class="sidebar-section">Décision</div>
-
-  <div class="nav-item" data-tab="reco">
-    <div class="nav-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-    </div>
-    Recommandations
-    <span class="nav-badge">6</span>
-  </div>
-
-  <div class="sidebar-footer">
-    <div class="live-pill">
-      <div class="live-dot"></div>
-      <div class="live-text">247 capteurs actifs</div>
-    </div>
-  </div>
-</aside>
-
-<!-- ════════════════ MAIN ════════════════ -->
-<div class="main">
-
-  <!-- TOPBAR -->
-  <div class="topbar" id="topbar">
-    <div>
-      <div class="topbar-title" id="topbar-title">Vue d'ensemble</div>
-      <div class="topbar-sub">RPA 2003 · Portefeuille TT · CATNAT</div>
-    </div>
-    <div class="topbar-right">
-      <div class="chip chip-green">✦ ML Actif</div>
-      <div class="chip chip-red">⚠ Alerte cumul</div>
-      <div class="date-chip">18 Avr 2026</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SismAssur · GAM Assurance</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+      :root {
+        --bg: #f5f7f5;
+        --sidebar: #0f1a10;
+        --surface: #ffffff;
+        --surface2: #f0f5f1;
+        --border: #e4ece5;
+        --border2: #d0dcd2;
+
+        --t1: #0e1a0f;
+        --t2: #4a6b4e;
+        --t3: #8faa92;
+
+        --green: #1a9e5c;
+        --green2: #0f7a44;
+        --green-glow: rgba(26, 158, 92, 0.12);
+        --green-dim: rgba(26, 158, 92, 0.08);
+
+        --z0: #22c55e;
+        --z1: #84cc16;
+        --z2a: #eab308;
+        --z2b: #f97316;
+        --z3: #ef4444;
+
+        --danger: #dc2626;
+        --warn: #d97706;
+
+        --font: "Plus Jakarta Sans", sans-serif;
+        --mono: "IBM Plex Mono", monospace;
+
+        --sidebar-w: 220px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--t1);
+        min-height: 100vh;
+        display: flex;
+      }
+
+      /* ── SIDEBAR ─────────────────────────────── */
+      .sidebar {
+        width: var(--sidebar-w);
+        background: var(--sidebar);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 200;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand {
+        padding: 22px 20px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+
+      .brand-icon {
+        width: 34px;
+        height: 34px;
+        background: var(--green);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .brand-icon svg {
+        width: 18px;
+        height: 18px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+      }
+
+      .brand-text .b-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.2px;
+        line-height: 1.1;
+      }
+
+      .brand-text .b-sub {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.35);
+        font-family: var(--mono);
+        margin-top: 2px;
+      }
+
+      .sidebar-section {
+        padding: 18px 14px 6px;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.25);
+        font-family: var(--mono);
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 14px;
+        cursor: pointer;
+        border-radius: 8px;
+        margin: 2px 8px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.15s;
+        position: relative;
+        user-select: none;
+      }
+
+      .nav-item:hover {
+        color: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-item.active {
+        color: #fff;
+        background: var(--green);
+      }
+
+      .nav-item.active .nav-icon {
+        opacity: 1;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.6;
+        flex-shrink: 0;
+      }
+
+      .nav-badge {
+        margin-left: auto;
+        background: var(--danger);
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 10px;
+        font-family: var(--mono);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 14px 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .live-pill {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(26, 158, 92, 0.15);
+        border: 1px solid rgba(26, 158, 92, 0.3);
+        border-radius: 7px;
+        padding: 8px 12px;
+      }
+
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 6px var(--green);
+        animation: blink 1.6s ease-in-out infinite;
+        flex-shrink: 0;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.25;
+        }
+      }
+
+      .live-text {
+        font-size: 11px;
+        color: #6fd49a;
+        font-family: var(--mono);
+      }
+
+      /* ── MAIN ────────────────────────────────── */
+      .main {
+        margin-left: var(--sidebar-w);
+        flex: 1;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── TOPBAR ──────────────────────────────── */
+      .topbar {
+        height: 58px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 28px;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .topbar-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--t1);
+        letter-spacing: -0.3px;
+      }
+
+      .topbar-sub {
+        font-size: 11px;
+        color: var(--t3);
+        font-family: var(--mono);
+      }
+
+      .topbar-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .chip {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        font-family: var(--mono);
+        letter-spacing: 0.3px;
+      }
+
+      .chip-green {
+        background: var(--green-dim);
+        border: 1px solid rgba(26, 158, 92, 0.2);
+        color: var(--green2);
+      }
+
+      .chip-red {
+        background: rgba(220, 38, 38, 0.08);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+        color: var(--danger);
+      }
+
+      .date-chip {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--t2);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-family: var(--mono);
+      }
+
+      /* ── PANEL CONTENT ───────────────────────── */
+      .content {
+        padding: 24px 28px 40px;
+        flex: 1;
+      }
+
+      .panel {
+        display: none;
+      }
+      .panel.active {
+        display: block;
+      }
+
+      /* ── KPI CARDS ───────────────────────────── */
+      .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .kpi {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 16px 14px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .kpi::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .kpi.k-green::after {
+        background: var(--green);
+      }
+      .kpi.k-red::after {
+        background: var(--danger);
+      }
+      .kpi.k-orange::after {
+        background: var(--warn);
+      }
+      .kpi.k-neutral::after {
+        background: var(--border2);
+      }
+
+      .kpi-lbl {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--t3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        font-family: var(--mono);
+      }
+
+      .kpi-val {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.8px;
+        color: var(--t1);
+        line-height: 1;
+      }
+
+      .kpi-val.red {
+        color: var(--danger);
+      }
+      .kpi-val.orange {
+        color: var(--warn);
+      }
+      .kpi-val.green {
+        color: var(--green2);
+      }
+
+      .kpi-foot {
+        font-size: 10px;
+        color: var(--t3);
+        margin-top: 5px;
+        font-family: var(--mono);
+      }
+
+      /* ── GRID HELPERS ────────────────────────── */
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .g3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+      .g13 {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .g31 {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .mb {
+        margin-bottom: 16px;
+      }
+
+      /* ── CARD ────────────────────────────────── */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .card-hd {
+        padding: 14px 18px 11px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .card-ttl {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--t1);
+        letter-spacing: -0.1px;
+      }
+
+      .card-meta {
+        font-size: 10px;
+        color: var(--t3);
+        font-family: var(--mono);
+      }
+
+      .card-bd {
+        padding: 16px 18px;
+      }
+
+      /* ── MAP ─────────────────────────────────── */
+      #gismap {
+        height: 460px;
+        width: 100%;
+        border-radius: 0 0 12px 12px;
+      }
+
+      /* ── ZONE BAR ────────────────────────────── */
+      .zonebar-wrap {
+        height: 28px;
+        display: flex;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 12px;
+      }
+
+      .zs {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        font-family: var(--mono);
+        transition: flex 0.7s ease;
+      }
+
+      .zleg {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .zleg-i {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: var(--t2);
+        font-family: var(--mono);
+      }
+
+      .zdot {
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+
+      /* ── TABLE ───────────────────────────────── */
+      .scroll-x {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      th {
+        text-align: left;
+        padding: 9px 14px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--t3);
+        border-bottom: 1px solid var(--border);
+        font-family: var(--mono);
+        white-space: nowrap;
+        background: var(--surface2);
+      }
+
+      td {
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--border);
+        color: var(--t1);
+        vertical-align: middle;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: var(--surface2);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-size: 10px;
+        font-weight: 600;
+        font-family: var(--mono);
+        letter-spacing: 0.3px;
+      }
+
+      .p0 {
+        background: #dcfce7;
+        color: #15803d;
+      }
+      .pI {
+        background: #ecfccb;
+        color: #3f6212;
+      }
+      .pIIa {
+        background: #fef9c3;
+        color: #854d0e;
+      }
+      .pIIb {
+        background: #ffedd5;
+        color: #9a3412;
+      }
+      .pIII {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      .p-ok {
+        background: #dcfce7;
+        color: #15803d;
+      }
+      .p-hi {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      .p-med {
+        background: #ffedd5;
+        color: #9a3412;
+      }
+      .p-mid {
+        background: #fef9c3;
+        color: #854d0e;
+      }
+
+      /* ── PROGRESS ────────────────────────────── */
+      .prog {
+        margin-bottom: 11px;
+      }
+      .prog-lbl {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-bottom: 5px;
+        color: var(--t2);
+      }
+      .prog-lbl span:first-child {
+        font-weight: 600;
+        color: var(--t1);
+      }
+      .prog-lbl span:last-child {
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .prog-track {
+        height: 5px;
+        background: var(--border);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .prog-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      /* ── ALERT FEED ──────────────────────────── */
+      .alert-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .alert-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 10px 12px;
+        border-radius: 9px;
+        border: 1px solid var(--border);
+      }
+
+      .alert-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+
+      .alert-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--t1);
+        margin-bottom: 2px;
+      }
+      .alert-desc {
+        font-size: 11px;
+        color: var(--t2);
+        font-family: var(--mono);
+      }
+      .alert-time {
+        font-size: 10px;
+        color: var(--t3);
+        font-family: var(--mono);
+        margin-top: 3px;
+      }
+
+      /* ── REC CARDS ───────────────────────────── */
+      .rec-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .rec-card {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .rec-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 14px;
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .rec-num {
+        font-size: 11px;
+        font-weight: 700;
+        font-family: var(--mono);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--t2);
+        flex-shrink: 0;
+      }
+
+      .rec-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--t1);
+      }
+
+      .rec-body {
+        padding: 12px 14px;
+        font-size: 12px;
+        color: var(--t2);
+        line-height: 1.65;
+      }
+
+      /* ── SIMULATOR ───────────────────────────── */
+      .sim-row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .sim-field {
+        flex: 1;
+        min-width: 180px;
+      }
+      .sim-lbl {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--t2);
+        margin-bottom: 6px;
+        font-family: var(--mono);
+      }
+      .sim-read {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--t1);
+        margin-top: 5px;
+        font-family: var(--mono);
+        letter-spacing: -0.5px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--green);
+      }
+
+      select.sim-sel {
+        width: 100%;
+        font-size: 12px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border2);
+        background: var(--surface);
+        color: var(--t1);
+        font-family: var(--font);
+      }
+
+      .sim-out {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+
+      /* ── DIAGNOSTIC BANNER ───────────────────── */
+      .diag {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 13px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fef2f2;
+        border: 1px solid rgba(220, 38, 38, 0.18);
+      }
+
+      .diag-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .diag-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--danger);
+        margin-bottom: 3px;
+      }
+      .diag-desc {
+        font-size: 11px;
+        color: var(--danger);
+        opacity: 0.8;
+        font-family: var(--mono);
+      }
+
+      /* ── HEATMAP ─────────────────────────────── */
+      .heatmap-grid {
+        display: grid;
+        grid-template-columns: 90px 1fr 1fr 1fr;
+        gap: 3px;
+        font-size: 11px;
+      }
+
+      .hm-head {
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--t3);
+        padding: 5px;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .hm-label {
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--t2);
+        display: flex;
+        align-items: center;
+      }
+      .hm-cell {
+        border-radius: 5px;
+        padding: 9px 6px;
+        text-align: center;
+        font-weight: 700;
+        font-family: var(--mono);
+        font-size: 11px;
+        cursor: default;
+        transition: transform 0.15s;
+      }
+      .hm-cell:hover {
+        transform: scale(1.05);
+      }
+
+      /* ── IOT ─────────────────────────────────── */
+      .iot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 10px;
+      }
+
+      .sensor {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 13px;
+      }
+
+      .s-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+      .s-name {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--t1);
+      }
+      .s-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+      }
+      .s-val {
+        font-size: 22px;
+        font-weight: 800;
+        font-family: var(--mono);
+        color: var(--t1);
+      }
+      .s-unit {
+        font-size: 10px;
+        color: var(--t2);
+        margin-left: 2px;
+      }
+      .s-bar {
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        margin-top: 8px;
+      }
+      .s-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 1.5s ease;
+      }
+      .s-lbl {
+        font-size: 10px;
+        color: var(--t3);
+        margin-top: 5px;
+        font-family: var(--mono);
+      }
+
+      /* ── FILTER BAR ──────────────────────────── */
+      .filter-bar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .filter-bar select {
+        font-size: 12px;
+        padding: 7px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border2);
+        background: var(--surface);
+        color: var(--t1);
+        font-family: var(--font);
+        cursor: pointer;
+      }
+
+      .filter-count {
+        margin-left: auto;
+        font-size: 11px;
+        color: var(--t3);
+        font-family: var(--mono);
+      }
+
+      /* ── CHART ───────────────────────────────── */
+      .ch {
+        position: relative;
+      }
+      .ch-200 {
+        height: 200px;
+      }
+      .ch-220 {
+        height: 220px;
+      }
+      .ch-240 {
+        height: 240px;
+      }
+      .ch-260 {
+        height: 260px;
+      }
+      .ch-160 {
+        height: 160px;
+      }
+
+      /* ── SECTION LABEL ───────────────────────── */
+      .sec-lbl {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: var(--t2);
+        margin: 18px 0 10px;
+      }
+
+      /* ── MAP LEGEND OVERLAY ──────────────────── */
+      .map-legend {
+        position: absolute;
+        bottom: 24px;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 14px;
+        z-index: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .ml-title {
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: var(--t3);
+        margin-bottom: 8px;
+        font-family: var(--mono);
+      }
+
+      .ml-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11px;
+        color: var(--t2);
+        margin-bottom: 5px;
+        font-family: var(--mono);
+      }
+
+      .ml-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .ml-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 2px solid rgba(0, 0, 0, 0.15);
+      }
+
+      /* Leaflet overrides */
+      .leaflet-popup-content-wrapper {
+        border-radius: 10px !important;
+        font-family: var(--font) !important;
+        font-size: 12px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+      }
+      .leaflet-popup-content {
+        margin: 12px 14px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ════════════════ SIDEBAR ════════════════ -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <polyline points="2,12 5,12 7,6 9,18 11,10 13,14 15,12 22,12" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="b-name">SismAssur</div>
+          <div class="b-sub">GAM Assurance</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">Navigation</div>
+
+      <div class="nav-item active" data-tab="overview">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+        </div>
+        Vue d'ensemble
+      </div>
+
+      <div class="nav-item" data-tab="portfolio">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="8" y1="13" x2="16" y2="13" />
+            <line x1="8" y1="17" x2="16" y2="17" />
+          </svg>
+        </div>
+        Portefeuille
+      </div>
+
+      <div class="nav-item" data-tab="map">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+            <line x1="9" y1="3" x2="9" y2="18" />
+            <line x1="15" y1="6" x2="15" y2="21" />
+          </svg>
+        </div>
+        Cartographie RPA
+      </div>
+
+      <div class="nav-item" data-tab="pml">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+        </div>
+        Analyse PML
+      </div>
+
+      <div class="sidebar-section">Décision</div>
+
+      <div class="nav-item" data-tab="reco">
+        <div class="nav-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M9 11l3 3L22 4" />
+            <path
+              d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
+            />
+          </svg>
+        </div>
+        Recommandations
+        <span class="nav-badge">6</span>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="live-pill">
+          <div class="live-dot"></div>
+          <div class="live-text">247 capteurs actifs</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ════════════════ MAIN ════════════════ -->
+    <div class="main">
+      <!-- TOPBAR -->
+      <div class="topbar" id="topbar">
+        <div>
+          <div class="topbar-title" id="topbar-title">Vue d'ensemble</div>
+          <div class="topbar-sub">RPA 2003 · Portefeuille TT · CATNAT</div>
+        </div>
+        <div class="topbar-right">
+          <div class="chip chip-green">✦ ML Actif</div>
+          <div class="chip chip-red">⚠ Alerte cumul</div>
+          <div class="date-chip">18 Avr 2026</div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
        PANELS
   ═══════════════════════════════════════ -->
-  <div class="content">
-
-    <!-- ── VUE D'ENSEMBLE ──────────────────── -->
-    <div class="panel active" id="tab-overview">
-
-      <div class="kpi-row">
-        <div class="kpi k-red">
-          <div class="kpi-lbl">Capital exposé</div>
-          <div class="kpi-val red">847,3</div>
-          <div class="kpi-foot">Mds DZD · toutes zones</div>
-        </div>
-        <div class="kpi k-neutral">
-          <div class="kpi-lbl">Contrats actifs</div>
-          <div class="kpi-val">12 648</div>
-          <div class="kpi-foot">Tremblements de terre</div>
-        </div>
-        <div class="kpi k-orange">
-          <div class="kpi-lbl">Surconcentration</div>
-          <div class="kpi-val orange">74%</div>
-          <div class="kpi-foot">Zones IIb + III combinées</div>
-        </div>
-        <div class="kpi k-red">
-          <div class="kpi-lbl">PML Zone III</div>
-          <div class="kpi-val red">212</div>
-          <div class="kpi-foot">Mds · scénario M7.5</div>
-        </div>
-        <div class="kpi k-green">
-          <div class="kpi-lbl">Rétention propre</div>
-          <div class="kpi-val green">85</div>
-          <div class="kpi-foot">Mds DZD limite</div>
-        </div>
-        <div class="kpi k-red">
-          <div class="kpi-lbl">Déficit couverture</div>
-          <div class="kpi-val red">127</div>
-          <div class="kpi-foot">Mds · PML − capacité</div>
-        </div>
-      </div>
-
-      <div class="card mb">
-        <div class="card-hd">
-          <span class="card-ttl">Répartition du capital assuré par zone RPA</span>
-          <span class="card-meta">Total : 847,3 Mds DZD</span>
-        </div>
-        <div class="card-bd">
-          <div class="zonebar-wrap" id="zonebar"></div>
-          <div class="zleg" id="zonelegend"></div>
-        </div>
-      </div>
-
-      <div class="g2">
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Capital par catégorie de bien</span></div>
-          <div class="card-bd">
-            <div class="ch ch-220"><canvas id="catChart"></canvas></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Top 5 wilayas à risque élevé</span></div>
-          <div class="card-bd">
-            <div id="top5prog"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-hd">
-          <span class="card-ttl">Flux d'alertes en temps réel</span>
-          <div class="live-pill" style="padding:4px 10px;">
-            <div class="live-dot"></div>
-            <div class="live-text" style="font-size:10px;">Live</div>
-          </div>
-        </div>
-        <div class="card-bd">
-          <div class="alert-list" id="alertFeed"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── PORTEFEUILLE ─────────────────────── -->
-    <div class="panel" id="tab-portfolio">
-
-      <div class="filter-bar">
-        <select id="filterZone">
-          <option value="all">Toutes les zones</option>
-          <option value="0">Zone 0</option>
-          <option value="I">Zone I</option>
-          <option value="IIa">Zone IIa</option>
-          <option value="IIb">Zone IIb</option>
-          <option value="III">Zone III</option>
-        </select>
-        <select id="filterCat">
-          <option value="all">Toutes catégories</option>
-          <option value="Résidentiel">Résidentiel</option>
-          <option value="Commercial">Commercial</option>
-          <option value="Industriel">Industriel</option>
-        </select>
-        <div class="filter-count" id="filterCount"></div>
-      </div>
-
-      <div class="card mb scroll-x">
-        <table id="portfolioTable">
-          <thead>
-            <tr>
-              <th>Wilaya</th><th>Région</th><th>Zone RPA</th><th>Catégorie</th>
-              <th>Contrats</th><th>Capital (M DZD)</th><th>Part %</th><th>Statut</th>
-            </tr>
-          </thead>
-          <tbody id="portfolioBody"></tbody>
-        </table>
-      </div>
-
-      <div class="g3">
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Cumul IIb + III</span></div>
-          <div class="card-bd"><div class="ch ch-160"><canvas id="cumulChart"></canvas></div></div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Évolution mensuelle capital</span></div>
-          <div class="card-bd"><div class="ch ch-160"><canvas id="trendChart"></canvas></div></div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Exposition vs rétention</span></div>
-          <div class="card-bd"><div class="ch ch-160"><canvas id="ratioChart"></canvas></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── CARTOGRAPHIE RPA ─────────────────── -->
-    <div class="panel" id="tab-map">
-
-      <div class="g13" style="align-items:start;">
-        <div class="card">
-          <div class="card-hd">
-            <span class="card-ttl">Carte SIG · Zones sismiques RPA 2003</span>
-            <span class="chip chip-green">Leaflet · OSM</span>
-          </div>
-          <div style="position:relative;">
-            <div id="gismap"></div>
-            <div class="map-legend">
-              <div class="ml-title">Zones RPA 2003</div>
-              <div class="ml-item"><div class="ml-dot" style="background:#22c55e;"></div>Zone 0 · Négligeable</div>
-              <div class="ml-item"><div class="ml-dot" style="background:#84cc16;"></div>Zone I · Faible</div>
-              <div class="ml-item"><div class="ml-dot" style="background:#eab308;"></div>Zone IIa · Modéré</div>
-              <div class="ml-item"><div class="ml-dot" style="background:#f97316;"></div>Zone IIb · Moyen</div>
-              <div class="ml-item"><div class="ml-dot" style="background:#ef4444;"></div>Zone III · Élevé</div>
+      <div class="content">
+        <!-- ── VUE D'ENSEMBLE ──────────────────── -->
+        <div class="panel active" id="tab-overview">
+          <div class="kpi-row">
+            <div class="kpi k-red">
+              <div class="kpi-lbl">Capital exposé</div>
+              <div class="kpi-val red">847,3</div>
+              <div class="kpi-foot">Mds DZD · toutes zones</div>
+            </div>
+            <div class="kpi k-neutral">
+              <div class="kpi-lbl">Contrats actifs</div>
+              <div class="kpi-val">12 648</div>
+              <div class="kpi-foot">Tremblements de terre</div>
+            </div>
+            <div class="kpi k-orange">
+              <div class="kpi-lbl">Surconcentration</div>
+              <div class="kpi-val orange">74%</div>
+              <div class="kpi-foot">Zones IIb + III combinées</div>
+            </div>
+            <div class="kpi k-red">
+              <div class="kpi-lbl">PML Zone III</div>
+              <div class="kpi-val red">212</div>
+              <div class="kpi-foot">Mds · scénario M7.5</div>
+            </div>
+            <div class="kpi k-green">
+              <div class="kpi-lbl">Rétention propre</div>
+              <div class="kpi-val green">85</div>
+              <div class="kpi-foot">Mds DZD limite</div>
+            </div>
+            <div class="kpi k-red">
+              <div class="kpi-lbl">Déficit couverture</div>
+              <div class="kpi-val red">127</div>
+              <div class="kpi-foot">Mds · PML − capacité</div>
             </div>
           </div>
-        </div>
 
-        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card mb">
+            <div class="card-hd">
+              <span class="card-ttl"
+                >Répartition du capital assuré par zone RPA</span
+              >
+              <span class="card-meta">Total : 847,3 Mds DZD</span>
+            </div>
+            <div class="card-bd">
+              <div class="zonebar-wrap" id="zonebar"></div>
+              <div class="zleg" id="zonelegend"></div>
+            </div>
+          </div>
+
+          <div class="g2">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Capital par catégorie de bien</span>
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-220"><canvas id="catChart"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Top 5 wilayas à risque élevé</span>
+              </div>
+              <div class="card-bd">
+                <div id="top5prog"></div>
+              </div>
+            </div>
+          </div>
+
           <div class="card">
-            <div class="card-hd"><span class="card-ttl">Heatmap · Wilaya × Catégorie</span></div>
-            <div class="card-bd" id="heatmapBody"></div>
+            <div class="card-hd">
+              <span class="card-ttl">Flux d'alertes en temps réel</span>
+              <div class="live-pill" style="padding: 4px 10px">
+                <div class="live-dot"></div>
+                <div class="live-text" style="font-size: 10px">Live</div>
+              </div>
+            </div>
+            <div class="card-bd">
+              <div class="alert-list" id="alertFeed"></div>
+            </div>
           </div>
+        </div>
+
+        <!-- ── PORTEFEUILLE ─────────────────────── -->
+        <div class="panel" id="tab-portfolio">
+          <div class="filter-bar">
+            <select id="filterZone">
+              <option value="all">Toutes les zones</option>
+              <option value="0">Zone 0</option>
+              <option value="I">Zone I</option>
+              <option value="IIa">Zone IIa</option>
+              <option value="IIb">Zone IIb</option>
+              <option value="III">Zone III</option>
+            </select>
+            <select id="filterCat">
+              <option value="all">Toutes catégories</option>
+              <option value="Résidentiel">Résidentiel</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Industriel">Industriel</option>
+            </select>
+            <div class="filter-count" id="filterCount"></div>
+          </div>
+
+          <div class="card mb scroll-x">
+            <table id="portfolioTable">
+              <thead>
+                <tr>
+                  <th>Wilaya</th>
+                  <th>Région</th>
+                  <th>Zone RPA</th>
+                  <th>Catégorie</th>
+                  <th>Contrats</th>
+                  <th>Capital (M DZD)</th>
+                  <th>Part %</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody id="portfolioBody"></tbody>
+            </table>
+          </div>
+
+          <div class="g3">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Cumul IIb + III</span>
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-160"><canvas id="cumulChart"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Évolution mensuelle capital</span>
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-160"><canvas id="trendChart"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Exposition vs rétention</span>
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-160"><canvas id="ratioChart"></canvas></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CARTOGRAPHIE RPA ─────────────────── -->
+        <div class="panel" id="tab-map">
+          <div class="g13" style="align-items: start">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl"
+                  >Carte SIG · Zones sismiques RPA 2003</span
+                >
+                <span class="chip chip-green">Leaflet · OSM</span>
+              </div>
+              <div style="position: relative">
+                <div id="gismap"></div>
+                <div class="map-legend">
+                  <div class="ml-title">Zones RPA 2003</div>
+                  <div class="ml-item">
+                    <div class="ml-dot" style="background: #22c55e"></div>
+                    Zone 0 · Négligeable
+                  </div>
+                  <div class="ml-item">
+                    <div class="ml-dot" style="background: #84cc16"></div>
+                    Zone I · Faible
+                  </div>
+                  <div class="ml-item">
+                    <div class="ml-dot" style="background: #eab308"></div>
+                    Zone IIa · Modéré
+                  </div>
+                  <div class="ml-item">
+                    <div class="ml-dot" style="background: #f97316"></div>
+                    Zone IIb · Moyen
+                  </div>
+                  <div class="ml-item">
+                    <div class="ml-dot" style="background: #ef4444"></div>
+                    Zone III · Élevé
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px">
+              <div class="card">
+                <div class="card-hd">
+                  <span class="card-ttl">Heatmap · Wilaya × Catégorie</span>
+                </div>
+                <div class="card-bd" id="heatmapBody"></div>
+              </div>
+              <div class="card">
+                <div class="card-hd">
+                  <span class="card-ttl">Exposition cumulée · Mds DZD</span>
+                </div>
+                <div class="card-bd">
+                  <div class="ch ch-200">
+                    <canvas id="exposureBar"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ANALYSE PML ─────────────────────── -->
+        <div class="panel" id="tab-pml">
+          <div class="kpi-row" style="grid-template-columns: repeat(5, 1fr)">
+            <div class="kpi k-orange">
+              <div class="kpi-lbl">PML scénario M6.5</div>
+              <div class="kpi-val orange">88 Mds</div>
+              <div class="kpi-foot">Couvert par rétention</div>
+            </div>
+            <div class="kpi k-orange">
+              <div class="kpi-lbl">PML scénario M7.0</div>
+              <div class="kpi-val orange">152 Mds</div>
+              <div class="kpi-foot">Dépasse de 67 Mds</div>
+            </div>
+            <div class="kpi k-red">
+              <div class="kpi-lbl">PML scénario M7.5</div>
+              <div class="kpi-val red">212 Mds</div>
+              <div class="kpi-foot">Déficit 127 Mds</div>
+            </div>
+            <div class="kpi k-red">
+              <div class="kpi-lbl">Période retour 250 ans</div>
+              <div class="kpi-val red">178 Mds</div>
+              <div class="kpi-foot">Scénario de référence</div>
+            </div>
+            <div class="kpi k-orange">
+              <div class="kpi-lbl">Ratio PML / SI</div>
+              <div class="kpi-val orange">25%</div>
+              <div class="kpi-foot">Benchmark ≤ 18%</div>
+            </div>
+          </div>
+
+          <div class="g2">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Courbe EP — Exceedance Probability</span>
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-220"><canvas id="epCurve"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-ttl">Distribution des pertes par zone</span>
+              </div>
+              <div class="card-bd">
+                <div class="ch ch-220"><canvas id="lossBar"></canvas></div>
+              </div>
+            </div>
+          </div>
+
           <div class="card">
-            <div class="card-hd"><span class="card-ttl">Exposition cumulée · Mds DZD</span></div>
-            <div class="card-bd"><div class="ch ch-200"><canvas id="exposureBar"></canvas></div></div>
+            <div class="card-hd">
+              <span class="card-ttl"
+                >Simulateur de séisme · Impact financier temps réel</span
+              >
+              <span class="chip chip-green">✦ Calcul dynamique</span>
+            </div>
+            <div class="card-bd">
+              <div class="sim-row">
+                <div class="sim-field">
+                  <div class="sim-lbl">Magnitude (Mw)</div>
+                  <input
+                    type="range"
+                    id="magSlider"
+                    min="5"
+                    max="8"
+                    step="0.1"
+                    value="7"
+                  />
+                  <div class="sim-read" id="magVal">7.0</div>
+                </div>
+                <div class="sim-field">
+                  <div class="sim-lbl">Zone épicentrale</div>
+                  <select class="sim-sel" id="epicZone">
+                    <option value="III">Zone III — Boumerdès</option>
+                    <option value="IIb">Zone IIb — Alger</option>
+                    <option value="IIb2">Zone IIb — Oran</option>
+                    <option value="IIa">Zone IIa — Constantine</option>
+                  </select>
+                </div>
+                <div class="sim-field">
+                  <div class="sim-lbl">Profondeur (km)</div>
+                  <input
+                    type="range"
+                    id="depthSlider"
+                    min="5"
+                    max="40"
+                    step="1"
+                    value="10"
+                  />
+                  <div class="sim-read" id="depthVal">10 km</div>
+                </div>
+              </div>
+              <div class="sim-out" id="simResults"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RECOMMANDATIONS ─────────────────── -->
+        <div class="panel" id="tab-reco">
+          <div class="diag">
+            <div class="diag-icon">⚠</div>
+            <div>
+              <div class="diag-title">
+                Diagnostic critique · Portefeuille déséquilibré
+              </div>
+              <div class="diag-desc">
+                74% du capital concentré zones IIb + III · PML dépasse rétention
+                de 127 Mds DZD · Action corrective urgente
+              </div>
+            </div>
+          </div>
+
+          <div class="sec-lbl">
+            Mesures d'assainissement · Zones de surconcentration
+          </div>
+
+          <div class="rec-list" id="recList"></div>
+
+          <div class="card" style="margin-top: 16px">
+            <div class="card-hd">
+              <span class="card-ttl"
+                >Cibles KPI · Plan de redressement 2026–2028</span
+              >
+            </div>
+            <div class="card-bd">
+              <div class="ch ch-220"><canvas id="kpiChart"></canvas></div>
+            </div>
           </div>
         </div>
       </div>
+      <!-- .content -->
     </div>
+    <!-- .main -->
 
-    <!-- ── ANALYSE PML ─────────────────────── -->
-    <div class="panel" id="tab-pml">
-
-      <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);">
-        <div class="kpi k-orange">
-          <div class="kpi-lbl">PML scénario M6.5</div>
-          <div class="kpi-val orange">88 Mds</div>
-          <div class="kpi-foot">Couvert par rétention</div>
-        </div>
-        <div class="kpi k-orange">
-          <div class="kpi-lbl">PML scénario M7.0</div>
-          <div class="kpi-val orange">152 Mds</div>
-          <div class="kpi-foot">Dépasse de 67 Mds</div>
-        </div>
-        <div class="kpi k-red">
-          <div class="kpi-lbl">PML scénario M7.5</div>
-          <div class="kpi-val red">212 Mds</div>
-          <div class="kpi-foot">Déficit 127 Mds</div>
-        </div>
-        <div class="kpi k-red">
-          <div class="kpi-lbl">Période retour 250 ans</div>
-          <div class="kpi-val red">178 Mds</div>
-          <div class="kpi-foot">Scénario de référence</div>
-        </div>
-        <div class="kpi k-orange">
-          <div class="kpi-lbl">Ratio PML / SI</div>
-          <div class="kpi-val orange">25%</div>
-          <div class="kpi-foot">Benchmark ≤ 18%</div>
-        </div>
-      </div>
-
-      <div class="g2">
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Courbe EP — Exceedance Probability</span></div>
-          <div class="card-bd"><div class="ch ch-220"><canvas id="epCurve"></canvas></div></div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Distribution des pertes par zone</span></div>
-          <div class="card-bd"><div class="ch ch-220"><canvas id="lossBar"></canvas></div></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-hd">
-          <span class="card-ttl">Simulateur de séisme · Impact financier temps réel</span>
-          <span class="chip chip-green">✦ Calcul dynamique</span>
-        </div>
-        <div class="card-bd">
-          <div class="sim-row">
-            <div class="sim-field">
-              <div class="sim-lbl">Magnitude (Mw)</div>
-              <input type="range" id="magSlider" min="5" max="8" step="0.1" value="7"/>
-              <div class="sim-read" id="magVal">7.0</div>
-            </div>
-            <div class="sim-field">
-              <div class="sim-lbl">Zone épicentrale</div>
-              <select class="sim-sel" id="epicZone">
-                <option value="III">Zone III — Boumerdès</option>
-                <option value="IIb">Zone IIb — Alger</option>
-                <option value="IIb2">Zone IIb — Oran</option>
-                <option value="IIa">Zone IIa — Constantine</option>
-              </select>
-            </div>
-            <div class="sim-field">
-              <div class="sim-lbl">Profondeur (km)</div>
-              <input type="range" id="depthSlider" min="5" max="40" step="1" value="10"/>
-              <div class="sim-read" id="depthVal">10 km</div>
-            </div>
-          </div>
-          <div class="sim-out" id="simResults"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── RÉSEAU IOT ───────────────────────── -->
-    <div class="panel" id="tab-iot">
-
-      <div style="background:#f0fdf4;border:1px solid rgba(22,163,74,0.2);border-radius:10px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:20px;">📡</span>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:3px;">Réseau de capteurs sismiques IoT — Concept théorique</div>
-          <div style="font-size:11px;color:var(--t2);font-family:var(--mono);">Accéléromètres connectés · détection précoce · tarification paramétrique · évaluation dommages en temps réel</div>
-        </div>
-      </div>
-
-      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
-        <div class="kpi k-green">
-          <div class="kpi-lbl">Capteurs déployés</div>
-          <div class="kpi-val green">247</div>
-          <div class="kpi-foot">48 wilayas · actifs</div>
-        </div>
-        <div class="kpi k-neutral">
-          <div class="kpi-lbl">Délai alerte précoce</div>
-          <div class="kpi-val">0–30s</div>
-          <div class="kpi-foot">Notification automatique</div>
-        </div>
-        <div class="kpi k-green">
-          <div class="kpi-lbl">Couverture portefeuille</div>
-          <div class="kpi-val green">89%</div>
-          <div class="kpi-foot">Biens assurés couverts</div>
-        </div>
-        <div class="kpi k-orange">
-          <div class="kpi-lbl">En maintenance</div>
-          <div class="kpi-val orange">14</div>
-          <div class="kpi-foot">Capteurs hors ligne</div>
-        </div>
-      </div>
-
-      <div class="g2">
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">Activité sismique · 24 dernières heures</span></div>
-          <div class="card-bd"><div class="ch ch-160"><canvas id="seismoChart"></canvas></div></div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">État réseau IoT par région</span></div>
-          <div class="card-bd" id="networkStatus"></div>
-        </div>
-      </div>
-
-      <div class="card mb">
-        <div class="card-hd"><span class="card-ttl">Capteurs actifs — Échantillon représentatif</span></div>
-        <div class="card-bd">
-          <div class="iot-grid" id="sensorGrid"></div>
-        </div>
-      </div>
-
-      <div class="g3">
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">⚡ Évaluation post-séisme rapide</span></div>
-          <div class="card-bd" style="font-size:12px;color:var(--t2);line-height:1.65;">Accéléromètres sur bâtiments assurés mesurent l'intensité reçue (PGA). Déclenchement automatique d'inspection drone et pré-estimation perte avant déclaration. Délai : 48h au lieu de 45 jours.</div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">◎ Modélisation dynamique du risque</span></div>
-          <div class="card-bd" style="font-size:12px;color:var(--t2);line-height:1.65;">Données capteurs alimentent un jumeau numérique du portefeuille. Mise à jour continue du PML sur micro-séismes et fatigue structurelle. Tarification ajustée au renouvellement.</div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-ttl">⟳ Assurance paramétrique</span></div>
-          <div class="card-bd" style="font-size:12px;color:var(--t2);line-height:1.65;">Produit déclenché automatiquement si PGA dépasse le seuil contractuel. Indemnisation 48h sans expertise terrain. Nouveau produit à lancer en zone III dès 2027.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── RECOMMANDATIONS ─────────────────── -->
-    <div class="panel" id="tab-reco">
-
-      <div class="diag">
-        <div class="diag-icon">⚠</div>
-        <div>
-          <div class="diag-title">Diagnostic critique · Portefeuille déséquilibré</div>
-          <div class="diag-desc">74% du capital concentré zones IIb + III · PML dépasse rétention de 127 Mds DZD · Action corrective urgente</div>
-        </div>
-      </div>
-
-      <div class="sec-lbl">Mesures d'assainissement · Zones de surconcentration</div>
-
-      <div class="rec-list" id="recList"></div>
-
-      <div class="card" style="margin-top:16px;">
-        <div class="card-hd"><span class="card-ttl">Cibles KPI · Plan de redressement 2026–2028</span></div>
-        <div class="card-bd"><div class="ch ch-220"><canvas id="kpiChart"></canvas></div></div>
-      </div>
-
-    </div>
-
-  </div><!-- .content -->
-</div><!-- .main -->
-
-<script>
-/* ═══════════════════════════════════════════
+    <script>
+      /* ═══════════════════════════════════════════
    DATA — same as original, backend-ready
 ═══════════════════════════════════════════ */
-const ZONES = [
-  { id:'0',   label:'Zone 0',   pct:12, capital:101.7, color:'#22c55e' },
-  { id:'I',   label:'Zone I',   pct:8,  capital:67.8,  color:'#84cc16' },
-  { id:'IIa', label:'Zone IIa', pct:18, capital:152.5, color:'#eab308' },
-  { id:'IIb', label:'Zone IIb', pct:38, capital:321.9, color:'#f97316' },
-  { id:'III', label:'Zone III', pct:24, capital:203.4, color:'#ef4444' },
-];
+      const ZONES = [
+        { id: "0", label: "Zone 0", pct: 12, capital: 101.7, color: "#22c55e" },
+        { id: "I", label: "Zone I", pct: 8, capital: 67.8, color: "#84cc16" },
+        {
+          id: "IIa",
+          label: "Zone IIa",
+          pct: 18,
+          capital: 152.5,
+          color: "#eab308",
+        },
+        {
+          id: "IIb",
+          label: "Zone IIb",
+          pct: 38,
+          capital: 321.9,
+          color: "#f97316",
+        },
+        {
+          id: "III",
+          label: "Zone III",
+          pct: 24,
+          capital: 203.4,
+          color: "#ef4444",
+        },
+      ];
 
-const PORTFOLIO = [
-  { wilaya:'Boumerdès',   region:'Nord',       zone:'III',  cat:'Industriel',  contracts:312,  capital:38200, pct:4.5  },
-  { wilaya:'Alger',       region:'Nord',       zone:'IIb',  cat:'Commercial',  contracts:1820, capital:87400, pct:10.3 },
-  { wilaya:'Blida',       region:'Nord',       zone:'IIb',  cat:'Résidentiel', contracts:1240, capital:62100, pct:7.3  },
-  { wilaya:'Tipaza',      region:'Nord',       zone:'IIb',  cat:'Résidentiel', contracts:890,  capital:44300, pct:5.2  },
-  { wilaya:'Béjaïa',      region:'Nord-Est',   zone:'IIb',  cat:'Commercial',  contracts:720,  capital:38900, pct:4.6  },
-  { wilaya:'Tizi Ouzou',  region:'Nord-Est',   zone:'III',  cat:'Résidentiel', contracts:980,  capital:52600, pct:6.2  },
-  { wilaya:'Sétif',       region:'Hauts-Plat', zone:'IIb',  cat:'Industriel',  contracts:640,  capital:41200, pct:4.9  },
-  { wilaya:'Oran',        region:'Nord-Ouest', zone:'IIb',  cat:'Commercial',  contracts:1100, capital:71800, pct:8.5  },
-  { wilaya:'Constantine', region:'Nord-Est',   zone:'IIa',  cat:'Commercial',  contracts:740,  capital:45600, pct:5.4  },
-  { wilaya:'Annaba',      region:'Nord-Est',   zone:'IIa',  cat:'Industriel',  contracts:560,  capital:32400, pct:3.8  },
-  { wilaya:'Guelma',      region:'Nord-Est',   zone:'IIa',  cat:'Résidentiel', contracts:310,  capital:18700, pct:2.2  },
-  { wilaya:"M'sila",      region:'Hauts-Plat', zone:'I',    cat:'Résidentiel', contracts:420,  capital:22100, pct:2.6  },
-  { wilaya:'Djelfa',      region:'Hauts-Plat', zone:'I',    cat:'Résidentiel', contracts:390,  capital:19800, pct:2.3  },
-  { wilaya:'Tamanrasset', region:'Sud',        zone:'0',    cat:'Industriel',  contracts:180,  capital:21400, pct:2.5  },
-  { wilaya:'Adrar',       region:'Sud',        zone:'0',    cat:'Industriel',  contracts:140,  capital:17200, pct:2.0  },
-  { wilaya:'Ghardaïa',    region:'Sud',        zone:'0',    cat:'Commercial',  contracts:220,  capital:15800, pct:1.9  },
-];
+      const PORTFOLIO = [
+        {
+          wilaya: "Boumerdès",
+          region: "Nord",
+          zone: "III",
+          cat: "Industriel",
+          contracts: 312,
+          capital: 38200,
+          pct: 4.5,
+        },
+        {
+          wilaya: "Alger",
+          region: "Nord",
+          zone: "IIb",
+          cat: "Commercial",
+          contracts: 1820,
+          capital: 87400,
+          pct: 10.3,
+        },
+        {
+          wilaya: "Blida",
+          region: "Nord",
+          zone: "IIb",
+          cat: "Résidentiel",
+          contracts: 1240,
+          capital: 62100,
+          pct: 7.3,
+        },
+        {
+          wilaya: "Tipaza",
+          region: "Nord",
+          zone: "IIb",
+          cat: "Résidentiel",
+          contracts: 890,
+          capital: 44300,
+          pct: 5.2,
+        },
+        {
+          wilaya: "Béjaïa",
+          region: "Nord-Est",
+          zone: "IIb",
+          cat: "Commercial",
+          contracts: 720,
+          capital: 38900,
+          pct: 4.6,
+        },
+        {
+          wilaya: "Tizi Ouzou",
+          region: "Nord-Est",
+          zone: "III",
+          cat: "Résidentiel",
+          contracts: 980,
+          capital: 52600,
+          pct: 6.2,
+        },
+        {
+          wilaya: "Sétif",
+          region: "Hauts-Plat",
+          zone: "IIb",
+          cat: "Industriel",
+          contracts: 640,
+          capital: 41200,
+          pct: 4.9,
+        },
+        {
+          wilaya: "Oran",
+          region: "Nord-Ouest",
+          zone: "IIb",
+          cat: "Commercial",
+          contracts: 1100,
+          capital: 71800,
+          pct: 8.5,
+        },
+        {
+          wilaya: "Constantine",
+          region: "Nord-Est",
+          zone: "IIa",
+          cat: "Commercial",
+          contracts: 740,
+          capital: 45600,
+          pct: 5.4,
+        },
+        {
+          wilaya: "Annaba",
+          region: "Nord-Est",
+          zone: "IIa",
+          cat: "Industriel",
+          contracts: 560,
+          capital: 32400,
+          pct: 3.8,
+        },
+        {
+          wilaya: "Guelma",
+          region: "Nord-Est",
+          zone: "IIa",
+          cat: "Résidentiel",
+          contracts: 310,
+          capital: 18700,
+          pct: 2.2,
+        },
+        {
+          wilaya: "M'sila",
+          region: "Hauts-Plat",
+          zone: "I",
+          cat: "Résidentiel",
+          contracts: 420,
+          capital: 22100,
+          pct: 2.6,
+        },
+        {
+          wilaya: "Djelfa",
+          region: "Hauts-Plat",
+          zone: "I",
+          cat: "Résidentiel",
+          contracts: 390,
+          capital: 19800,
+          pct: 2.3,
+        },
+        {
+          wilaya: "Tamanrasset",
+          region: "Sud",
+          zone: "0",
+          cat: "Industriel",
+          contracts: 180,
+          capital: 21400,
+          pct: 2.5,
+        },
+        {
+          wilaya: "Adrar",
+          region: "Sud",
+          zone: "0",
+          cat: "Industriel",
+          contracts: 140,
+          capital: 17200,
+          pct: 2.0,
+        },
+        {
+          wilaya: "Ghardaïa",
+          region: "Sud",
+          zone: "0",
+          cat: "Commercial",
+          contracts: 220,
+          capital: 15800,
+          pct: 1.9,
+        },
+      ];
 
-const ALERTS = [
-  { type:'danger', icon:'⚡', title:'Cumul critique · Alger Est',          desc:'Capital cumulé dépasse 45 Mds DZD (seuil 40 Mds)',       time:'Il y a 4 min'  },
-  { type:'warn',   icon:'◈',  title:'Nouveau contrat Zone III · Boumerdès', desc:'Engagement 450 M DZD · Sous-souscription recommandée',  time:'Il y a 18 min' },
-  { type:'info',   icon:'◎',  title:'Capteur S-047 · Activité faible',     desc:'Magnitude 2.1 · Profondeur 12 km · Alger Centre',        time:'Il y a 34 min' },
-  { type:'ok',     icon:'✔',  title:'Rapport mensuel généré',              desc:'Tableau de bord cumuls · Avril 2026 · 58 pages',         time:'Il y a 1h'     },
-  { type:'warn',   icon:'◈',  title:'Renouvellement traité XL',            desc:'Capacité actuelle insuffisante vs PML recalculé',         time:'Il y a 2h'     },
-];
+      const ALERTS = [
+        {
+          type: "danger",
+          icon: "⚡",
+          title: "Cumul critique · Alger Est",
+          desc: "Capital cumulé dépasse 45 Mds DZD (seuil 40 Mds)",
+          time: "Il y a 4 min",
+        },
+        {
+          type: "warn",
+          icon: "◈",
+          title: "Nouveau contrat Zone III · Boumerdès",
+          desc: "Engagement 450 M DZD · Sous-souscription recommandée",
+          time: "Il y a 18 min",
+        },
+        {
+          type: "info",
+          icon: "◎",
+          title: "Capteur S-047 · Activité faible",
+          desc: "Magnitude 2.1 · Profondeur 12 km · Alger Centre",
+          time: "Il y a 34 min",
+        },
+        {
+          type: "ok",
+          icon: "✔",
+          title: "Rapport mensuel généré",
+          desc: "Tableau de bord cumuls · Avril 2026 · 58 pages",
+          time: "Il y a 1h",
+        },
+        {
+          type: "warn",
+          icon: "◈",
+          title: "Renouvellement traité XL",
+          desc: "Capacité actuelle insuffisante vs PML recalculé",
+          time: "Il y a 2h",
+        },
+      ];
 
-const RECS = [
-  { num:'01', prio:'CRITIQUE', pcls:'p-hi', title:'Plafonnement des cumuls zone III',
-    text:'Introduire un plafond de 15 Mds DZD par commune en zone III. Le cumul actuel de Boumerdès (38 Mds) dépasse de 153% la capacité de rétention unitaire. Mise en place d\'un comité d\'engagement au-delà de 2 Mds par police.' },
-  { num:'02', prio:'CRITIQUE', pcls:'p-hi', title:'Cession en réassurance proportionnelle · Traité QS',
-    text:'Négocier un traité Quote-Part de 60% sur les risques en zone III et IIb. Compléter par un XL catastrophe à 200 Mds DZD pour couvrir le déficit de 127 Mds face au PML M7.5. Revue annuelle obligatoire.' },
-  { num:'03', prio:'HAUTE',    pcls:'p-med', title:'Révision de la politique de tarification différenciée RPA',
-    text:'Appliquer un coefficient multiplicateur selon la zone RPA : ×1.0 Zone 0, ×1.4 Zone I, ×1.9 Zone IIa, ×2.8 Zone IIb, ×4.2 Zone III. Intégrer la vulnérabilité intrinsèque (type de construction, année, étages).' },
-  { num:'04', prio:'OPPORTUNITÉ', pcls:'p-ok', title:'Développement commercial ciblé · Zones 0 et I',
-    text:'Les wilayas du Sud (Tamanrasset, Adrar, Illizi) classées Zone 0 représentent seulement 2% du portefeuille malgré un potentiel industriel croissant. Campagne de prospection B2B à lancer H2 2026.' },
-  { num:'05', prio:'OPPORTUNITÉ', pcls:'p-ok', title:'Équilibrage géographique · Hauts-Plateaux Zone I',
-    text:"M'sila, Djelfa, Tiaret offrent un potentiel en biens agricoles et industriels légers. Objectif : porter la part de Zone I de 8% à 20% d'ici 2028 pour rééquilibrer le profil de risque." },
-  { num:'06', prio:'INNOVATION', pcls:'p-mid', title:'Déploiement IoT et assurance paramétrique',
-    text:'Installer 250 accéléromètres sur les biens prioritaires en zone III. Lancer un produit paramétrique déclenché sur PGA pour les installations industrielles. Réduction du délai sinistres de 45 jours à 48h.' },
-];
+      const RECS = [
+        {
+          num: "01",
+          prio: "CRITIQUE",
+          pcls: "p-hi",
+          title: "Plafonnement des cumuls zone III",
+          text: "Introduire un plafond de 15 Mds DZD par commune en zone III. Le cumul actuel de Boumerdès (38 Mds) dépasse de 153% la capacité de rétention unitaire. Mise en place d'un comité d'engagement au-delà de 2 Mds par police.",
+        },
+        {
+          num: "02",
+          prio: "CRITIQUE",
+          pcls: "p-hi",
+          title: "Cession en réassurance proportionnelle · Traité QS",
+          text: "Négocier un traité Quote-Part de 60% sur les risques en zone III et IIb. Compléter par un XL catastrophe à 200 Mds DZD pour couvrir le déficit de 127 Mds face au PML M7.5. Revue annuelle obligatoire.",
+        },
+        {
+          num: "03",
+          prio: "HAUTE",
+          pcls: "p-med",
+          title: "Révision de la politique de tarification différenciée RPA",
+          text: "Appliquer un coefficient multiplicateur selon la zone RPA : ×1.0 Zone 0, ×1.4 Zone I, ×1.9 Zone IIa, ×2.8 Zone IIb, ×4.2 Zone III. Intégrer la vulnérabilité intrinsèque (type de construction, année, étages).",
+        },
+        {
+          num: "04",
+          prio: "OPPORTUNITÉ",
+          pcls: "p-ok",
+          title: "Développement commercial ciblé · Zones 0 et I",
+          text: "Les wilayas du Sud (Tamanrasset, Adrar, Illizi) classées Zone 0 représentent seulement 2% du portefeuille malgré un potentiel industriel croissant. Campagne de prospection B2B à lancer H2 2026.",
+        },
+        {
+          num: "05",
+          prio: "OPPORTUNITÉ",
+          pcls: "p-ok",
+          title: "Équilibrage géographique · Hauts-Plateaux Zone I",
+          text: "M'sila, Djelfa, Tiaret offrent un potentiel en biens agricoles et industriels légers. Objectif : porter la part de Zone I de 8% à 20% d'ici 2028 pour rééquilibrer le profil de risque.",
+        },
+        {
+          num: "06",
+          prio: "INNOVATION",
+          pcls: "p-mid",
+          title: "Déploiement IoT et assurance paramétrique",
+          text: "Installer 250 accéléromètres sur les biens prioritaires en zone III. Lancer un produit paramétrique déclenché sur PGA pour les installations industrielles. Réduction du délai sinistres de 45 jours à 48h.",
+        },
+      ];
 
-/* ═══════════════════════════════════════════
+      /* ═══════════════════════════════════════════
    CHART DEFAULTS
 ═══════════════════════════════════════════ */
-Chart.defaults.font = { family: "'IBM Plex Mono', monospace", size: 10 };
-Chart.defaults.color = '#8faa92';
-const gColor = 'rgba(0,0,0,0.05)';
+      Chart.defaults.font = { family: "'IBM Plex Mono', monospace", size: 10 };
+      Chart.defaults.color = "#8faa92";
+      const gColor = "rgba(0,0,0,0.05)";
 
-function baseOpts(extra = {}) {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { color: gColor }, ticks: { color: '#8faa92' }, ...extra.x },
-      y: { grid: { color: gColor }, ticks: { color: '#8faa92' }, ...extra.y },
-    },
-  };
-}
+      function baseOpts(extra = {}) {
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              grid: { color: gColor },
+              ticks: { color: "#8faa92" },
+              ...extra.x,
+            },
+            y: {
+              grid: { color: gColor },
+              ticks: { color: "#8faa92" },
+              ...extra.y,
+            },
+          },
+        };
+      }
 
-/* ═══════════════════════════════════════════
+      /* ═══════════════════════════════════════════
    BUILD FUNCTIONS
 ═══════════════════════════════════════════ */
 
-function buildZoneBar() {
-  const bar = document.getElementById('zonebar');
-  const leg = document.getElementById('zonelegend');
-  ZONES.forEach(z => {
-    const seg = document.createElement('div');
-    seg.className = 'zs';
-    seg.style.cssText = `flex:${z.pct};background:${z.color};`;
-    seg.style.color = (z.id === '0' || z.id === 'I') ? '#166534' : '#fff';
-    seg.textContent = z.pct + '%';
-    bar.appendChild(seg);
+      function buildZoneBar() {
+        const bar = document.getElementById("zonebar");
+        const leg = document.getElementById("zonelegend");
+        ZONES.forEach((z) => {
+          const seg = document.createElement("div");
+          seg.className = "zs";
+          seg.style.cssText = `flex:${z.pct};background:${z.color};`;
+          seg.style.color = z.id === "0" || z.id === "I" ? "#166534" : "#fff";
+          seg.textContent = z.pct + "%";
+          bar.appendChild(seg);
 
-    const li = document.createElement('div');
-    li.className = 'zleg-i';
-    li.innerHTML = `<span class="zdot" style="background:${z.color};"></span>${z.label} · ${z.capital} Mds`;
-    leg.appendChild(li);
-  });
-}
+          const li = document.createElement("div");
+          li.className = "zleg-i";
+          li.innerHTML = `<span class="zdot" style="background:${z.color};"></span>${z.label} · ${z.capital} Mds`;
+          leg.appendChild(li);
+        });
+      }
 
-function buildTop5() {
-  const TOP = [
-    { name:'Alger',      zone:'IIb', capital:87.4, color:'#f97316' },
-    { name:'Oran',       zone:'IIb', capital:71.8, color:'#f97316' },
-    { name:'Blida',      zone:'IIb', capital:62.1, color:'#f97316' },
-    { name:'Tizi Ouzou', zone:'III', capital:52.6, color:'#ef4444' },
-    { name:'Boumerdès',  zone:'III', capital:38.2, color:'#ef4444' },
-  ];
-  const max = 87.4;
-  const el = document.getElementById('top5prog');
-  el.innerHTML = TOP.map(w => `
+      function buildTop5() {
+        const TOP = [
+          { name: "Alger", zone: "IIb", capital: 87.4, color: "#f97316" },
+          { name: "Oran", zone: "IIb", capital: 71.8, color: "#f97316" },
+          { name: "Blida", zone: "IIb", capital: 62.1, color: "#f97316" },
+          { name: "Tizi Ouzou", zone: "III", capital: 52.6, color: "#ef4444" },
+          { name: "Boumerdès", zone: "III", capital: 38.2, color: "#ef4444" },
+        ];
+        const max = 87.4;
+        const el = document.getElementById("top5prog");
+        el.innerHTML = TOP.map(
+          (w) => `
     <div class="prog">
       <div class="prog-lbl">
         <span>${w.name}</span>
         <span style="color:${w.color}">${w.capital} Mds</span>
       </div>
       <div class="prog-track">
-        <div class="prog-fill" style="width:${(w.capital/max)*100}%;background:${w.color};"></div>
+        <div class="prog-fill" style="width:${(w.capital / max) * 100}%;background:${w.color};"></div>
       </div>
     </div>
-  `).join('');
-}
+  `,
+        ).join("");
+      }
 
-function buildAlerts() {
-  const colors = {
-    danger: ['#fef2f2','#b91c1c'],
-    warn:   ['#fffbeb','#92400e'],
-    info:   ['#f0fdf4','#166534'],
-    ok:     ['#f0fdf4','#15803d'],
-  };
-  document.getElementById('alertFeed').innerHTML = ALERTS.map(a => {
-    const [bg, tc] = colors[a.type];
-    return `<div class="alert-item">
+      function buildAlerts() {
+        const colors = {
+          danger: ["#fef2f2", "#b91c1c"],
+          warn: ["#fffbeb", "#92400e"],
+          info: ["#f0fdf4", "#166534"],
+          ok: ["#f0fdf4", "#15803d"],
+        };
+        document.getElementById("alertFeed").innerHTML = ALERTS.map((a) => {
+          const [bg, tc] = colors[a.type];
+          return `<div class="alert-item">
       <div class="alert-icon" style="background:${bg};color:${tc};">${a.icon}</div>
       <div>
         <div class="alert-title">${a.title}</div>
@@ -1207,21 +1837,36 @@ function buildAlerts() {
         <div class="alert-time">${a.time}</div>
       </div>
     </div>`;
-  }).join('');
-}
+        }).join("");
+      }
 
-const ZONE_PILL = { '0':'p0','I':'pI','IIa':'pIIa','IIb':'pIIb','III':'pIII' };
+      const ZONE_PILL = {
+        0: "p0",
+        I: "pI",
+        IIa: "pIIa",
+        IIb: "pIIb",
+        III: "pIII",
+      };
 
-function buildPortfolioTable(filterZone = 'all', filterCat = 'all') {
-  const filtered = PORTFOLIO.filter(r =>
-    (filterZone === 'all' || r.zone === filterZone) &&
-    (filterCat  === 'all' || r.cat  === filterCat)
-  );
-  document.getElementById('filterCount').textContent = filtered.length + ' enregistrements';
-  const STATUS = { 'III':['p-hi','Surconcentré'], 'IIb':['p-med','Élevé'], 'IIa':['p-mid','Modéré'], 'I':['p-ok','Sous-exploité'], '0':['p-ok','Sous-exploité'] };
-  document.getElementById('portfolioBody').innerHTML = filtered.map(r => {
-    const [sc, sl] = STATUS[r.zone] || ['p-mid','Normal'];
-    return `<tr>
+      function buildPortfolioTable(filterZone = "all", filterCat = "all") {
+        const filtered = PORTFOLIO.filter(
+          (r) =>
+            (filterZone === "all" || r.zone === filterZone) &&
+            (filterCat === "all" || r.cat === filterCat),
+        );
+        document.getElementById("filterCount").textContent =
+          filtered.length + " enregistrements";
+        const STATUS = {
+          III: ["p-hi", "Surconcentré"],
+          IIb: ["p-med", "Élevé"],
+          IIa: ["p-mid", "Modéré"],
+          I: ["p-ok", "Sous-exploité"],
+          0: ["p-ok", "Sous-exploité"],
+        };
+        document.getElementById("portfolioBody").innerHTML = filtered
+          .map((r) => {
+            const [sc, sl] = STATUS[r.zone] || ["p-mid", "Normal"];
+            return `<tr>
       <td style="font-weight:600;">${r.wilaya}</td>
       <td style="color:var(--t3);font-size:11px;">${r.region}</td>
       <td><span class="pill ${ZONE_PILL[r.zone]}">${r.zone}</span></td>
@@ -1231,59 +1876,192 @@ function buildPortfolioTable(filterZone = 'all', filterCat = 'all') {
       <td style="font-family:var(--mono);">${r.pct}%</td>
       <td><span class="pill ${sc}">${sl}</span></td>
     </tr>`;
-  }).join('');
-}
+          })
+          .join("");
+      }
 
-/* ── LEAFLET GIS MAP ────────────────────── */
-let mapInited = false;
-function initMap() {
-  if (mapInited) return;
-  mapInited = true;
+      /* ── LEAFLET GIS MAP ────────────────────── */
+      let mapInited = false;
+      function initMap() {
+        if (mapInited) return;
+        mapInited = true;
 
-  const map = L.map('gismap', { center: [28.5, 2.5], zoom: 5, zoomControl: true });
+        const map = L.map("gismap", {
+          center: [28.5, 2.5],
+          zoom: 5,
+          zoomControl: true,
+        });
 
-  // Clean light tile
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap © CARTO',
-    maxZoom: 18,
-  }).addTo(map);
+        // Clean light tile
+        L.tileLayer(
+          "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+          {
+            attribution: "© OpenStreetMap © CARTO",
+            maxZoom: 18,
+          },
+        ).addTo(map);
 
-  const ZONE_COLORS = { '0':'#22c55e','I':'#84cc16','IIa':'#eab308','IIb':'#f97316','III':'#ef4444' };
+        const ZONE_COLORS = {
+          0: "#22c55e",
+          I: "#84cc16",
+          IIa: "#eab308",
+          IIb: "#f97316",
+          III: "#ef4444",
+        };
 
-  const CITIES = [
-    { name:'Alger',       lat:36.74,  lng:3.06,   zone:'IIb', cap:87.4,  contracts:1820 },
-    { name:'Blida',       lat:36.47,  lng:2.83,   zone:'IIb', cap:62.1,  contracts:1240 },
-    { name:'Boumerdès',   lat:36.76,  lng:3.48,   zone:'III', cap:38.2,  contracts:312  },
-    { name:'Tizi Ouzou',  lat:36.72,  lng:4.05,   zone:'III', cap:52.6,  contracts:980  },
-    { name:'Béjaïa',      lat:36.75,  lng:5.08,   zone:'IIb', cap:38.9,  contracts:720  },
-    { name:'Tipaza',      lat:36.59,  lng:2.45,   zone:'IIb', cap:44.3,  contracts:890  },
-    { name:'Oran',        lat:35.70,  lng:-0.62,  zone:'IIb', cap:71.8,  contracts:1100 },
-    { name:'Constantine', lat:36.36,  lng:6.61,   zone:'IIa', cap:45.6,  contracts:740  },
-    { name:'Annaba',      lat:36.90,  lng:7.76,   zone:'IIa', cap:32.4,  contracts:560  },
-    { name:'Sétif',       lat:36.19,  lng:5.41,   zone:'IIb', cap:41.2,  contracts:640  },
-    { name:"M'sila",      lat:35.70,  lng:4.54,   zone:'I',   cap:22.1,  contracts:420  },
-    { name:'Djelfa',      lat:34.67,  lng:3.26,   zone:'I',   cap:19.8,  contracts:390  },
-    { name:'Ghardaïa',    lat:32.49,  lng:3.67,   zone:'0',   cap:15.8,  contracts:220  },
-    { name:'Tamanrasset', lat:22.78,  lng:5.52,   zone:'0',   cap:21.4,  contracts:180  },
-    { name:'Adrar',       lat:27.87,  lng:-0.29,  zone:'0',   cap:17.2,  contracts:140  },
-    { name:'Guelma',      lat:36.46,  lng:7.43,   zone:'IIa', cap:18.7,  contracts:310  },
-  ];
+        const CITIES = [
+          {
+            name: "Alger",
+            lat: 36.74,
+            lng: 3.06,
+            zone: "IIb",
+            cap: 87.4,
+            contracts: 1820,
+          },
+          {
+            name: "Blida",
+            lat: 36.47,
+            lng: 2.83,
+            zone: "IIb",
+            cap: 62.1,
+            contracts: 1240,
+          },
+          {
+            name: "Boumerdès",
+            lat: 36.76,
+            lng: 3.48,
+            zone: "III",
+            cap: 38.2,
+            contracts: 312,
+          },
+          {
+            name: "Tizi Ouzou",
+            lat: 36.72,
+            lng: 4.05,
+            zone: "III",
+            cap: 52.6,
+            contracts: 980,
+          },
+          {
+            name: "Béjaïa",
+            lat: 36.75,
+            lng: 5.08,
+            zone: "IIb",
+            cap: 38.9,
+            contracts: 720,
+          },
+          {
+            name: "Tipaza",
+            lat: 36.59,
+            lng: 2.45,
+            zone: "IIb",
+            cap: 44.3,
+            contracts: 890,
+          },
+          {
+            name: "Oran",
+            lat: 35.7,
+            lng: -0.62,
+            zone: "IIb",
+            cap: 71.8,
+            contracts: 1100,
+          },
+          {
+            name: "Constantine",
+            lat: 36.36,
+            lng: 6.61,
+            zone: "IIa",
+            cap: 45.6,
+            contracts: 740,
+          },
+          {
+            name: "Annaba",
+            lat: 36.9,
+            lng: 7.76,
+            zone: "IIa",
+            cap: 32.4,
+            contracts: 560,
+          },
+          {
+            name: "Sétif",
+            lat: 36.19,
+            lng: 5.41,
+            zone: "IIb",
+            cap: 41.2,
+            contracts: 640,
+          },
+          {
+            name: "M'sila",
+            lat: 35.7,
+            lng: 4.54,
+            zone: "I",
+            cap: 22.1,
+            contracts: 420,
+          },
+          {
+            name: "Djelfa",
+            lat: 34.67,
+            lng: 3.26,
+            zone: "I",
+            cap: 19.8,
+            contracts: 390,
+          },
+          {
+            name: "Ghardaïa",
+            lat: 32.49,
+            lng: 3.67,
+            zone: "0",
+            cap: 15.8,
+            contracts: 220,
+          },
+          {
+            name: "Tamanrasset",
+            lat: 22.78,
+            lng: 5.52,
+            zone: "0",
+            cap: 21.4,
+            contracts: 180,
+          },
+          {
+            name: "Adrar",
+            lat: 27.87,
+            lng: -0.29,
+            zone: "0",
+            cap: 17.2,
+            contracts: 140,
+          },
+          {
+            name: "Guelma",
+            lat: 36.46,
+            lng: 7.43,
+            zone: "IIa",
+            cap: 18.7,
+            contracts: 310,
+          },
+        ];
 
-  CITIES.forEach(c => {
-    const col = ZONE_COLORS[c.zone];
-    const radius = Math.max(8, Math.sqrt(c.cap) * 1.8);
+        CITIES.forEach((c) => {
+          const col = ZONE_COLORS[c.zone];
+          const radius = Math.max(8, Math.sqrt(c.cap) * 1.8);
 
-    const circle = L.circleMarker([c.lat, c.lng], {
-      radius,
-      fillColor: col,
-      color: '#ffffff',
-      weight: 2,
-      fillOpacity: 0.82,
-    }).addTo(map);
+          const circle = L.circleMarker([c.lat, c.lng], {
+            radius,
+            fillColor: col,
+            color: "#ffffff",
+            weight: 2,
+            fillOpacity: 0.82,
+          }).addTo(map);
 
-    const zoneDesc = { '0':'Aléa négligeable','I':'Aléa faible','IIa':'Aléa modéré','IIb':'Aléa moyen','III':'Aléa élevé' };
+          const zoneDesc = {
+            0: "Aléa négligeable",
+            I: "Aléa faible",
+            IIa: "Aléa modéré",
+            IIb: "Aléa moyen",
+            III: "Aléa élevé",
+          };
 
-    circle.bindPopup(`
+          circle.bindPopup(
+            `
       <div style="font-family:'Plus Jakarta Sans',sans-serif;">
         <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#0e1a0f;">${c.name}</div>
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
@@ -1296,94 +2074,127 @@ function initMap() {
           <div><div style="color:#8faa92;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;">Contrats</div><div style="font-weight:700;color:#0e1a0f;">${c.contracts.toLocaleString()}</div></div>
         </div>
       </div>
-    `, { maxWidth: 220 });
+    `,
+            { maxWidth: 220 },
+          );
 
-    // Pulse animation for high-risk zones
-    if (c.zone === 'III') {
-      const pulse = L.circleMarker([c.lat, c.lng], {
-        radius: radius + 6,
-        fillColor: 'transparent',
-        color: col,
-        weight: 1.5,
-        fillOpacity: 0,
-        opacity: 0.4,
-      }).addTo(map);
+          // Pulse animation for high-risk zones
+          if (c.zone === "III") {
+            const pulse = L.circleMarker([c.lat, c.lng], {
+              radius: radius + 6,
+              fillColor: "transparent",
+              color: col,
+              weight: 1.5,
+              fillOpacity: 0,
+              opacity: 0.4,
+            }).addTo(map);
 
-      let growing = true;
-      let r = radius + 6;
-      setInterval(() => {
-        if (growing) { r += 1; if (r > radius + 14) growing = false; }
-        else { r -= 1; if (r < radius + 4) growing = true; }
-        pulse.setRadius(r);
-        pulse.setStyle({ opacity: (radius + 14 - r) / 20 });
-      }, 80);
-    }
-  });
-}
+            let growing = true;
+            let r = radius + 6;
+            setInterval(() => {
+              if (growing) {
+                r += 1;
+                if (r > radius + 14) growing = false;
+              } else {
+                r -= 1;
+                if (r < radius + 4) growing = true;
+              }
+              pulse.setRadius(r);
+              pulse.setStyle({ opacity: (radius + 14 - r) / 20 });
+            }, 80);
+          }
+        });
+      }
 
-/* ── HEATMAP ──────────────────────────── */
-function buildHeatmap() {
-  const cats  = ['Résidentiel','Commercial','Industriel'];
-  const zones = ['Zone 0','Zone I','Zone IIa','Zone IIb','Zone III'];
-  const data  = [[18,12,8],[14,18,6],[24,28,22],[82,74,68],[62,44,72]];
-  const max   = 82;
+      /* ── HEATMAP ──────────────────────────── */
+      function buildHeatmap() {
+        const cats = ["Résidentiel", "Commercial", "Industriel"];
+        const zones = ["Zone 0", "Zone I", "Zone IIa", "Zone IIb", "Zone III"];
+        const data = [
+          [18, 12, 8],
+          [14, 18, 6],
+          [24, 28, 22],
+          [82, 74, 68],
+          [62, 44, 72],
+        ];
+        const max = 82;
 
-  let html = `<div class="heatmap-grid">
+        let html = `<div class="heatmap-grid">
     <div></div>
-    ${cats.map(c => `<div class="hm-head">${c}</div>`).join('')}`;
+    ${cats.map((c) => `<div class="hm-head">${c}</div>`).join("")}`;
 
-  data.forEach((row, zi) => {
-    html += `<div class="hm-label">${zones[zi]}</div>`;
-    row.forEach(val => {
-      const pct  = val / max;
-      const a    = 0.1 + pct * 0.85;
-      const bg   = `rgba(239,68,68,${a.toFixed(2)})`;
-      const tc   = pct > 0.5 ? '#fff' : '#7f1d1d';
-      html += `<div class="hm-cell" style="background:${bg};color:${tc};" title="${val} Mds DZD">${val}</div>`;
-    });
-  });
-  html += `</div><div style="font-size:10px;color:var(--t3);margin-top:8px;font-family:var(--mono);">Valeurs en Mds DZD · Intensité = exposition</div>`;
-  document.getElementById('heatmapBody').innerHTML = html;
-}
+        data.forEach((row, zi) => {
+          html += `<div class="hm-label">${zones[zi]}</div>`;
+          row.forEach((val) => {
+            const pct = val / max;
+            const a = 0.1 + pct * 0.85;
+            const bg = `rgba(239,68,68,${a.toFixed(2)})`;
+            const tc = pct > 0.5 ? "#fff" : "#7f1d1d";
+            html += `<div class="hm-cell" style="background:${bg};color:${tc};" title="${val} Mds DZD">${val}</div>`;
+          });
+        });
+        html += `</div><div style="font-size:10px;color:var(--t3);margin-top:8px;font-family:var(--mono);">Valeurs en Mds DZD · Intensité = exposition</div>`;
+        document.getElementById("heatmapBody").innerHTML = html;
+      }
 
-/* ── IOT ─────────────────────────────── */
-function buildSensors() {
-  const sensors = [
-    { name:'S-012 Alger Centre',  val:0.04, status:'ok',   lbl:'Inactif'         },
-    { name:'S-047 Boumerdès',     val:0.12, status:'warn', lbl:'Micro-sismicité' },
-    { name:'S-089 Oran Ville',    val:0.02, status:'ok',   lbl:'Normal'          },
-    { name:'S-103 Tizi Ouzou',    val:0.08, status:'warn', lbl:'Activité faible' },
-    { name:'S-156 Blida',         val:0.03, status:'ok',   lbl:'Normal'          },
-    { name:'S-201 Béjaïa',        val:0.05, status:'ok',   lbl:'Normal'          },
-  ];
-  const sc = { ok:'#22c55e', warn:'#d97706', danger:'#dc2626' };
-  const sf = { ok:'#22c55e', warn:'#f97316' };
-  document.getElementById('sensorGrid').innerHTML = sensors.map(s => `
+      /* ── IOT ─────────────────────────────── */
+      function buildSensors() {
+        const sensors = [
+          {
+            name: "S-012 Alger Centre",
+            val: 0.04,
+            status: "ok",
+            lbl: "Inactif",
+          },
+          {
+            name: "S-047 Boumerdès",
+            val: 0.12,
+            status: "warn",
+            lbl: "Micro-sismicité",
+          },
+          { name: "S-089 Oran Ville", val: 0.02, status: "ok", lbl: "Normal" },
+          {
+            name: "S-103 Tizi Ouzou",
+            val: 0.08,
+            status: "warn",
+            lbl: "Activité faible",
+          },
+          { name: "S-156 Blida", val: 0.03, status: "ok", lbl: "Normal" },
+          { name: "S-201 Béjaïa", val: 0.05, status: "ok", lbl: "Normal" },
+        ];
+        const sc = { ok: "#22c55e", warn: "#d97706", danger: "#dc2626" };
+        const sf = { ok: "#22c55e", warn: "#f97316" };
+        document.getElementById("sensorGrid").innerHTML = sensors
+          .map(
+            (s) => `
     <div class="sensor">
       <div class="s-top">
         <div class="s-name">${s.name}</div>
         <div class="s-dot" style="background:${sc[s.status]};box-shadow:0 0 5px ${sc[s.status]};"></div>
       </div>
       <div><span class="s-val">${s.val.toFixed(2)}</span><span class="s-unit">g PGA</span></div>
-      <div class="s-bar"><div class="s-fill" style="width:${(s.val/0.2)*100}%;background:${sf[s.status]||'#ef4444'};"></div></div>
+      <div class="s-bar"><div class="s-fill" style="width:${(s.val / 0.2) * 100}%;background:${sf[s.status] || "#ef4444"};"></div></div>
       <div class="s-lbl">${s.lbl}</div>
     </div>
-  `).join('');
-}
+  `,
+          )
+          .join("");
+      }
 
-function buildNetworkStatus() {
-  const regions = [
-    { name:'Grand Nord',     total:120, active:118 },
-    { name:'Nord-Est',       total:68,  active:65  },
-    { name:'Nord-Ouest',     total:42,  active:41  },
-    { name:'Hauts-Plateaux', total:12,  active:10  },
-    { name:'Sahara',         total:5,   active:4   },
-  ];
-  const el = document.getElementById('networkStatus');
-  el.innerHTML = regions.map(r => {
-    const pct = Math.round(r.active / r.total * 100);
-    const col = pct >= 95 ? '#22c55e' : '#d97706';
-    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+      function buildNetworkStatus() {
+        const regions = [
+          { name: "Grand Nord", total: 120, active: 118 },
+          { name: "Nord-Est", total: 68, active: 65 },
+          { name: "Nord-Ouest", total: 42, active: 41 },
+          { name: "Hauts-Plateaux", total: 12, active: 10 },
+          { name: "Sahara", total: 5, active: 4 },
+        ];
+        const el = document.getElementById("networkStatus");
+        el.innerHTML = regions
+          .map((r) => {
+            const pct = Math.round((r.active / r.total) * 100);
+            const col = pct >= 95 ? "#22c55e" : "#d97706";
+            return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
       <div style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;"></div>
       <div style="flex:1;font-size:12px;font-weight:500;">${r.name}</div>
       <div style="font-size:11px;font-family:var(--mono);color:var(--t3);">${r.active}/${r.total}</div>
@@ -1392,52 +2203,56 @@ function buildNetworkStatus() {
       </div>
       <div style="font-size:11px;font-family:var(--mono);font-weight:600;width:30px;text-align:right;">${pct}%</div>
     </div>`;
-  }).join('');
-}
+          })
+          .join("");
+      }
 
-/* ── SIMULATOR ────────────────────────── */
-function buildSimulator() {
-  const zf = { III:1.0, IIb:0.75, IIb2:0.70, IIa:0.45 };
-  function calc(mag, zone, depth) {
-    const base = Math.pow(10, (mag - 4.5) * 0.8) * 8;
-    const df   = Math.max(0.3, 1 - (depth - 5) / 60);
-    return Math.round(base * (zf[zone] || 0.5) * df * 10) / 10;
-  }
-  function update() {
-    const mag   = parseFloat(document.getElementById('magSlider').value);
-    const zone  = document.getElementById('epicZone').value;
-    const depth = parseInt(document.getElementById('depthSlider').value);
-    document.getElementById('magVal').textContent   = mag.toFixed(1);
-    document.getElementById('depthVal').textContent = depth + ' km';
-    const pml     = calc(mag, zone, depth);
-    const deficit = Math.max(0, pml - 85);
-    const ratio   = Math.round(pml / 847.3 * 100);
-    document.getElementById('simResults').innerHTML = `
-      <div class="kpi ${pml > 85 ? 'k-red' : 'k-green'}">
+      /* ── SIMULATOR ────────────────────────── */
+      function buildSimulator() {
+        const zf = { III: 1.0, IIb: 0.75, IIb2: 0.7, IIa: 0.45 };
+        function calc(mag, zone, depth) {
+          const base = Math.pow(10, (mag - 4.5) * 0.8) * 8;
+          const df = Math.max(0.3, 1 - (depth - 5) / 60);
+          return Math.round(base * (zf[zone] || 0.5) * df * 10) / 10;
+        }
+        function update() {
+          const mag = parseFloat(document.getElementById("magSlider").value);
+          const zone = document.getElementById("epicZone").value;
+          const depth = parseInt(document.getElementById("depthSlider").value);
+          document.getElementById("magVal").textContent = mag.toFixed(1);
+          document.getElementById("depthVal").textContent = depth + " km";
+          const pml = calc(mag, zone, depth);
+          const deficit = Math.max(0, pml - 85);
+          const ratio = Math.round((pml / 847.3) * 100);
+          document.getElementById("simResults").innerHTML = `
+      <div class="kpi ${pml > 85 ? "k-red" : "k-green"}">
         <div class="kpi-lbl">PML estimé</div>
-        <div class="kpi-val ${pml > 85 ? 'red' : 'green'}">${pml.toFixed(0)} Mds</div>
+        <div class="kpi-val ${pml > 85 ? "red" : "green"}">${pml.toFixed(0)} Mds</div>
         <div class="kpi-foot">DZD · impact direct</div>
       </div>
-      <div class="kpi ${deficit > 0 ? 'k-red' : 'k-green'}">
+      <div class="kpi ${deficit > 0 ? "k-red" : "k-green"}">
         <div class="kpi-lbl">Déficit couverture</div>
-        <div class="kpi-val ${deficit > 0 ? 'red' : 'green'}">${deficit > 0 ? '+' + deficit.toFixed(0) + ' Mds' : 'Couvert'}</div>
-        <div class="kpi-foot">${deficit > 0 ? 'Dépasse rétention' : 'Sous rétention'}</div>
+        <div class="kpi-val ${deficit > 0 ? "red" : "green"}">${deficit > 0 ? "+" + deficit.toFixed(0) + " Mds" : "Couvert"}</div>
+        <div class="kpi-foot">${deficit > 0 ? "Dépasse rétention" : "Sous rétention"}</div>
       </div>
-      <div class="kpi ${ratio > 20 ? 'k-red' : ratio > 10 ? 'k-orange' : 'k-green'}">
+      <div class="kpi ${ratio > 20 ? "k-red" : ratio > 10 ? "k-orange" : "k-green"}">
         <div class="kpi-lbl">% du portefeuille</div>
-        <div class="kpi-val ${ratio > 20 ? 'red' : ratio > 10 ? 'orange' : 'green'}">${ratio}%</div>
+        <div class="kpi-val ${ratio > 20 ? "red" : ratio > 10 ? "orange" : "green"}">${ratio}%</div>
         <div class="kpi-foot">Capital affecté</div>
       </div>
     `;
-  }
-  ['magSlider','depthSlider'].forEach(id => document.getElementById(id).addEventListener('input', update));
-  document.getElementById('epicZone').addEventListener('change', update);
-  update();
-}
+        }
+        ["magSlider", "depthSlider"].forEach((id) =>
+          document.getElementById(id).addEventListener("input", update),
+        );
+        document.getElementById("epicZone").addEventListener("change", update);
+        update();
+      }
 
-/* ── RECS ─────────────────────────────── */
-function buildRecs() {
-  document.getElementById('recList').innerHTML = RECS.map(r => `
+      /* ── RECS ─────────────────────────────── */
+      function buildRecs() {
+        document.getElementById("recList").innerHTML = RECS.map(
+          (r) => `
     <div class="rec-card">
       <div class="rec-head">
         <div class="rec-num">${r.num}</div>
@@ -1448,166 +2263,367 @@ function buildRecs() {
       </div>
       <div class="rec-body">${r.text}</div>
     </div>
-  `).join('');
-}
-
-/* ── CHARTS ───────────────────────────── */
-function initCharts() {
-  new Chart('catChart', {
-    type: 'doughnut',
-    data: {
-      labels: ['Résidentiel','Commercial','Industriel','Autre'],
-      datasets: [{ data:[387,218,162,80], backgroundColor:['#1a9e5c','#3b82f6','#f97316','#94a3b8'], borderWidth:0 }]
-    },
-    options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'bottom', labels:{ padding:14, boxWidth:10, font:{ family:"'Plus Jakarta Sans'" } } } }
-    }
-  });
-
-  new Chart('cumulChart', {
-    type: 'doughnut',
-    data: {
-      labels: ['Zone IIb + III','Autres zones'],
-      datasets: [{ data:[74,26], backgroundColor:['#ef4444','#e4ece5'], borderWidth:0 }]
-    },
-    options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'bottom', labels:{ padding:10, boxWidth:10 } } }
-    }
-  });
-
-  const months = ['Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc','Jan','Fév','Mar','Avr'];
-  new Chart('trendChart', {
-    type: 'line',
-    data: {
-      labels: months,
-      datasets: [{ data:[710,718,724,729,735,742,748,756,763,769,778,784],
-        borderColor:'#1a9e5c', borderWidth:2, tension:0.4, pointRadius:0,
-        fill:true, backgroundColor:'rgba(26,158,92,0.06)' }]
-    },
-    options: { ...baseOpts() }
-  });
-
-  new Chart('ratioChart', {
-    type: 'bar',
-    data: {
-      labels: ['Z.0','Z.I','Z.IIa','Z.IIb','Z.III'],
-      datasets: [
-        { label:'Capital', data:[102,68,152,322,203], backgroundColor:['#22c55e','#84cc16','#eab308','#f97316','#ef4444'], borderWidth:0, borderRadius:4 },
-        { label:'Rétention', data:Array(5).fill(85), type:'line', borderColor:'#64748b', borderDash:[5,4], borderWidth:1.5, pointRadius:0, fill:false }
-      ]
-    },
-    options: { ...baseOpts({ x:{ grid:{ display:false } } }) }
-  });
-
-  new Chart('exposureBar', {
-    type: 'bar',
-    data: {
-      labels: ['Alger','Oran','Blida','Tizi O.','Sétif','Béjaïa','Const.','Boumerdès'],
-      datasets: [{ data:[87.4,71.8,62.1,52.6,41.2,38.9,45.6,38.2],
-        backgroundColor:['#f97316','#f97316','#f97316','#ef4444','#f97316','#f97316','#eab308','#ef4444'],
-        borderWidth:0, borderRadius:4 }]
-    },
-    options: { ...baseOpts(), indexAxis:'y' }
-  });
-
-  new Chart('epCurve', {
-    type: 'line',
-    data: {
-      labels: ['10 ans','25 ans','50 ans','100 ans','200 ans','250 ans','500 ans'],
-      datasets: [
-        { label:'PML (Mds)', data:[12,28,52,88,152,178,212],
-          borderColor:'#ef4444', borderWidth:2, tension:0.4, fill:true,
-          backgroundColor:'rgba(239,68,68,0.06)', pointRadius:3, pointBackgroundColor:'#ef4444' },
-        { label:'Rétention max', data:Array(7).fill(85),
-          borderColor:'#94a3b8', borderDash:[6,4], borderWidth:1.5, pointRadius:0, fill:false }
-      ]
-    },
-    options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:10 } } },
-      scales:{ x:{ grid:{ color:gColor } }, y:{ grid:{ color:gColor } } }
-    }
-  });
-
-  new Chart('lossBar', {
-    type: 'bar',
-    data: {
-      labels: ['Zone 0','Zone I','Zone IIa','Zone IIb','Zone III'],
-      datasets: [{ data:[8,22,48,128,212],
-        backgroundColor:['#22c55e','#84cc16','#eab308','#f97316','#ef4444'],
-        borderWidth:0, borderRadius:4 }]
-    },
-    options: { ...baseOpts({ x:{ grid:{ display:false } } }) }
-  });
-
-  const seismoData = [0,0,0.8,0,0,1.2,0,0,0,2.1,0,0,0.5,0,0,0,1.8,0,0.3,0,0,0,1.1,0];
-  new Chart('seismoChart', {
-    type: 'bar',
-    data: {
-      labels: Array.from({length:24}, (_,i) => i+'h'),
-      datasets: [{ data:seismoData,
-        backgroundColor: seismoData.map(v => v>1.5?'#ef4444':v>0.8?'#f97316':'#22c55e'),
-        borderWidth:0, borderRadius:2 }]
-    },
-    options: { ...baseOpts({ x:{ grid:{ display:false }, ticks:{ maxTicksLimit:8 } }, y:{ title:{ display:true, text:'Magnitude', font:{ size:9 } } } }) }
-  });
-
-  new Chart('kpiChart', {
-    type: 'bar',
-    data: {
-      labels: ['Concentration IIb+III','PML/SI (%)','Part Zone 0+I','Couverture IoT'],
-      datasets: [
-        { label:'Situation 2026', data:[74,25,20,89], backgroundColor:'rgba(239,68,68,0.7)', borderWidth:0, borderRadius:4 },
-        { label:'Cible 2028',     data:[55,16,35,95], backgroundColor:'rgba(26,158,92,0.7)',  borderWidth:0, borderRadius:4 }
-      ]
-    },
-    options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:12 } } },
-      scales:{
-        x:{ grid:{ display:false } },
-        y:{ grid:{ color:gColor }, max:100, ticks:{ callback: v => v+'%' } }
+  `,
+        ).join("");
       }
-    }
-  });
-}
 
-/* ── TABS ────────────────────────────── */
-const TAB_TITLES = {
-  overview: 'Vue d\'ensemble',
-  portfolio: 'Portefeuille',
-  map: 'Cartographie RPA · SIG',
-  pml: 'Analyse PML',
-  iot: 'Réseau IoT',
-  reco: 'Recommandations stratégiques',
-};
+      /* ── CHARTS ───────────────────────────── */
+      function initCharts() {
+        new Chart("catChart", {
+          type: "doughnut",
+          data: {
+            labels: ["Résidentiel", "Commercial", "Industriel", "Autre"],
+            datasets: [
+              {
+                data: [387, 218, 162, 80],
+                backgroundColor: ["#1a9e5c", "#3b82f6", "#f97316", "#94a3b8"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 14,
+                  boxWidth: 10,
+                  font: { family: "'Plus Jakarta Sans'" },
+                },
+              },
+            },
+          },
+        });
 
-document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    item.classList.add('active');
-    const tab = item.dataset.tab;
-    document.getElementById('tab-' + tab).classList.add('active');
-    document.getElementById('topbar-title').textContent = TAB_TITLES[tab] || tab;
-    if (tab === 'map') initMap();
-  });
-});
+        new Chart("cumulChart", {
+          type: "doughnut",
+          data: {
+            labels: ["Zone IIb + III", "Autres zones"],
+            datasets: [
+              {
+                data: [74, 26],
+                backgroundColor: ["#ef4444", "#e4ece5"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { padding: 10, boxWidth: 10 },
+              },
+            },
+          },
+        });
 
-document.getElementById('filterZone').addEventListener('change', e =>
-  buildPortfolioTable(e.target.value, document.getElementById('filterCat').value));
-document.getElementById('filterCat').addEventListener('change', e =>
-  buildPortfolioTable(document.getElementById('filterZone').value, e.target.value));
+        const months = [
+          "Mai",
+          "Jun",
+          "Jul",
+          "Aoû",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Déc",
+          "Jan",
+          "Fév",
+          "Mar",
+          "Avr",
+        ];
+        new Chart("trendChart", {
+          type: "line",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                data: [
+                  710, 718, 724, 729, 735, 742, 748, 756, 763, 769, 778, 784,
+                ],
+                borderColor: "#1a9e5c",
+                borderWidth: 2,
+                tension: 0.4,
+                pointRadius: 0,
+                fill: true,
+                backgroundColor: "rgba(26,158,92,0.06)",
+              },
+            ],
+          },
+          options: { ...baseOpts() },
+        });
 
-/* ── BOOT ────────────────────────────── */
-buildZoneBar();
-buildTop5();
-buildAlerts();
-buildPortfolioTable();
-buildHeatmap();
-buildSensors();
-buildNetworkStatus();
-buildSimulator();
-buildRecs();
-initCharts();
-</script>
-</body>
+        new Chart("ratioChart", {
+          type: "bar",
+          data: {
+            labels: ["Z.0", "Z.I", "Z.IIa", "Z.IIb", "Z.III"],
+            datasets: [
+              {
+                label: "Capital",
+                data: [102, 68, 152, 322, 203],
+                backgroundColor: [
+                  "#22c55e",
+                  "#84cc16",
+                  "#eab308",
+                  "#f97316",
+                  "#ef4444",
+                ],
+                borderWidth: 0,
+                borderRadius: 4,
+              },
+              {
+                label: "Rétention",
+                data: Array(5).fill(85),
+                type: "line",
+                borderColor: "#64748b",
+                borderDash: [5, 4],
+                borderWidth: 1.5,
+                pointRadius: 0,
+                fill: false,
+              },
+            ],
+          },
+          options: { ...baseOpts({ x: { grid: { display: false } } }) },
+        });
+
+        new Chart("exposureBar", {
+          type: "bar",
+          data: {
+            labels: [
+              "Alger",
+              "Oran",
+              "Blida",
+              "Tizi O.",
+              "Sétif",
+              "Béjaïa",
+              "Const.",
+              "Boumerdès",
+            ],
+            datasets: [
+              {
+                data: [87.4, 71.8, 62.1, 52.6, 41.2, 38.9, 45.6, 38.2],
+                backgroundColor: [
+                  "#f97316",
+                  "#f97316",
+                  "#f97316",
+                  "#ef4444",
+                  "#f97316",
+                  "#f97316",
+                  "#eab308",
+                  "#ef4444",
+                ],
+                borderWidth: 0,
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: { ...baseOpts(), indexAxis: "y" },
+        });
+
+        new Chart("epCurve", {
+          type: "line",
+          data: {
+            labels: [
+              "10 ans",
+              "25 ans",
+              "50 ans",
+              "100 ans",
+              "200 ans",
+              "250 ans",
+              "500 ans",
+            ],
+            datasets: [
+              {
+                label: "PML (Mds)",
+                data: [12, 28, 52, 88, 152, 178, 212],
+                borderColor: "#ef4444",
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                backgroundColor: "rgba(239,68,68,0.06)",
+                pointRadius: 3,
+                pointBackgroundColor: "#ef4444",
+              },
+              {
+                label: "Rétention max",
+                data: Array(7).fill(85),
+                borderColor: "#94a3b8",
+                borderDash: [6, 4],
+                borderWidth: 1.5,
+                pointRadius: 0,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { boxWidth: 10, padding: 10 },
+              },
+            },
+            scales: {
+              x: { grid: { color: gColor } },
+              y: { grid: { color: gColor } },
+            },
+          },
+        });
+
+        new Chart("lossBar", {
+          type: "bar",
+          data: {
+            labels: ["Zone 0", "Zone I", "Zone IIa", "Zone IIb", "Zone III"],
+            datasets: [
+              {
+                data: [8, 22, 48, 128, 212],
+                backgroundColor: [
+                  "#22c55e",
+                  "#84cc16",
+                  "#eab308",
+                  "#f97316",
+                  "#ef4444",
+                ],
+                borderWidth: 0,
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: { ...baseOpts({ x: { grid: { display: false } } }) },
+        });
+
+        const seismoData = [
+          0, 0, 0.8, 0, 0, 1.2, 0, 0, 0, 2.1, 0, 0, 0.5, 0, 0, 0, 1.8, 0, 0.3,
+          0, 0, 0, 1.1, 0,
+        ];
+        new Chart("seismoChart", {
+          type: "bar",
+          data: {
+            labels: Array.from({ length: 24 }, (_, i) => i + "h"),
+            datasets: [
+              {
+                data: seismoData,
+                backgroundColor: seismoData.map((v) =>
+                  v > 1.5 ? "#ef4444" : v > 0.8 ? "#f97316" : "#22c55e",
+                ),
+                borderWidth: 0,
+                borderRadius: 2,
+              },
+            ],
+          },
+          options: {
+            ...baseOpts({
+              x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
+              y: {
+                title: { display: true, text: "Magnitude", font: { size: 9 } },
+              },
+            }),
+          },
+        });
+
+        new Chart("kpiChart", {
+          type: "bar",
+          data: {
+            labels: [
+              "Concentration IIb+III",
+              "PML/SI (%)",
+              "Part Zone 0+I",
+              "Couverture IoT",
+            ],
+            datasets: [
+              {
+                label: "Situation 2026",
+                data: [74, 25, 20, 89],
+                backgroundColor: "rgba(239,68,68,0.7)",
+                borderWidth: 0,
+                borderRadius: 4,
+              },
+              {
+                label: "Cible 2028",
+                data: [55, 16, 35, 95],
+                backgroundColor: "rgba(26,158,92,0.7)",
+                borderWidth: 0,
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { boxWidth: 10, padding: 12 },
+              },
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                grid: { color: gColor },
+                max: 100,
+                ticks: { callback: (v) => v + "%" },
+              },
+            },
+          },
+        });
+      }
+
+      /* ── TABS ────────────────────────────── */
+      const TAB_TITLES = {
+        overview: "Vue d'ensemble",
+        portfolio: "Portefeuille",
+        map: "Cartographie RPA · SIG",
+        pml: "Analyse PML",
+        reco: "Recommandations stratégiques",
+      };
+
+      document.querySelectorAll(".nav-item[data-tab]").forEach((item) => {
+        item.addEventListener("click", () => {
+          document
+            .querySelectorAll(".nav-item")
+            .forEach((n) => n.classList.remove("active"));
+          document
+            .querySelectorAll(".panel")
+            .forEach((p) => p.classList.remove("active"));
+          item.classList.add("active");
+          const tab = item.dataset.tab;
+          document.getElementById("tab-" + tab).classList.add("active");
+          document.getElementById("topbar-title").textContent =
+            TAB_TITLES[tab] || tab;
+          if (tab === "map") initMap();
+        });
+      });
+
+      document
+        .getElementById("filterZone")
+        .addEventListener("change", (e) =>
+          buildPortfolioTable(
+            e.target.value,
+            document.getElementById("filterCat").value,
+          ),
+        );
+      document
+        .getElementById("filterCat")
+        .addEventListener("change", (e) =>
+          buildPortfolioTable(
+            document.getElementById("filterZone").value,
+            e.target.value,
+          ),
+        );
+
+      /* ── BOOT ────────────────────────────── */
+      buildZoneBar();
+      buildTop5();
+      buildAlerts();
+      buildPortfolioTable();
+      buildHeatmap();
+      buildSimulator();
+      buildRecs();
+      initCharts();
+    </script>
+  </body>
 </html>
